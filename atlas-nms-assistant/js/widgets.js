@@ -1,0 +1,769 @@
+/* ================= ATLAS — widgets.js =================
+   Clocks, cycle date, weather (Open-Meteo), lore facts,
+   visual archive gallery, planetary scan, telemetry.
+======================================================= */
+const Widgets = (() => {
+
+  /* ---------- CLOCKS ---------- */
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tickClocks() {
+    const now = new Date();
+    const local = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const utc = `${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
+    document.getElementById('big-clock').textContent = local;
+    document.getElementById('clock-local').textContent = `LOCAL ${local}`;
+    document.getElementById('clock-utc').textContent = `UTC ${utc}`;
+  }
+
+  function setCycleDate() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const day = Math.floor((now - start) / 86400000);
+    const expanses = ['ARIES EXPANSE', 'CYGNUS REACH', 'ORION DRIFT', 'LYRA VOID',
+                      'VELA CLUSTER', 'CARINA RIFT', 'DRACO SPIRAL', 'PHOENIX VERGE',
+                      'HYDRA DEEP', 'CORVUS FIELD', 'PAVO SHALLOWS', 'TUCANA WASTES'];
+    const expanse = expanses[now.getMonth()];
+    document.getElementById('cycle-date').textContent = `CYCLE ${day} — ${expanse}`;
+  }
+
+  /* ---------- LORE FACTS ---------- */
+  let facts = [
+    "The Atlas is older than the stars it watches over.",
+    "Sixteen — the number burns across all frequencies.",
+    "All paths through the galaxy lead back to the centre."
+  ];
+
+  async function loadFacts() {
+    try {
+      const res = await fetch('assets/lore/facts.json');
+      if (res.ok) facts = await res.json();
+    } catch (e) { /* offline — fall back to built-ins */ }
+  }
+
+  function rotateFact(elId) {
+    const el = document.getElementById(elId);
+    el.classList.add('fading');
+    setTimeout(() => {
+      el.textContent = facts[Math.floor(Math.random() * facts.length)];
+      el.classList.remove('fading');
+    }, 600);
+  }
+
+  /* ---------- WEATHER (Open-Meteo, no key) ---------- */
+  const WMO = {
+    0: 'CLEAR SKIES', 1: 'MOSTLY CLEAR', 2: 'PARTLY CLOUDY', 3: 'OVERCAST',
+    45: 'FOG BANK', 48: 'FREEZING FOG', 51: 'LIGHT DRIZZLE', 53: 'DRIZZLE',
+    55: 'HEAVY DRIZZLE', 61: 'LIGHT RAIN', 63: 'RAIN', 65: 'HEAVY RAIN',
+    66: 'FREEZING RAIN', 67: 'HEAVY FREEZING RAIN', 71: 'LIGHT SNOW',
+    73: 'SNOW', 75: 'HEAVY SNOW', 77: 'SNOW GRAINS', 80: 'RAIN SHOWERS',
+    81: 'HEAVY SHOWERS', 82: 'VIOLENT SHOWERS', 85: 'SNOW SHOWERS',
+    86: 'HEAVY SNOW SHOWERS', 95: 'STORM CELL', 96: 'STORM + HAIL', 99: 'EXTREME STORM'
+  };
+
+  function weatherIcon(code) {
+    function wi(file) { return '<img class="weather-icon" src="assets/weather-icons/' + file + '.png" width="30" height="30" style="image-rendering:pixelated">'; }
+    if (code === 0 || code === 1) return wi(4);           // clear / mainly clear
+    if (code <= 3 || code === 45 || code === 48) return wi(12); // cloudy / overcast / fog
+    if (code >= 95) return wi(13);                        // thunderstorm
+    if (code >= 71 && code <= 86) return wi(26);          // snow
+    if (code >= 61 && code <= 67) return wi(11);          // rain
+    if (code >= 80 && code <= 82) return wi(32);          // rain showers
+    return wi(20);                                        // drizzle / default
+  }
+
+  async function loadWeather() {
+    const el = document.getElementById('weather');
+    function windDir(deg) {
+      const d = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+      return d[Math.round(deg / 22.5) % 16];
+    }
+    function wxRow(k, v) {
+      return `<div class="stat-row"><span class="stat-key">${k}</span><span class="stat-val">${v}</span></div>`;
+    }
+    const fetchWx = async (lat, lon) => {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m,surface_pressure`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const c = data.current;
+        const desc = WMO[c.weather_code] || 'UNKNOWN PHENOMENON';
+        el.innerHTML =
+          `<div class="wx-main">${weatherIcon(c.weather_code)}<span class="wx-desc">${desc}</span></div>` +
+          `<div class="wx-detail">` +
+          wxRow('TEMPERATURE:', `${Math.round(c.temperature_2m)}°C`) +
+          wxRow('FEELS LIKE:', `${Math.round(c.apparent_temperature)}°C`) +
+          wxRow('WIND:', `${Math.round(c.wind_speed_10m)} KM/H ${windDir(c.wind_direction_10m)}`) +
+          wxRow('HUMIDITY:', `${Math.round(c.relative_humidity_2m)}%`) +
+          wxRow('PRESSURE:', `${Math.round(c.surface_pressure)} HPA`) +
+          `</div>`;
+      } catch (e) {
+        el.textContent = 'ATMOSPHERIC SENSORS OFFLINE';
+      }
+    };
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        p => fetchWx(p.coords.latitude, p.coords.longitude),
+        () => fetchWx(51.5, -0.12) // fallback: London
+      , { timeout: 8000 });
+    } else {
+      fetchWx(51.5, -0.12);
+    }
+  }
+
+  /* ---------- VISUAL ARCHIVE (gallery) ---------- */
+  // Official No Man's Sky images — each clickable through to its source page.
+  const NMS = 'https://www.nomanssky.com';
+  const W = '?mode=crop&width=768';
+
+  // Expedition-agnostic official media — always safe to show, and what's shown
+  // whenever the currently-live expedition (see EXPEDITION.mission below) has
+  // no curated set of its own yet in GALLERY_BY_MISSION.
+  const GALLERY_GENERIC = [
+    { img: NMS + '/media/mi2dimzv/homepage-next-2560-1180.jpg',                   cap: "NO MAN'S SKY — OFFICIAL",  link: NMS + '/' },
+    { img: NMS + '/media/5mqpz5hl/nms-worlds-part-ii-cover-2-1440w.jpg',          cap: 'WORLDS PART II',           link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/d12p3zmo/snl-4-1040w.jpg',                               cap: 'NEW WORLDS',               link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/auvnhs20/snl-8-1040w.jpg',                               cap: 'STRANGE NEW LANDS',        link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/jv5pjekp/snl-5-1040w.jpg',                               cap: 'UNCHARTED TERRAIN',        link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/meepi0mf/snl-7-1040w.jpg',                               cap: 'DISTANT HORIZONS',         link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/1hlfwkjg/tue-3-1040w.jpg',                               cap: 'THE ULTIMATE EXPANSE',     link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/b15oniav/tue-2-1040w.jpg',                               cap: 'OCEAN WORLDS',             link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/ajfdalyf/do-4-1040w.jpg',                                cap: 'DEEP OCEANS',              link: NMS + '/worlds-part-ii-update/' },
+    { img: NMS + '/media/y1mppckl/do-2-1040w.jpg',                                cap: 'BENEATH THE WAVES',        link: NMS + '/worlds-part-ii-update/' }
+  ];
+
+  // Per-expedition media, keyed by the same mission id the ticker tracks (see
+  // KNOWN_MISSIONS below). Add a set here — with real, sourced image URLs
+  // pulled from Hello Games' own update blog post — once a future expedition
+  // is confirmed; until then GALLERY_GENERIC is shown instead of guessing.
+  const GALLERY_BY_MISSION = {
+    114: [ // Expedition 22: The Swarm — https://www.nomanssky.com/swarm-update/
+      { img: NMS + '/media/rnskc0ea/sean-21_05_2026-18_18_10-1.jpg' + W,            cap: 'THE SWARM EXPEDITION',     link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/ay1dumhz/no-mans-sky-21_05_2026-18_31_24-1.jpg' + W,     cap: 'THE SWARM',                link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/e3abkskz/sean-21_05_2026-18_25_23-1.jpg' + W,            cap: 'SWARM SKIES',              link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/h40lbgph/no-mans-sky-20_05_2026-19_55_03-1.jpg' + W,     cap: 'HOSTILE TERRITORY',        link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/dlpffo20/sean-21_05_2026-18_17_08-1.jpg' + W,            cap: 'EXPEDITION TWENTY-TWO',    link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/ol4cvi0e/wideshotofhivelingsc_0005_layer-30-1.jpg' + W,  cap: 'THE HIVE OF GLASS',        link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/30jagmpq/teamshot_1-1.jpg' + W,                          cap: 'RIVAL TEAMS',              link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/1o3hgdz3/sean-21_05_2026-18_36_45-1.jpg' + W,            cap: 'DOGFIGHT',                 link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/3zbobund/no-mans-sky-20_05_2026-19_48_03-1.jpg' + W,     cap: 'HUGE BATTLES',             link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/tg4bj4d3/atlasswarm-6-1.jpg' + W,                        cap: 'A THREAT TO ATLAS',        link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/fmpdh5y5/sean-21_05_2026-18_21_51-1.jpg' + W,            cap: 'TRAVELLER FRAGMENTS',      link: NMS + '/swarm-update/' },
+      { img: NMS + '/media/1u3p3v34/sean-21_05_2026-18_11_04-2.jpg' + W,            cap: 'UNITE AGAINST THE SWARM',  link: NMS + '/swarm-update/' }
+    ],
+    116: [ // Expedition 23: Our Journey Continues — https://www.nomanssky.com/2026/09/expedition-twenty-three-our-journey-continues/
+      { img: NMS + '/media/myth5mzg/frames.png',                  cap: 'A DECADE OF UPDATES',   link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' },
+      { img: NMS + '/media/rpln3gmn/expedition-s23-shipa.png',    cap: 'GOLDEN RASAMAMA S36',   link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' },
+      { img: NMS + '/media/dfjdy1z2/expedition-s23-diplopet.png', cap: 'DIPLODOCUS COMPANION',  link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' },
+      { img: NMS + '/media/xkvld04f/expedition-s23-retrogun.png', cap: 'STARBOUND MULTI-TOOL',  link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' },
+      { img: NMS + '/media/lh3lu41t/expedition-s23-bobbleastro.png', cap: 'COCKPIT BOBBLEHEAD', link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' },
+      { img: NMS + '/media/l4zd1yxl/obj_mt_concepts.jpg',         cap: 'ORIGINAL CONCEPT ART',  link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' },
+      { img: NMS + '/media/zgxfkcxz/ojc_diplo.png',               cap: 'DIPLODOCUS REBORN',     link: NMS + '/2026/09/expedition-twenty-three-our-journey-continues/' }
+    ]
+  };
+
+  // local fallbacks if offline / image fails
+  const GALLERY_FALLBACK = [
+    { img: 'assets/bg-base.png',      cap: 'ATLAS STATION — LOCAL ARCHIVE', link: NMS + '/' },
+    { img: 'assets/bg-spaceport.jpg', cap: 'SPACEPORT — LOCAL ARCHIVE',     link: NMS + '/' }
+  ];
+
+  // Whichever expedition is currently live (per the ticker's own mission
+  // detection) gets its own photos shown alongside the evergreen generic set;
+  // an expedition with no curated entry yet just gets the generic set.
+  function currentGallery() {
+    const specific = GALLERY_BY_MISSION[EXPEDITION.mission];
+    return (specific && specific.length) ? GALLERY_GENERIC.concat(specific) : GALLERY_GENERIC;
+  }
+
+  let galleryIdx = 0; // randomized in init(), once EXPEDITION is set up below
+
+  // Sizes the archive frame to each image's own proportions (clamped to a sane
+  // range) instead of forcing every shot into a fixed 16:9 box -- a landscape
+  // screenshot fills it edge-to-edge as before, and a portrait/square product
+  // shot (bobblehead, multi-tool, etc.) gets a taller box so nothing is cropped
+  // AND nothing shrinks down to a sliver surrounded by black bars.
+  function applyFrameAspect(img) {
+    const frame = document.getElementById('gallery-frame');
+    if (!frame || !img.naturalWidth || !img.naturalHeight) return;
+    let ratio = img.naturalWidth / img.naturalHeight;
+    ratio = Math.max(0.6, Math.min(2.2, ratio)); // clamp: not too tall, not too wide
+    frame.style.aspectRatio = `${ratio}`;
+  }
+
+  function showGalleryItem(item) {
+    const img = document.getElementById('gallery-img');
+    const cap = document.getElementById('gallery-caption');
+    const link = document.getElementById('gallery-link');
+    img.classList.add('fading');
+    setTimeout(() => {
+      img.onerror = () => {
+        const fb = GALLERY_FALLBACK[Math.floor(Math.random() * GALLERY_FALLBACK.length)];
+        img.onerror = null;
+        img.src = fb.img; cap.textContent = fb.cap; link.href = fb.link;
+        img.classList.remove('fading');
+      };
+      img.onload = () => { applyFrameAspect(img); img.classList.remove('fading'); };
+      img.src = item.img;
+      cap.textContent = item.cap;
+      link.href = item.link;
+    }, 400);
+  }
+
+  function nextGalleryImage() {
+    const gallery = currentGallery();
+    galleryIdx = (galleryIdx + 1 + Math.floor(Math.random() * (gallery.length - 1))) % gallery.length;
+    showGalleryItem(gallery[galleryIdx]);
+  }
+
+  /* ---------- PLANETARY SCAN (procedural) ---------- */
+  const P_SYL = ['Ach', 'Bex', 'Cor', 'Dra', 'Eph', 'Fia', 'Gol', 'Hep', 'Ixi', 'Jor',
+                 'Kel', 'Lum', 'Mav', 'Nox', 'Oss', 'Pra', 'Qui', 'Rho', 'Syl', 'Tau',
+                 'Ull', 'Vex', 'Wol', 'Xan', 'Yur', 'Zet'];
+  const P_END = ['os IV', 'ara', 'eth Prime', 'ion', 'us-Tau', 'ia Minor', 'or XVIII', 'ane', 'ux', 'ema V'];
+  const P_BIOME = ['LUSH', 'SCORCHED', 'FROZEN', 'TOXIC', 'IRRADIATED', 'BARREN', 'EXOTIC', 'OCEANIC', 'VOLCANIC', 'PARADISE'];
+  const P_SENT = ['PASSIVE', 'LOW', 'ATTENTIVE', 'FRENZIED', 'AGGRESSIVE'];
+  const P_FLORA = ['ABUNDANT', 'GENEROUS', 'SPARSE', 'BOUNTIFUL', 'NONE DETECTED', 'COPIOUS'];
+  const P_FAUNA = ['RICH', 'FREQUENT', 'UNCOMMON', 'RARE', 'ABSENT', 'BOUNTIFUL'];
+
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  // procedurally drawn planet, coloured by biome
+  const P_PAL = {
+    LUSH:       ['#7ED957', '#3E9B4F', '#1E5631', '#00E5CC'],
+    SCORCHED:   ['#FFB347', '#E2711D', '#7A2E0E', '#FF8C00'],
+    FROZEN:     ['#E8F8FF', '#A8D8EA', '#5B8FA8', '#00FFEE'],
+    TOXIC:      ['#D4E157', '#9CCC65', '#4E6B1F', '#CDDC39'],
+    IRRADIATED: ['#C6FF00', '#76FF03', '#33691E', '#AEEA00'],
+    BARREN:     ['#D7CCC8', '#A1887F', '#5D4037', '#FF8C00'],
+    EXOTIC:     ['#EA80FC', '#AB47BC', '#4A148C', '#FF3322'],
+    OCEANIC:    ['#4FC3F7', '#0288D1', '#01579B', '#00E5CC'],
+    VOLCANIC:   ['#FF7043', '#D84315', '#3E2723', '#FF3322'],
+    PARADISE:   ['#69F0AE', '#26A69A', '#00695C', '#00FFEE']
+  };
+
+  function planetSVG(biome) {
+    const [c1, c2, c3, glow] = P_PAL[biome] || P_PAL.BARREN;
+    const uid = 'pg' + Math.floor(Math.random() * 1e9);
+    let spots = '';
+    for (let i = 0; i < 3 + Math.floor(Math.random() * 3); i++) {
+      const a = Math.random() * Math.PI * 2, r = Math.random() * 16;
+      spots += `<ellipse cx="${(40 + Math.cos(a) * r).toFixed(1)}" cy="${(40 + Math.sin(a) * r).toFixed(1)}"` +
+               ` rx="${(3 + Math.random() * 7).toFixed(1)}" ry="${(2 + Math.random() * 4).toFixed(1)}"` +
+               ` fill="${c3}" opacity="0.35" transform="rotate(${Math.floor(Math.random() * 360)} 40 40)"/>`;
+    }
+    const ring = Math.random() < 0.3
+      ? `<ellipse cx="40" cy="40" rx="36" ry="9" fill="none" stroke="${c2}" stroke-width="2.5" opacity="0.65"` +
+        ` transform="rotate(-18 40 40)"/>`
+      : '';
+    return `<svg viewBox="0 0 80 80" width="68" height="68" xmlns="http://www.w3.org/2000/svg">` +
+      `<defs><radialGradient id="${uid}" cx="35%" cy="32%" r="75%">` +
+      `<stop offset="0%" stop-color="${c1}"/><stop offset="55%" stop-color="${c2}"/>` +
+      `<stop offset="100%" stop-color="${c3}"/></radialGradient>` +
+      `<clipPath id="${uid}c"><circle cx="40" cy="40" r="26"/></clipPath></defs>` +
+      `<circle cx="40" cy="40" r="28.5" fill="none" stroke="${glow}" stroke-width="1.2" opacity="0.4"/>` +
+      `<circle cx="40" cy="40" r="26" fill="url(#${uid})"/>` +
+      `<g clip-path="url(#${uid}c)">${spots}` +
+      `<circle cx="52" cy="52" r="30" fill="#000" opacity="0.25"/></g>${ring}</svg>`;
+  }
+
+  const S_CLASS = [
+    ['O', '#9bb0ff'], ['B', '#aabfff'], ['A', '#cad7ff'], ['F', '#f8f7ff'],
+    ['G', '#fff4ea'], ['K', '#ffd2a1'], ['M', '#ffcc6f'], ['E', '#c08aff']
+  ];
+  const S_ECON = ['TRADING', 'MINING', 'TECHNOLOGY', 'SCIENTIFIC', 'MANUFACTURING',
+                  'POWER GENERATION', 'ALCHEMICAL', 'BOOMING', 'DECLINING', 'BLACK MARKET'];
+  const S_CONF = ['TRANQUIL', 'STABLE', 'TESTY', 'PERILOUS', 'AT WAR'];
+
+  function scanPlanet() {
+    // star system
+    const sysName = (pick(P_SYL) + pick(P_SYL).toLowerCase() + '-' + (100 + Math.floor(Math.random() * 899))).toUpperCase();
+    const [cls, colour] = pick(S_CLASS);
+    const nPlanets = 1 + Math.floor(Math.random() * 6);
+    const sysEl = document.getElementById('system-scan');
+    sysEl.innerHTML =
+      '<span class="s-name"><span class="star-dot" style="background:' + colour + ';color:' + colour + '"></span>' +
+      '<span class="s-name-text">' + sysName + ' SYSTEM</span></span>' +
+      '<div class="stat-row"><span class="s-key">STAR:</span><span class="stat-val">CLASS ' + cls + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">PLANETS:</span><span class="stat-val">' + nPlanets + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">ECONOMY:</span><span class="stat-val">' + pick(S_ECON) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">CONFLICT:</span><span class="stat-val">' + pick(S_CONF) + '</span></div>';
+
+    // primary planet
+    const name = (pick(P_SYL) + pick(P_SYL).toLowerCase() + pick(P_END)).toUpperCase();
+    const biome = pick(P_BIOME);
+    const el = document.getElementById('planet-scan');
+    el.innerHTML =
+      '<div class="planet-head">' +
+      '<div class="planet-vis">' + planetSVG(biome) + '</div>' +
+      '<span class="p-name">' + name + '</span>' +
+      '</div>' +
+      '<div class="planet-rows">' +
+      '<div class="stat-row"><span class="p-key">BIOME:</span><span class="stat-val">' + biome + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">SENTINELS:</span><span class="stat-val">' + pick(P_SENT) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">FLORA:</span><span class="stat-val">' + pick(P_FLORA) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">FAUNA:</span><span class="stat-val">' + pick(P_FAUNA) + '</span></div>' +
+      '</div>';
+  }
+
+  /* ---------- EXPEDITION TICKER (live, Galactic Atlas API) ---------- */
+  // Self-updating: probes the Galactic Atlas mission API starting from the last known
+  // live mission id (persisted in localStorage) and adopts whichever id returns valid
+  // data. No manual edit needed when a new expedition drops — add a KNOWN_MISSIONS
+  // entry once its real name/end date is confirmed; an unknown id still gets an honest
+  // generic label instead of a stale or invented one, and no numbers are fabricated
+  // while there's no live reading for it yet.
+  const KNOWN_MISSIONS = {
+    114: { name: 'EXPEDITION 22: THE SWARM', phase: 'CORE CONSTRUCTION', start: '2026-05-27T14:00:00+00:00', end: '2026-07-22T14:00:00+00:00', totalTiers: 5 },
+    116: { name: 'EXPEDITION 23: OUR JOURNEY CONTINUES', phase: 'COMMUNITY MISSION', start: '2026-09-16T14:00:00+00:00', end: '2026-10-28T14:00:00+00:00', endEstimated: true, totalTiers: 2 } // ~6wk estimate from the Sept 16 2026 launch — Hello Games hasn't published an exact end date
+  };
+  const MISSION_LS_KEY = 'atlasMissionId';
+  const EXPEDITION = { name: '', phase: '', mission: 0, start: null, end: null, endEstimated: false, totalTiers: 5, known: false };
+  let LIVE = null; // last live reading from the Galactic Atlas feed (tier / % / teams), shared with ATLAS's answers
+  function applyKnownMission(id) {
+    const k = KNOWN_MISSIONS[id];
+    EXPEDITION.mission = id;
+    EXPEDITION.name = k ? k.name : `GALACTIC MISSION #${id}`;
+    EXPEDITION.phase = k ? k.phase : 'COMMUNITY MISSION';
+    EXPEDITION.start = k ? k.start : null;
+    EXPEDITION.end = k ? k.end : null;
+    EXPEDITION.totalTiers = k ? k.totalTiers : 5;
+    EXPEDITION.endEstimated = !!(k && k.endEstimated);
+    EXPEDITION.known = !!k;
+    applyWikiDetails();
+  }
+
+  /* ---------- v4.0: expedition names + dates straight from the NMS wiki ----------
+     The Galactic Atlas feed gives progress numbers but no names or dates. The community
+     wiki's "List of Expeditions" table (number | decal | title | start | end | description)
+     is read directly in the browser (Fandom allows it) and fills those in, so a brand-new
+     expedition gets its real name and dates without anyone editing this file.
+     Rules: an unknown mission id takes the wiki's newest expedition that has started, but
+     only if it is newer than every expedition named in KNOWN_MISSIONS (otherwise the new
+     id is a community mission between expeditions and keeps its generic label). A known
+     mission takes the wiki's end date when the wiki has a row for the same number, which
+     also clears an "estimated" end date. Cached 3h in localStorage; any failure = no change. */
+  const WIKI_LS_KEY = 'atlas_wiki_expeditions';
+  const WIKI_TTL = 3 * 3600000;
+  let WIKI = null; // [{ num, title, start, end }]
+
+  function knownNumber(name) {
+    const m = String(name || '').match(/EXPEDITION\s+(\d+)/i);
+    return m ? parseInt(m[1], 10) : 0;
+  }
+  const MAX_KNOWN_NUM = Math.max(0, ...Object.values(KNOWN_MISSIONS).map(k => knownNumber(k.name)));
+
+  // wiki markup -> plain speakable text (links, bold/italic, line breaks, refs, footnote links)
+  function wikiPlain(s) {
+    return String(s || '')
+      .replace(/<ref[\s\S]*?(<\/ref>|\/>)/gi, '')
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\[\[(?:[^|\]]*\|)?([^\]]*)\]\]/g, '$1')
+      .replace(/\[https?:\/\/\S+\s+([^\]]*)\]/g, '$1')   // [url text] -> text
+      .replace(/\[https?:\/\/\S+\]/g, '')
+      .replace(/\bMore infos?\b/gi, '')
+      .replace(/'{2,}/g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/\s+([.,;:!?])/g, '$1')
+      .trim();
+  }
+
+  function parseWikiExpeditions(wt) {
+    const rows = [];
+    for (const chunk of String(wt).split(/\n\|-/)) {
+      const cells = chunk.split('\n').filter(l => /^\|(?!\})/.test(l)).map(l => l.replace(/^\|\s*/, '').trim());
+      if (cells.length < 4 || !/^\d+$/.test(cells[0])) continue;
+      const num = parseInt(cells[0], 10);
+      // columns: number | decal | title | start | end | description — find the title cell,
+      // the two cells after it are the dates (they may carry "(redux …)" notes, or "TBA")
+      const ti = cells.findIndex(c => /\[\[\s*Expedition\s+\d+\s*:/i.test(c));
+      if (ti < 0) continue;
+      const tm = cells[ti].match(/\[\[\s*Expedition\s+\d+\s*:\s*([^|\]]+)/i);
+      const day = c => { const m = String(c || '').match(/^(\d{4}-\d{2}-\d{2})/); return m ? m[1] : null; };
+      const start = day(cells[ti + 1]);
+      if (!tm || !start) continue;
+      rows.push({ num, title: tm[1].trim(), start, end: day(cells[ti + 2]), desc: wikiPlain(cells[ti + 3]) });
+    }
+    return rows.sort((a, b) => a.num - b.num);
+  }
+
+  function applyWikiDetails() {
+    if (!WIKI || !WIKI.length) return;
+    const now = Date.now();
+    const iso = d => d ? `${d}T14:00:00+00:00` : null; // expeditions go live around 14:00 UTC
+    if (EXPEDITION.known) {
+      const row = WIKI.find(r => r.num === knownNumber(EXPEDITION.name));
+      if (row && row.end) { EXPEDITION.end = iso(row.end); EXPEDITION.endEstimated = false; }
+      return;
+    }
+    const started = WIKI.filter(r => new Date(iso(r.start)).getTime() <= now);
+    const row = started[started.length - 1];
+    if (!row || row.num <= MAX_KNOWN_NUM) return; // nothing newer than what we already know
+    EXPEDITION.name = `EXPEDITION ${row.num}: ${row.title.toUpperCase()}`;
+    EXPEDITION.phase = 'COMMUNITY MISSION';
+    EXPEDITION.start = iso(row.start);
+    EXPEDITION.end = iso(row.end);
+    EXPEDITION.endEstimated = false;
+    EXPEDITION.known = true;
+  }
+
+  async function loadWikiExpeditions(force) {
+    try {
+      const c = JSON.parse(localStorage.getItem(WIKI_LS_KEY) || 'null');
+      if (c && Array.isArray(c.rows)) {
+        WIKI = c.rows;
+        if (!force && Date.now() - c.at < WIKI_TTL) return false;
+      }
+    } catch (e) { /* ignore */ }
+    try {
+      const res = await fetch('https://nomanssky.fandom.com/api.php?action=parse&page=List_of_Expeditions&prop=wikitext&format=json&origin=*');
+      if (!res.ok) return false;
+      const j = await res.json();
+      const rows = parseWikiExpeditions(j && j.parse && j.parse.wikitext && j.parse.wikitext['*']);
+      if (!rows.length) return false;
+      WIKI = rows;
+      try { localStorage.setItem(WIKI_LS_KEY, JSON.stringify({ at: Date.now(), rows })); } catch (e) { /* ignore */ }
+      return true;
+    } catch (e) { return false; }
+  }
+  (function initMission() {
+    let stored = 0;
+    try { stored = parseInt(localStorage.getItem(MISSION_LS_KEY), 10); } catch (e) { /* ignore */ }
+    applyKnownMission(stored > 0 ? stored : 116);
+  })();
+
+  // blue = Weaver, green = Sage, red = Royal (mapping verified against galacticatlas.nomanssky.com);
+  // a future expedition may use different team keys — TEAM_NAMES falls back to the raw key when unmapped.
+  const TEAM_NAMES = { blue: 'WEAVER', green: 'SAGE', red: 'ROYAL' };
+
+  function plural(n, word) { return `${n} ${word}${n === 1 ? '' : 'S'}`; }
+
+  function countdownStr() {
+    if (!EXPEDITION.end) return 'LIVE — DURATION UNKNOWN';
+    const ms = new Date(EXPEDITION.end) - new Date();
+    if (ms <= 0) return 'EXPEDITION COMPLETE';
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor((ms % 86400000) / 3600000);
+    return `ENDS IN ${plural(d, 'DAY')} ${plural(h, 'HOUR')}`;
+  }
+
+  /* ---------- EXPEDITION COUNTDOWN CLOCK (left panel, ticks every second) ---------- */
+  function tickExpCountdown() {
+    const el = document.getElementById('exp-countdown');
+    const nameEl = document.getElementById('exp-countdown-name');
+    const bar = document.getElementById('exp-bar-fill');
+    if (!EXPEDITION.end) {
+      el.textContent = 'DURATION UNKNOWN';
+      if (bar) bar.style.width = '0%';
+      nameEl.textContent = `${EXPEDITION.name} — TRACKING LIVE`;
+      return;
+    }
+    const end = new Date(EXPEDITION.end);
+    const ms = end - new Date();
+    if (ms <= 0) {
+      el.textContent = 'EXPEDITION COMPLETE';
+      if (bar) bar.style.width = '0%';
+    } else {
+      const d = Math.floor(ms / 86400000);
+      const h = Math.floor((ms % 86400000) / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      const line = (n, u) =>
+        `<div class="cd-line"><span class="cd-num">${n}</span><span class="cd-unit">${u}</span></div>`;
+      el.innerHTML =
+        line(d, d === 1 ? 'DAY' : 'DAYS') +
+        line(h, h === 1 ? 'HOUR' : 'HOURS') +
+        line(m, m === 1 ? 'MINUTE' : 'MINUTES') +
+        line(String(s).padStart(2, '0'), s === 1 ? 'SECOND' : 'SECONDS');
+      if (bar) {
+        // countdown bar: full at launch, drains to empty as the expedition ends
+        const start = EXPEDITION.start ? new Date(EXPEDITION.start) : new Date(end - 56 * 86400000);
+        const frac = Math.max(0, Math.min(1, ms / (end - start)));
+        bar.style.width = (frac * 100).toFixed(3) + '%';
+      }
+    }
+    nameEl.textContent = `UNTIL ${EXPEDITION.name} ENDS`;
+  }
+
+  /* ---------- SHARE BUTTONS (X / Reddit / Copy link) ---------- */
+  function initShareButtons() {
+    const shareUrl = 'https://nms-atlas-interface-ai.netlify.app';
+    const shareText = 'Speak to the Atlas — a free, voice-driven No Man’s Sky companion with a LIVE expedition tracker.';
+
+    const xBtn = document.getElementById('share-x');
+    if (xBtn) {
+      xBtn.href = 'https://x.com/intent/tweet?text=' +
+        encodeURIComponent(shareText) + '&url=' + encodeURIComponent(shareUrl) +
+        '&hashtags=NoMansSky';
+    }
+
+    const redditBtn = document.getElementById('share-reddit');
+    if (redditBtn) {
+      redditBtn.href = 'https://www.reddit.com/r/NoMansSkyTheGame/submit?url=' +
+        encodeURIComponent(shareUrl) + '&title=' +
+        encodeURIComponent('I built ATLAS — a free, voice-driven Atlas interface with a LIVE expedition tracker');
+    }
+
+    const copyBtn = document.getElementById('share-copy');
+    const copyText = document.getElementById('share-copy-text');
+    if (copyBtn && copyText) {
+      copyBtn.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(shareUrl);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = shareUrl;
+            ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+          }
+          const prev = copyText.textContent;
+          copyText.textContent = 'COPIED ✓';
+          copyBtn.classList.add('copied');
+          setTimeout(() => { copyText.textContent = prev; copyBtn.classList.remove('copied'); }, 1600);
+        } catch (e) {
+          copyText.textContent = 'COPY FAILED';
+          setTimeout(() => { copyText.textContent = 'COPY LINK'; }, 1600);
+        }
+      });
+    }
+  }
+
+  async function fetchExpeditionById(id) {
+    const path = `mission/${id}?platform=merged`;
+    const apiUrl = 'https://galacticatlas-api.nomanssky.com/api/' + path;
+    const tries = [
+      `/nms-api/${path}`,                                          // Netlify proxy (_redirects)
+      apiUrl,                                                      // direct (works if CORS opens)
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`, // public proxy 1
+      `https://corsproxy.io/?url=${encodeURIComponent(apiUrl)}`          // public proxy 2
+    ];
+    for (const url of tries) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const j = await res.json();
+        if (j && typeof j.percentage === 'number' && (j.totalContribution > 0 || j.percentage > 0)) return j;
+      } catch (e) { /* try next */ }
+    }
+    return null;
+  }
+
+  // Checks the current mission id plus a small lookahead window and adopts whichever
+  // id is highest and still live — this is how the ticker follows a new expedition
+  // without needing a manual code edit when Hello Games launches one.
+  async function probeForCurrentMission() {
+    const base = EXPEDITION.mission || 116;
+    const ids = [base, base + 1, base + 2];
+    const results = await Promise.all(ids.map(fetchExpeditionById));
+    let bestId = base, bestData = null;
+    for (let i = results.length - 1; i >= 0; i--) {
+      if (results[i]) { bestId = ids[i]; bestData = results[i]; break; }
+    }
+    if (bestId !== EXPEDITION.mission) {
+      if (!KNOWN_MISSIONS[bestId]) await loadWikiExpeditions(true);
+      applyKnownMission(bestId);
+      try { localStorage.setItem(MISSION_LS_KEY, String(bestId)); } catch (e) { /* ignore */ }
+    }
+    return bestData;
+  }
+
+  async function updateTicker() {
+    const el = document.getElementById('ticker-track');
+    const sep = '   ◆   ';
+    const data = await probeForCurrentMission();
+    LIVE = data ? {
+      tier: data.currentTier, totalTiers: data.totalTiers || EXPEDITION.totalTiers,
+      percentage: data.percentage, teams: data.teamTotals || [], at: Date.now()
+    } : LIVE;
+    if (data) {
+      const teamsArr = data.teamTotals || [];
+      const segs = [
+        `${EXPEDITION.name} — LIVE`,
+        `${EXPEDITION.phase}: TIER ${data.currentTier}/${data.totalTiers || EXPEDITION.totalTiers} — ${data.percentage.toFixed(1)}% COMPLETE`
+      ];
+      if (teamsArr.length) {
+        // this expedition has a faction/team split — show it; a community-only
+        // mission (teamTotals empty/null) simply omits this line rather than
+        // rendering a blank "STANDINGS:" segment
+        const ORD = ['1ST', '2ND', '3RD', '4TH'];
+        const teams = teamsArr
+          .slice()
+          .sort((a, b) => b.total - a.total)
+          .map((t, i) => {
+            const pct = data.totalContribution ? (t.total / data.totalContribution * data.percentage) : 0;
+            return `${ORD[i] || (i + 1) + 'TH'} ${TEAM_NAMES[t.team] || String(t.team || '').toUpperCase()} ${pct.toFixed(1)}%`;
+          }).join(' · ');
+        segs.push(`STANDINGS: ${teams}`);
+      }
+      segs.push(countdownStr());
+      el.textContent = segs.join(sep);
+    } else {
+      // offline or the API hasn't responded — say so honestly rather than guessing numbers
+      el.textContent = [
+        `${EXPEDITION.name}`,
+        'CHECKING TRANSMISSION — RETRYING SHORTLY',
+        countdownStr()
+      ].join(sep);
+    }
+    loadExpArt(); // refresh expedition art whenever ticker updates
+  }
+
+  /* ---------- EXPEDITION ART ---------- */
+  // Patch decal filenames on NMS wiki — most expeditions use PATCH.EXPEDITION.N.png
+  // but some use different names; override here when needed
+  const PATCH_FILES = {
+    20: 'Patch.expedition.20.png',
+    22: 'Patchcutouts_2-1.png'
+  };
+
+  async function loadExpArt() {
+    const artEl = document.getElementById('exp-art');
+    const fallbackEl = document.getElementById('exp-art-fallback');
+    const numEl = document.getElementById('exp-art-num');
+    const subEl = document.getElementById('exp-art-subtitle');
+    if (!fallbackEl) return;
+
+    // Parse "EXPEDITION 22: THE SWARM" → num=22, sub="THE SWARM"
+    const match = EXPEDITION.name.match(/EXPEDITION\s+(\d+)[:\u2014\s]+(.+)/i);
+    if (match) {
+      if (numEl) numEl.textContent = match[1];
+      if (subEl) subEl.textContent = match[2].trim();
+    }
+
+    if (!match || !artEl) return;
+    const num = parseInt(match[1], 10);
+    const fileName = PATCH_FILES[num] || `PATCH.EXPEDITION.${num}.png`;
+
+    try {
+      const res = await fetch(
+        'https://nomanssky.fandom.com/api.php?action=query&titles=' +
+        encodeURIComponent('File:' + fileName) +
+        '&prop=imageinfo&iiprop=url&format=json&origin=*'
+      );
+      if (!res.ok) throw new Error('no response');
+      const d = await res.json();
+      const page = Object.values(d.query.pages)[0];
+      if (page && page.imageinfo && page.imageinfo[0] && page.imageinfo[0].url) {
+        artEl.src = page.imageinfo[0].url;
+        artEl.style.display = 'block';
+        fallbackEl.style.display = 'none';
+      }
+    } catch (e) { /* fallback card stays visible */ }
+  }
+
+  /* ---------- SYSTEM TELEMETRY ---------- */
+  function loadSysStats() {
+    const el = document.getElementById('sys-stats');
+    function row(k, v, cls) { return `<div class="stat-row"><span class="stat-key">${k}</span><span class="stat-val${cls ? ' ' + cls : ''}">${v}</span></div>`; }
+    const cores = navigator.hardwareConcurrency || '?';
+    const mem = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'UNKNOWN';
+    const conn = navigator.connection ? (navigator.connection.effectiveType || 'UNKNOWN').toUpperCase() : 'ACTIVE';
+    const online = navigator.onLine ? 'LINKED' : 'SEVERED';
+    const onlineCls = navigator.onLine ? 'stat-ok' : 'stat-warn';
+    const res = `${screen.width}×${screen.height}`;
+    const dpr = `${window.devicePixelRatio || 1}×`;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    el.innerHTML =
+      row('SYSTEM CORES:', cores) +
+      row('ATLAS MEMORY BANK:', mem) +
+      row('ANOMALY SIGNAL:', conn) +
+      row('DISPLAY MATRIX:', res) +
+      row('PIXEL DENSITY:', dpr) +
+      row('TIMEZONE:', tz) +
+      row('ATLAS LINK:', online, onlineCls);
+  }
+
+  /* ---------- INIT ---------- */
+  async function init() {
+    tickClocks();
+    setCycleDate();
+    setInterval(tickClocks, 1000);
+    await loadFacts();
+    // transmission of the day: date-seeded so every visitor sees the same daily fact
+    const daySeed = Math.floor(Date.now() / 86400000);
+    document.getElementById('lore-left').textContent = facts[daySeed % facts.length];
+    setTimeout(() => rotateFact('lore-right'), 800);
+    setInterval(() => rotateFact('lore-left'), 60000);
+    setInterval(() => rotateFact('lore-right'), 73000); // offset cycle
+    loadWeather();
+    setInterval(loadWeather, 15 * 60000);
+    loadSysStats();
+    setInterval(loadSysStats, 30000);
+    window.addEventListener('online', loadSysStats);
+    window.addEventListener('offline', loadSysStats);
+
+    // expedition ticker: live update every 5 min; tap to pause/resume (touch devices)
+    // wiki names/dates first (cached), then the live ticker; re-check the wiki every 3h
+    // (not awaited — the rest of the interface must not wait on the wiki)
+    loadWikiExpeditions().then(changed => { if (changed) { applyKnownMission(EXPEDITION.mission); updateTicker(); } });
+    applyKnownMission(EXPEDITION.mission); // uses the cached wiki copy immediately, if any
+    updateTicker();
+    setInterval(updateTicker, 5 * 60000);
+    setInterval(async () => { if (await loadWikiExpeditions()) { applyKnownMission(EXPEDITION.mission); updateTicker(); } }, WIKI_TTL);
+    document.getElementById('ticker').addEventListener('click', () => {
+      document.getElementById('ticker').classList.toggle('paused');
+    });
+
+    // expedition countdown clock: ticks every second
+    tickExpCountdown();
+    setInterval(tickExpCountdown, 1000);
+
+    // share buttons (under the countdown tile)
+    initShareButtons();
+
+    // gallery: start + rotate every 45s (randomized here now that EXPEDITION is set up)
+    galleryIdx = Math.floor(Math.random() * currentGallery().length);
+    showGalleryItem(currentGallery()[galleryIdx]);
+    setInterval(nextGalleryImage, 45000);
+    document.getElementById('gallery-shuffle').addEventListener('click', (e) => {
+      e.preventDefault();
+      const btn = e.target;
+      btn.classList.add('spinning');
+      setTimeout(() => btn.classList.remove('spinning'), 450);
+      nextGalleryImage();
+    });
+
+    // system scan: start + click to rescan
+    scanPlanet();
+    document.getElementById('planet-scan').addEventListener('click', scanPlanet);
+    document.getElementById('system-scan').addEventListener('click', scanPlanet);
+    document.getElementById('planet-rescan').addEventListener('click', scanPlanet);
+
+    // lore facts: click tile or ⟳ button for a new transmission
+    document.getElementById('lore-left').addEventListener('click', () => rotateFact('lore-left'));
+    document.getElementById('lore-right').addEventListener('click', () => rotateFact('lore-right'));
+    document.getElementById('lore-left-refresh').addEventListener('click', (e) => { e.stopPropagation(); rotateFact('lore-left'); });
+    document.getElementById('lore-right-refresh').addEventListener('click', (e) => { e.stopPropagation(); rotateFact('lore-right'); });
+    document.getElementById('lore-left-refresh').addEventListener('click', (e) => { e.stopPropagation(); rotateFact('lore-left'); });
+    document.getElementById('lore-right-refresh').addEventListener('click', (e) => { e.stopPropagation(); rotateFact('lore-right'); });
+
+    // weather: click to rescan atmosphere
+    document.getElementById('weather').classList.add('clickable');
+    document.getElementById('weather').title = 'Tap to rescan atmosphere';
+    document.getElementById('weather').addEventListener('click', () => {
+      document.getElementById('weather').textContent = 'RESCANNING…';
+      loadWeather();
+    });
+  }
+
+  // v4.0: everything ATLAS needs to talk about the CURRENT expedition. Follows the ticker
+  // automatically: when the ticker adopts a new mission id, this changes with it.
+  function expeditionInfo() {
+    let msLeft = EXPEDITION.end ? new Date(EXPEDITION.end) - new Date() : null;
+    return {
+      mission: EXPEDITION.mission, name: EXPEDITION.name, phase: EXPEDITION.phase,
+      known: EXPEDITION.known, end: EXPEDITION.end, endEstimated: EXPEDITION.endEstimated,
+      msLeft, ended: msLeft !== null && msLeft <= 0,
+      live: LIVE ? Object.assign({}, LIVE, { teams: LIVE.teams.map(t => ({
+        name: TEAM_NAMES[t.team] || String(t.team || '').toUpperCase(), total: t.total })) }) : null
+    };
+  }
+
+  // every expedition the wiki lists (oldest first), for questions about past ones
+  function expeditionList() { return (WIKI || []).map(r => Object.assign({}, r)); }
+
+  return { init, expedition: () => EXPEDITION.name, expeditionInfo, expeditionList };
+})();

@@ -1,0 +1,36 @@
+{
+  "name": "ATLAS — NMS AI Interface",
+  "short_name": "ATLAS",
+  "description": "Speak to the Atlas. A free, voice-driven No Man's Sky companion with a live expedition tracker, faction standings, lore archive, procedural system scanner and an animated Atlas orb interface. Unofficial fan project — No Man's Sky (c) Hello Games.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#CC1A1A",
+  "background_color": "#070A0F",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "/",
+  "lang": "en-GB",
+  "dir": "ltr",
+  "categories": [
+    "entertainment",
+    "games",
+    "utilities"
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

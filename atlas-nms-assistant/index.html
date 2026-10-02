@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#CC1A1A">
+<title>ATLAS — NMS AI Interface</title>
+<meta name="description" content="A free, voice-driven No Man's Sky companion. Live expedition tracking, lore, and the Atlas itself — speak, Traveller.">
+<meta property="og:title" content="ATLAS — A No Man's Sky AI Companion">
+<meta property="og:description" content="Talk to the Atlas. Live expedition tracker, faction standings, lore archive and a voice interface — free, no account needed.">
+<meta property="og:image" content="https://nms-atlas-interface-ai.netlify.app/assets/og-image.jpg">
+<meta property="og:url" content="https://nms-atlas-interface-ai.netlify.app/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/orb.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+<!-- ====== BACKGROUND LAYERS ====== -->
+<div id="bg-base"></div>
+<div id="bg-scanlines"></div>
+<div id="bg-grid">
+  <svg width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="none">
+    <g stroke="#FF8C00" stroke-width="1" opacity="0.6">
+      <line x1="500" y1="300" x2="0"    y2="600"/>
+      <line x1="500" y1="300" x2="200"  y2="600"/>
+      <line x1="500" y1="300" x2="400"  y2="600"/>
+      <line x1="500" y1="300" x2="600"  y2="600"/>
+      <line x1="500" y1="300" x2="800"  y2="600"/>
+      <line x1="500" y1="300" x2="1000" y2="600"/>
+      <line x1="0" y1="380" x2="1000" y2="380"/>
+      <line x1="0" y1="440" x2="1000" y2="440"/>
+      <line x1="0" y1="520" x2="1000" y2="520"/>
+    </g>
+  </svg>
+</div>
+<div id="bg-vignette"></div>
+
+<!-- ====== API KEY MODAL ====== -->
+<div id="key-modal" class="modal hidden">
+  <div class="modal-box">
+    <h2>ATLAS ACTIVATION</h2>
+    <p>Enter your Anthropic API key to activate ATLAS.<br>
+       The key is stored only on this device.</p>
+    <div class="key-row">
+      <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
+      <button id="key-toggle" type="button" title="Show/hide">◉</button>
+    </div>
+    <div class="voice-row">
+      <label for="preset-select" class="voice-label">VOICE CHARACTER</label>
+      <select id="preset-select">
+        <option value="atlas">THE ATLAS — VAST &amp; RESONANT</option>
+        <option value="telamon">TELAMON — CALM SUIT AI</option>
+        <option value="echo">BOUNDARY ECHO — GLITCHED ENTITY</option>
+        <option value="traveller">THE TRAVELLER — WEATHERED STORYTELLER</option>
+        <option value="classic">CLASSIC — PLAIN NARRATOR</option>
+      </select>
+    </div>
+    <div class="voice-row">
+      <label for="source-select" class="voice-label">VOICE SOURCE</label>
+      <select id="source-select">
+        <option value="auto">AUTO — NATURAL VOICE WHEN KEY PRESENT</option>
+        <option value="device">DEVICE VOICE — USE MY CHOICE BELOW</option>
+      </select>
+    </div>
+    <div class="voice-row">
+      <label for="voice-select" class="voice-label">ATLAS VOICE</label>
+      <select id="voice-select"><option value="">AUTO (BRITISH PREFERRED)</option></select>
+      <button id="voice-test" type="button" title="Test voice">▶ TEST</button>
+    </div>
+    <div class="key-row">
+      <input type="password" id="el-key-input" placeholder="Optional: ElevenLabs key — ultra-natural voice" autocomplete="off">
+      <button id="el-toggle" type="button" title="Show/hide">◉</button>
+    </div>
+    <div class="key-row">
+      <input type="text" id="el-voice-input" placeholder="Optional: ElevenLabs voice ID — paste any from their Voice Library" autocomplete="off">
+    </div>
+    <p class="key-note">VOICE CHARACTER shapes any voice; its deep Atlas resonance needs the optional ElevenLabs key. A pasted voice ID overrides the character's own voice (add the voice to My Voices in your ElevenLabs account first), while the character keeps shaping its tone.</p>
+    <button id="key-save" class="btn-primary">INITIALISE</button>
+    <button id="demo-skip" class="btn-demo">CONTINUE IN FREE DEMO MODE</button>
+    <button id="open-memory" class="btn-demo" type="button">◈ ATLAS MEMORY — WHAT IT REMEMBERS ABOUT YOU</button>
+    <p class="key-note">Create a key free at console.anthropic.com, then add a small prepaid credit there (even $5 lasts months — a chat costs a penny or two). Note: this is separate from any Claude.ai subscription. The key is sent only to Anthropic and stored only on this device.</p>
+    <p class="key-note key-warn">⚠ Keep your key private, like a password. A typical chat costs only a penny or two, and you can set spending limits — or revoke the key — anytime at console.anthropic.com.</p>
+    <p class="key-note">ATLAS is a free, unofficial fan project — its creator receives no money whatsoever. The only cost is your own Anthropic API usage, billed by Anthropic to you directly. No Man's Sky © Hello Games.</p>
+    <p class="key-note"><a href="#" id="websearch-info-link">ⓘ Why can't ATLAS search the web?</a></p>
+  </div>
+</div>
+
+<!-- ====== INCOMING TRANSMISSION (returning visitors) — the one tap lets ATLAS speak ====== -->
+<div id="transmission-gate" class="hidden" role="button" tabindex="0" aria-label="Incoming transmission — tap to receive">
+  <div class="tg-inner">
+    <div class="tg-orb" aria-hidden="true"></div>
+    <div class="tg-title">INCOMING TRANSMISSION</div>
+    <div class="tg-glyphs" aria-hidden="true">INCOMING TRANSMISSION</div>
+    <div class="tg-tap">TAP TO RECEIVE <span>▸</span></div>
+  </div>
+</div>
+
+<!-- ====== WELCOME POPUP (first visit, demo users) ====== -->
+<div id="welcome-modal" class="modal hidden">
+  <div class="modal-box welcome-box">
+    <button id="welcome-close" class="modal-x" aria-label="Close welcome message">✕</button>
+    <h2>WELCOME, TRAVELLER</h2>
+    <p><strong>Everything here is free to use, forever.</strong><br>
+       Tap the orb or the mic and speak — the Atlas answers aloud with the lore of the
+       No Man's Sky universe. No account, no cost.</p>
+    <p>To unlock the Atlas's <strong>FULL AI potential</strong> — true conversation about
+       anything — tap the <strong>⚙ cog</strong> (top right) and add your own Anthropic
+       API key. The cog is also where you choose the Atlas's <strong>voice</strong>.</p>
+    <button id="welcome-begin" class="btn-primary">BEGIN</button>
+  </div>
+</div>
+
+<!-- ====== WEB SEARCH INFO POPUP (shown once, after first key save) ====== -->
+<div id="websearch-modal" class="modal hidden">
+  <div class="modal-box welcome-box">
+    <button id="websearch-close" class="modal-x" aria-label="Close web search notice">✕</button>
+    <h2>UNLOCK LIVE DATA</h2>
+    <p>ATLAS can now <strong>search the web</strong> — real weather, current news, live stats —
+       not just No Man's Sky lore. One extra setting is needed first.</p>
+    <p>Go to <a href="https://platform.claude.com/settings/privacy" target="_blank" rel="noopener">platform.claude.com/settings/privacy</a>,
+       sign in with the <strong>same account as your API key</strong>, and switch on
+       <strong>Web Search</strong>. This is separate from claude.ai's own settings, and it's
+       per-account — if a friend uses ATLAS with their own key, they'll need to enable it too.</p>
+    <p class="key-note">Web search is billed by Anthropic at roughly $10 per 1,000 searches, on top of normal chat usage — charged to whoever's key is entered.</p>
+    <button id="websearch-ack" class="btn-primary">GOT IT</button>
+  </div>
+</div>
+
+<!-- ====== ATLAS MEMORY POPUP ====== -->
+<div id="memory-modal" class="modal hidden">
+  <div class="modal-box welcome-box memory-box">
+    <button id="memory-close" class="modal-x" aria-label="Close memory">✕</button>
+    <h2>ATLAS MEMORY</h2>
+    <p>What the Atlas remembers about you between visits. It learns from what you tell it about yourself; you can add, remove or wipe anything here.</p>
+    <div class="key-row">
+      <input type="text" id="memory-name" maxlength="40" placeholder="Your name, Traveller (optional)" autocomplete="off">
+    </div>
+    <ul id="memory-list" class="memory-list"></ul>
+    <div class="key-row">
+      <input type="text" id="memory-add-input" maxlength="140" placeholder="Add something, e.g. I play on PS5" autocomplete="off">
+      <button id="memory-add" type="button" title="Add memory" aria-label="Add memory">+</button>
+    </div>
+    <div class="memory-btns">
+      <button id="memory-export" class="btn-demo" type="button">EXPORT</button>
+      <button id="memory-import" class="btn-demo" type="button">IMPORT</button>
+      <button id="memory-forget" class="btn-demo memory-forget" type="button">FORGET ALL</button>
+    </div>
+    <input type="file" id="memory-file" accept=".txt,text/plain" hidden>
+    <p class="key-note">Stored only in this browser. With an API key, your memories go to Anthropic with your own chats so the Atlas can use them, and a tiny extra request (a fraction of a penny) checks new messages for things worth remembering.</p>
+  </div>
+</div>
+
+<!-- ====== SISTER PROJECTS POPUP ====== -->
+<div id="sister-modal" class="modal hidden">
+  <div class="modal-box sister-box">
+    <h2>SISTER PROJECTS</h2>
+    <div class="sister-modal-links">
+      <a class="sister-modal-link" href="https://nomansskyhub.app" target="_blank" rel="noopener">⟁ NMS COMMAND NETWORK (HUB)</a>
+      <a class="sister-modal-link" href="https://nomansskyhub.app/theme" target="_blank" rel="noopener">⟁ NMS THEME PACK</a>
+      <a class="sister-modal-link" href="https://nomansskyhub.app/weather" target="_blank" rel="noopener">⟁ NMS WEATHER APP</a>
+      <a class="sister-modal-link" href="https://nomansskyhub.app/map" target="_blank" rel="noopener">⟁ NMS GALACTIC MAP</a>
+      <a class="sister-modal-link" href="https://nomansskyhub.app/translator" target="_blank" rel="noopener">⟁ ALPHABET TRANSLATOR</a>
+      <a class="sister-modal-link" href="https://github.com/elegra1965-source/obsidian-nms-atlas" target="_blank" rel="noopener">⟁ ATLAS OBSIDIAN THEME (PENDING)</a>
+    </div>
+    <button id="sister-close" class="btn-close-sister">CLOSE</button>
+  </div>
+</div>
+
+<!-- ====== MOBILE DISPLAY HINT ====== -->
+<div id="mobile-hint" class="hidden">
+  ⚠ SMALL SCREEN IN DESKTOP MODE — turn OFF "Desktop site" in your browser menu, or switch rotation lock off and turn your device sideways.
+  <button id="mobile-hint-close" title="Dismiss">✕</button>
+</div>
+
+<!-- ====== APP GRID ====== -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header-bar">
+    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.0</span></div>
+    <div id="ticker"><div id="ticker-track">ESTABLISHING EXPEDITION UPLINK…</div></div>
+    <div class="header-clocks">
+      <span id="clock-utc">UTC --:--:--</span>
+      <span class="clock-sep">|</span>
+      <span id="clock-local">LOCAL --:--:--</span>
+      <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds">♪</button>
+      <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings">⚙</button>
+    </div>
+  </header>
+
+  <!-- LEFT PANEL -->
+  <aside id="panel-left" class="hud-panel">
+    <div class="widget">
+      <div class="widget-label">STARDATE</div>
+      <div id="big-clock" class="big-clock">--:--:--</div>
+      <div id="cycle-date" class="cycle-date">CYCLE --- — LOADING</div>
+    <div class="widget" id="credits">
+      <div class="widget-label">SIGNAL ORIGIN</div>
+      <div class="credit-rows">
+        <div><span class="c-key">INTERFACE:</span>ATLAS v4.0</div>
+        <div><span class="c-key">FORGED BY:</span>ELEGRA1965</div>
+        <div><span class="c-key">STARDATE:</span>06.2026</div>
+        <div><span class="c-key">TRAVELLER:</span>T672B774</div>
+        <div><span class="c-key">FRIEND CODE:</span>MGD8-C6PP-XKFGT</div>
+      </div>
+      <button id="sister-btn" class="sister-popup-btn">⏁ SISTER PROJECTS</button>
+      <div class="credit-foot">UNOFFICIAL FAN PROJECT · NO MAN'S SKY © HELLO GAMES</div>
+    </div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">ATLAS ARCHIVE <span id="lore-left-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive">⟳</span></div>
+      <div id="lore-left" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">VISUAL ARCHIVE <span id="gallery-shuffle" class="widget-action" title="Shuffle" role="button" aria-label="Shuffle archive image">⟳</span></div>
+      <a id="gallery-link" href="https://www.nomanssky.com/" target="_blank" rel="noopener">
+        <div id="gallery-frame">
+          <img id="gallery-img" src="assets/bg-base.png" alt="No Man's Sky archive image">
+          <div id="gallery-caption">ESTABLISHING UPLINK…</div>
+        </div>
+      </a>
+      <a id="gallery-map-link" href="https://galacticatlas.nomanssky.com/" target="_blank" rel="noopener">◈ OPEN GALACTIC ATLAS MAP</a>
+    </div>
+    <div class="widget">
+      <div class="widget-label">EXPEDITION COUNTDOWN</div>
+      <div class="exp-layout">
+        <div id="exp-countdown" class="exp-countdown">CALCULATING…</div>
+        <div class="exp-art-wrap">
+          <img id="exp-art" class="exp-art" src="" alt="Expedition art" style="display:none" onerror="this.style.display='none';var f=document.getElementById('exp-art-fallback');if(f)f.style.display='flex'">
+          <div id="exp-art-fallback" class="exp-art-card">
+            <div id="exp-art-num" class="exp-art-num">—</div>
+            <div id="exp-art-subtitle" class="exp-art-subtitle"></div>
+          </div>
+        </div>
+      </div>
+      <div id="exp-bar" class="exp-bar" title="Time remaining — drains as the expedition ends"><div id="exp-bar-fill"></div></div>
+      <div id="exp-countdown-name" class="exp-countdown-name"></div>
+      <div class="exp-share">
+        <span class="exp-share-label">SHARE TRANSMISSION</span>
+        <div class="exp-share-btns">
+          <a class="exp-share-btn" id="share-x" href="#" target="_blank" rel="noopener" title="Share on X" aria-label="Share on X">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25h6.83l4.713 6.231 5.447-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/></svg>
+            <span>X</span>
+          </a>
+          <a class="exp-share-btn" id="share-reddit" href="#" target="_blank" rel="noopener" title="Share on Reddit" aria-label="Share on Reddit">
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0Zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+            <span>REDDIT</span>
+          </a>
+          <button class="exp-share-btn" id="share-copy" type="button" title="Copy link" aria-label="Copy link">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1m-2 9a5 5 0 0 1-7 0 5 5 0 0 1 0-7l3-3a5 5 0 0 1 7 0"/></svg>
+            <span id="share-copy-text">COPY LINK</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENTRE -->
+  <main id="panel-centre">
+    <div id="orb-zone">
+      <div id="orb-arch">
+        <div id="orb"></div>
+        <div id="orb-mirror"></div>
+        <div id="orb-rings">
+          <div class="ring r1"></div>
+          <div class="ring r2"></div>
+          <div class="ring r3"></div>
+        </div>
+        <div id="status-line"><span id="status-text">ATLAS ONLINE</span><span class="cursor">▌</span></div>
+      </div>
+      <button id="silence-btn" class="hidden" aria-label="Stop ATLAS speaking">■ END TRANSMISSION</button>
+    </div>
+
+    <div id="speech-decode" class="hidden" aria-hidden="true">
+      <div id="sd-glyphs" class="sd-line sd-glyphs"></div>
+      <div id="sd-english" class="sd-line"></div>
+    </div>
+
+    <div id="transcript"></div>
+
+    <div id="chips">
+      <button class="chip" data-prompt="Who are you, Atlas?">WHO ARE YOU?</button>
+      <button class="chip" data-prompt="Tell me a story from the No Man's Sky universe.">TELL ME A STORY</button>
+      <button class="chip" data-prompt="Give me a random interesting fact about the universe.">RANDOM TRANSMISSION</button>
+      <button class="chip" data-prompt="What should I explore today, Atlas?">GUIDE ME</button>
+      <button class="chip" data-prompt="What is the status of the current expedition?">EXPEDITION STATUS</button>
+      <button class="chip" id="faction-chip">WHAT FACTION ARE YOU?</button>
+    </div>
+
+    <div id="input-bar">
+      <button id="wake-btn" title="Wake word — say 'Atlas' to activate the mic (experimental, keeps microphone armed)" aria-label="Toggle wake word">◉)</button>
+      <button id="auto-btn" title="Continuous conversation — ATLAS listens again after each reply" aria-label="Toggle continuous conversation">∞</button>
+      <button id="mic-btn" title="Tap to speak" aria-label="Speak to ATLAS">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
+        </svg>
+      </button>
+      <input type="text" id="text-input" placeholder="Speak, Traveller — or type…" autocomplete="off">
+      <button id="send-btn" title="Send" aria-label="Send message">▶</button>
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside id="panel-right" class="hud-panel">
+    <div class="widget">
+      <div class="widget-label">ATMOSPHERIC CONDITIONS</div>
+      <div id="weather" class="weather-line">SCANNING…</div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">SYSTEM TELEMETRY</div>
+      <div id="sys-stats" class="sys-stats">—</div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">ATLAS ARCHIVE — II <span id="lore-right-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive II">⟳</span></div>
+      <div id="lore-right" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">SYSTEM SCAN <span id="planet-rescan" class="widget-action" title="Rescan">⟳</span></div>
+      <div id="system-scan" class="system-scan clickable" title="Tap to scan a new system">SCANNING…</div>
+      <div id="planet-scan" class="planet-scan clickable" title="Tap to scan a new system">…</div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">GALACTIC UPLINKS</div>
+      <nav id="uplinks">
+        <a href="https://www.nomanssky.com/" target="_blank" rel="noopener">◈ NO MAN'S SKY — OFFICIAL</a>
+        <a href="https://hellogames.org/" target="_blank" rel="noopener">◈ HELLO GAMES</a>
+        <a href="https://galacticatlas.nomanssky.com/" target="_blank" rel="noopener">◈ GALACTIC ATLAS</a>
+        <a href="https://www.nomanssky.com/news/" target="_blank" rel="noopener">◈ TRANSMISSION LOG (NEWS)</a>
+        <a href="https://nomanssky.fandom.com/" target="_blank" rel="noopener">◈ TRAVELLER WIKI</a>
+        <a href="https://www.reddit.com/r/NoMansSkyTheGame/" target="_blank" rel="noopener">◈ TRAVELLER COMMUNITY</a>
+      </nav>
+    </div>
+  </aside>
+
+
+  <!-- CHAT HISTORY -->
+  <section id="history" class="collapsed">
+    <div class="widget-label history-label">
+      <button id="log-toggle" class="log-toggle" type="button" aria-expanded="false" aria-controls="history-list" title="Show or hide the transmission log">
+        <span id="log-arrow" class="log-arrow">▲</span> TRANSMISSION LOG <span id="log-count" class="log-count">0</span>
+      </button>
+      <span class="history-actions">
+        <span id="memory-btn" class="widget-action" role="button" tabindex="0" title="What the Atlas remembers about you">◈ MEMORY</span>
+        <span id="purge-log" class="widget-action" role="button" tabindex="0" title="Erase conversation memory">⌫ PURGE</span>
+      </span>
+    </div>
+    <div id="history-list"></div>
+  </section>
+
+</div>
+
+<script src="js/widgets.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/memory.js"></script>
+<script src="js/api.js"></script>
+<script src="js/voice.js"></script>
+<script src="js/atlas.js"></script>
+<script src="js/orbwrap.js"></script>
+<script src="js/pulse.js"></script>
+<script src="js/heartbeat.js"></script>
+</body>
+</html>

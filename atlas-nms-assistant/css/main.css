@@ -1,0 +1,693 @@
+/* ================= ATLAS — main.css ================= */
+:root {
+  --nms-black: #070A0F;
+  --nms-deep-red: #1A0505;
+  --nms-red: #CC1A1A;
+  --nms-red-bright: #FF3322;
+  --nms-orange: #FF8C00;
+  --nms-teal: #00E5CC;
+  --nms-cyan: #00FFEE;
+  --nms-white: #E8F4F8;
+  --nms-panel-bg: rgba(0, 20, 25, 0.75);
+  --font-head: 'GeoNMS', 'Orbitron', monospace;
+  --font-body: 'Share Tech Mono', monospace;
+}
+
+/* NMS alphabet — used for glyph subtitles beneath ATLAS replies */
+@font-face {
+  font-family: 'NMSGlyphs';
+  src: url('../assets/fonts/nms-alphabet.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* Drop GeoNMS.woff2 into assets/fonts/ and this activates automatically */
+@font-face {
+  font-family: 'GeoNMS';
+  src: url('../assets/fonts/GeoNMS.woff2') format('woff2'),
+       url('../assets/fonts/GeoNMS.otf') format('opentype');
+  font-display: swap;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+button { -webkit-appearance: none; appearance: none; }
+
+html, body {
+  height: 100%;
+  background: var(--nms-black);
+  color: var(--nms-white);
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+/* ====== BACKGROUND LAYERS ====== */
+#bg-base {
+  position: fixed; inset: 0; z-index: 0;
+  background: url('../assets/bg-spaceport.jpg') center/cover no-repeat;
+  filter: blur(2px) brightness(0.55);
+  opacity: 0.6;
+}
+#bg-scanlines {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 3px,
+    rgba(0, 229, 204, 0.03) 3px 4px
+  );
+  animation: scan-scroll 12s linear infinite;
+}
+@keyframes scan-scroll {
+  from { background-position-y: 0; }
+  to   { background-position-y: 200px; }
+}
+#bg-grid {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.15;
+}
+#bg-vignette {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%,
+    transparent 30%, rgba(7, 10, 15, 0.85) 100%);
+}
+
+/* ====== APP GRID ====== */
+#app {
+  position: relative; z-index: 3;
+  display: grid;
+  height: 100vh;
+  height: 100dvh;
+  grid-template-rows: 52px 1fr auto; /* log row sizes itself: slim bar collapsed, taller expanded */
+  grid-template-columns: 250px 1fr 250px;
+  grid-template-areas:
+    "header header header"
+    "left   centre right"
+    "left   hist   right";
+  gap: 12px;
+  padding: 12px;
+}
+
+/* prevent any wide child (ticker text etc.) from blowing the grid out */
+#app > * { min-width: 0; }
+
+/* ====== HEADER ====== */
+#header-bar {
+  grid-area: header;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px;
+  background: var(--nms-panel-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 140, 0, 0.35);
+  border-bottom: 2px solid var(--nms-orange);
+  box-shadow: 0 0 18px rgba(255, 140, 0, 0.15);
+}
+.brand {
+  font-family: var(--font-head);
+  font-size: 1.15rem; font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--nms-orange);
+  text-shadow: 0 0 12px rgba(255, 140, 0, 0.6);
+  text-transform: uppercase;
+}
+.brand-sub { font-size: 0.65rem; color: var(--nms-teal); letter-spacing: 0.15em; }
+.header-clocks {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8rem; color: var(--nms-teal);
+  flex: 0 0 auto;
+}
+
+/* ====== EXPEDITION TICKER ====== */
+#ticker {
+  flex: 1 1 auto;
+  overflow: hidden;
+  margin: 0 18px;
+  min-width: 0;
+  border: 1px solid rgba(0, 229, 204, 0.4);
+  border-radius: 4px;
+  padding: 2px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+#ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--nms-orange);
+  text-shadow: 0 0 8px rgba(255, 140, 0, 0.4);
+  text-transform: uppercase;
+  animation: ticker-scroll 38s linear infinite;
+  will-change: transform;
+}
+#ticker:hover #ticker-track,
+#ticker.paused #ticker-track { animation-play-state: paused; }
+#ticker { cursor: pointer; }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+.clock-sep { color: var(--nms-orange); }
+#mute-btn {
+  background: none; border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-teal); cursor: pointer;
+  width: 28px; height: 28px; border-radius: 4px; font-size: 0.9rem;
+}
+#mute-btn:hover { box-shadow: 0 0 8px var(--nms-teal); }
+#mute-btn.muted { color: #555; border-color: #444; }
+
+#settings-btn {
+  background: none; border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-teal); cursor: pointer;
+  width: 28px; height: 28px; border-radius: 4px; font-size: 0.9rem;
+}
+#settings-btn:hover { box-shadow: 0 0 8px var(--nms-teal); }
+
+/* ====== CENTRE ====== */
+#panel-centre {
+  grid-area: centre;
+  display: flex; flex-direction: column;
+  min-width: 0; min-height: 0;
+  overflow: hidden; /* v4.0: never spill under the log — children shrink instead */
+}
+#orb-zone {
+  flex: 0 0 auto;
+  min-height: 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+#status-line {
+  margin-top: 6px;
+  font-size: 0.78rem; letter-spacing: 0.3em;
+  color: var(--nms-teal); text-transform: uppercase;
+}
+.cursor { animation: blink 1s steps(1) infinite; color: var(--nms-red-bright); }
+
+#silence-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  margin-top: 8px;
+  background: rgba(20, 8, 0, 0.8);
+  border: 1px solid var(--nms-orange);
+  color: var(--nms-orange);
+  font-family: var(--font-body); font-size: 0.72rem;
+  letter-spacing: 0.2em; padding: 7px 18px;
+  cursor: pointer; border-radius: 4px;
+  animation: blink-soft 1.4s ease-in-out infinite;
+}
+#silence-btn.hidden { display: none; }
+@keyframes blink-soft { 50% { opacity: 0.55; } }
+
+#wake-btn {
+  flex: 0 0 44px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--nms-panel-bg);
+  border: 1px solid rgba(255, 140, 0, 0.35);
+  color: rgba(255, 140, 0, 0.45);
+  font-size: 0.85rem; cursor: pointer; border-radius: 6px;
+  transition: box-shadow 0.2s, color 0.2s;
+  letter-spacing: -0.05em;
+}
+#wake-btn.active {
+  color: var(--nms-orange);
+  border-color: var(--nms-orange);
+  box-shadow: 0 0 12px rgba(255, 140, 0, 0.5);
+  animation: wake-breathe 2.4s ease-in-out infinite;
+}
+@keyframes wake-breathe { 50% { box-shadow: 0 0 22px rgba(255, 140, 0, 0.7); } }
+
+#auto-btn {
+  flex: 0 0 40px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--nms-panel-bg);
+  border: 1px solid rgba(0, 229, 204, 0.35);
+  color: rgba(0, 229, 204, 0.45);
+  font-size: 1.3rem; cursor: pointer; border-radius: 6px;
+  transition: box-shadow 0.2s, color 0.2s;
+}
+#auto-btn.active {
+  color: var(--nms-teal);
+  border-color: var(--nms-teal);
+  box-shadow: 0 0 12px rgba(0, 229, 204, 0.5);
+}
+#mic-btn.disabled { opacity: 0.3; cursor: not-allowed; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ====== SPEECH DECODE (live dual captions while ATLAS speaks) ====== */
+#speech-decode {
+  width: min(680px, 100%);
+  margin: 8px auto 0;
+  padding: 14px 16px;
+  background: rgba(10, 2, 2, 0.78);
+  border: 1px solid rgba(255, 51, 34, 0.4);
+  box-shadow: 0 0 14px rgba(204, 26, 26, 0.25);
+}
+#speech-decode.hidden { display: none; }
+/* v4.0: the decode box shrinks (each line scrolls inside itself) rather than overflowing the column */
+#speech-decode:not(.hidden) {
+  flex: 0 1 auto; min-height: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sd-line { min-height: 1.5em; flex: 0 1 auto; }
+.sd-glyphs { min-height: 2.2em; }
+.sd-glyphs {
+  font-family: 'NMSGlyphs', monospace;
+  font-size: 1rem;
+  color: var(--nms-teal);
+  opacity: 0.85;
+  line-height: 1.95;       /* tall glyphs need headroom — no clipping */
+  text-align: center;
+  padding: 2px 4px 8px;
+  word-break: break-all;
+  max-height: 6.2em;       /* ~3 glyph lines, scrolls within its own window */
+  overflow-y: auto;
+}
+#sd-english {
+  font-size: 0.95rem;
+  color: var(--nms-white);
+  line-height: 1.55;
+  text-align: center;
+  margin-top: 8px;
+  padding: 10px 4px 2px;
+  border-top: 1px dashed rgba(0, 229, 204, 0.3);
+  max-height: 4.7em;       /* ~3 lines, scrolls within its own window */
+  overflow-y: auto;
+}
+
+/* transcript */
+#transcript {
+  flex: 1 1 0; /* v4.0: only takes leftover space — never squeezes the speech decode */
+  min-height: 0;
+  overflow-y: auto;
+  margin: 10px auto 8px;
+  width: min(680px, 100%);
+  padding: 10px 14px;
+  background: rgba(0, 10, 14, 0.55);
+  border: 1px solid rgba(0, 229, 204, 0.2);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.t-user  { color: var(--nms-cyan); margin-bottom: 6px; }
+.t-atlas { color: var(--nms-white); margin-bottom: 10px; }
+.t-user::before  { display: block; content: "TRAVELLER ►"; color: var(--nms-teal); font-size: 0.75em; letter-spacing: 0.1em; margin-bottom: 2px; }
+.t-atlas::before { display: block; content: "ATLAS ◆"; color: var(--nms-red-bright); font-size: 0.75em; letter-spacing: 0.1em; margin-bottom: 2px; }
+.t-interim { opacity: 0.55; font-style: italic; }
+
+/* Collapsible Atlas responses */
+.t-decode-btn {
+  display: block;
+  margin-top: 5px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(0, 229, 204, 0.25);
+  color: rgba(0, 229, 204, 0.55);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  padding: 2px 0;
+  text-transform: uppercase;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.t-decode-btn:hover { color: var(--nms-teal); }
+.t-restored {
+  text-align: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  color: var(--nms-orange);
+  opacity: 0.55;
+  margin: 8px 0;
+}
+.t-glyphs {
+  font-family: 'NMSGlyphs', monospace;
+  font-size: 0.8rem;
+  color: var(--nms-teal);
+  opacity: 0.4;
+  margin-top: 2px;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  word-break: break-all;
+  user-select: none;
+}
+.t-error { color: var(--nms-orange); }
+
+/* input bar */
+#input-bar {
+  flex: 0 0 auto;
+  display: flex; gap: 8px;
+  width: min(680px, 100%);
+  margin: 0 auto;
+}
+#mic-btn, #send-btn {
+  flex: 0 0 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--nms-panel-bg);
+  border: 1px solid var(--nms-red);
+  color: var(--nms-red-bright);
+  cursor: pointer; border-radius: 6px;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+#mic-btn:hover, #send-btn:hover { box-shadow: 0 0 14px rgba(255, 51, 34, 0.6); }
+#mic-btn.active {
+  background: var(--nms-red);
+  color: #fff;
+  box-shadow: 0 0 22px var(--nms-red-bright);
+  animation: mic-pulse 0.8s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  50% { box-shadow: 0 0 34px var(--nms-red-bright); }
+}
+#send-btn { border-color: var(--nms-teal); color: var(--nms-teal); }
+#send-btn:hover { box-shadow: 0 0 14px rgba(0, 229, 204, 0.6); }
+#text-input {
+  flex: 1 1 auto; height: 48px;
+  background: rgba(0, 10, 14, 0.7);
+  border: 1px solid rgba(0, 229, 204, 0.35);
+  color: var(--nms-cyan);
+  font-family: var(--font-body); font-size: 1rem;
+  padding: 0 14px; border-radius: 6px;
+  min-width: 0;
+}
+#text-input:focus {
+  outline: none;
+  border-color: var(--nms-teal);
+  box-shadow: 0 0 12px rgba(0, 229, 204, 0.35);
+}
+#text-input::placeholder { color: rgba(0, 229, 204, 0.35); }
+
+/* ====== HISTORY ====== */
+#history {
+  grid-area: hist;
+  background: var(--nms-panel-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 140, 0, 0.3);
+  padding: 8px 14px;
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+.history-label {
+  margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+#history.collapsed .history-label { margin-bottom: 0; border-bottom-color: transparent; padding-bottom: 0; }
+.log-toggle {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font: inherit; letter-spacing: inherit; color: inherit; text-transform: inherit;
+  display: flex; align-items: center; gap: 8px;
+}
+.log-toggle:hover, .log-toggle:focus-visible { color: var(--nms-teal); outline: none; }
+.log-arrow { display: inline-block; transition: transform 0.25s; color: var(--nms-teal); }
+#history:not(.collapsed) .log-arrow { transform: rotate(180deg); }
+.log-count {
+  font-family: var(--font-body); font-size: 0.85em; letter-spacing: 0.05em;
+  color: var(--nms-teal); border: 1px solid rgba(0, 229, 204, 0.4);
+  border-radius: 8px; padding: 0 6px; line-height: 1.5;
+}
+.history-actions { display: flex; gap: 16px; }
+.history-actions .widget-action { float: none; font-size: 0.85rem; }
+#history-list { overflow-y: auto; height: clamp(90px, 22vh, 190px); font-size: 0.8rem; line-height: 1.45; }
+#history.collapsed #history-list { display: none; }
+.h-msg { margin-bottom: 4px; }
+#log-placeholder {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--nms-teal);
+  opacity: 0.45;
+  text-align: center;
+  padding: 14px 0;
+}
+.h-msg .h-who { letter-spacing: 0.1em; font-size: 0.72em; margin-right: 6px; }
+.h-msg.user .h-who  { color: var(--nms-teal); }
+.h-msg.atlas .h-who { color: var(--nms-red-bright); }
+.h-msg.user  { color: var(--nms-cyan); }
+.h-msg.atlas { color: var(--nms-white); }
+
+/* scrollbars */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(0, 20, 25, 0.4); }
+::-webkit-scrollbar-thumb { background: var(--nms-orange); border-radius: 3px; }
+
+/* ====== BOOT SEQUENCE ====== */
+@keyframes boot-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+#header-bar   { animation: boot-in 0.5s ease-out 0.05s backwards; }
+#panel-centre { animation: boot-in 0.5s ease-out 0.25s backwards; }
+#panel-left   { animation: boot-in 0.5s ease-out 0.45s backwards; }
+#panel-right  { animation: boot-in 0.5s ease-out 0.6s backwards; }
+#history      { animation: boot-in 0.5s ease-out 0.75s backwards; }
+
+/* ====== REDUCED MOTION ====== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  #ticker-track { animation: none !important; padding-left: 0; }
+  #bg-scanlines { display: none; }
+}
+
+/* ====== WELCOME POPUP ====== */
+.welcome-box { position: relative; text-align: left; }
+.welcome-box h2 { text-align: center; }
+.welcome-box p { font-size: 0.88rem; }
+.welcome-box strong { color: var(--nms-teal); font-weight: normal; }
+.modal-x {
+  position: absolute; top: 10px; right: 10px;
+  width: 34px; height: 34px;
+  background: none; border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-teal); cursor: pointer; font-size: 1rem;
+  border-radius: 4px;
+}
+.modal-x:hover { box-shadow: 0 0 10px var(--nms-teal); }
+
+/* ====== MOBILE DISPLAY HINT ====== */
+#mobile-hint {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  background: rgba(20, 8, 0, 0.95);
+  border-bottom: 2px solid var(--nms-orange);
+  color: var(--nms-orange);
+  font-size: 0.95rem; line-height: 1.5;
+  letter-spacing: 0.06em;
+  padding: 14px 52px 14px 16px;
+  text-transform: uppercase;
+}
+#mobile-hint.hidden { display: none; }
+#mobile-hint-close {
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  background: none; border: 1px solid var(--nms-orange);
+  color: var(--nms-orange); cursor: pointer; font-size: 1rem;
+}
+
+/* ====== MODAL ====== */
+.modal {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(7, 10, 15, 0.92);
+  display: flex; align-items: flex-start; justify-content: center;
+  overflow-y: auto;
+  padding: 24px 0;
+}
+.modal.hidden { display: none; }
+.modal-box {
+  width: min(440px, 92vw);
+  background: var(--nms-panel-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--nms-red);
+  box-shadow: 0 0 40px rgba(204, 26, 26, 0.4);
+  padding: 28px; text-align: center;
+}
+.modal-box h2 {
+  font-family: var(--font-head);
+  color: var(--nms-red-bright);
+  letter-spacing: 0.3em; margin-bottom: 14px;
+  text-shadow: 0 0 14px rgba(255, 51, 34, 0.7);
+}
+.modal-box p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 16px; color: var(--nms-white); }
+.modal-box a { color: var(--nms-teal); }
+.modal-box a:hover { color: var(--nms-cyan); }
+.key-row { display: flex; gap: 6px; margin-bottom: 14px; }
+.key-row input {
+  flex: 1; height: 44px;
+  background: rgba(0, 10, 14, 0.8);
+  border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-cyan); font-family: var(--font-body);
+  padding: 0 12px;
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+.key-row button {
+  flex: 0 0 44px; width: 44px; background: none;
+  border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-teal); cursor: pointer;
+}
+.voice-row {
+  display: flex; gap: 6px; align-items: center;
+  margin-bottom: 14px;
+}
+.voice-label {
+  font-size: 0.62rem; letter-spacing: 0.2em;
+  color: var(--nms-orange); flex: 0 0 auto;
+}
+.voice-row select {
+  flex: 1 1 auto; min-width: 0; height: 38px;
+  background: rgba(0, 10, 14, 0.8);
+  border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-cyan); font-family: var(--font-body);
+  font-size: 0.72rem; padding: 0 6px;
+}
+#voice-test {
+  flex: 0 0 auto; height: 38px; padding: 0 10px;
+  background: none;
+  border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-teal); cursor: pointer;
+  font-family: var(--font-body); font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+#voice-test:hover { box-shadow: 0 0 10px rgba(0, 229, 204, 0.5); }
+
+.btn-primary {
+  width: 100%; height: 46px;
+  background: var(--nms-red);
+  border: none; color: #fff;
+  font-family: var(--font-head); font-size: 1rem;
+  letter-spacing: 0.25em; cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.btn-primary:hover { box-shadow: 0 0 24px var(--nms-red-bright); }
+.btn-demo {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 40px; margin-top: 8px;
+  background: transparent;
+  border: 1px solid rgba(0, 229, 204, 0.5);
+  color: var(--nms-teal);
+  font-family: var(--font-head); font-size: 0.78rem;
+  letter-spacing: 0.2em; cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 0.2s;
+}
+.btn-demo:hover { box-shadow: 0 0 16px rgba(0, 229, 204, 0.5); }
+
+.key-note { font-size: 0.7rem !important; opacity: 0.6; margin-top: 12px !important; margin-bottom: 0 !important; }
+.key-warn {
+  color: var(--nms-orange) !important;
+  opacity: 0.85;
+  margin-top: 8px !important;
+  border-top: 1px solid rgba(255, 140, 0, 0.25);
+  padding-top: 8px;
+}
+
+/* ====== ATLAS MEMORY POPUP (v4.0) ====== */
+.memory-list { list-style: none; margin: 0 0 14px; padding: 0; max-height: 34vh; overflow-y: auto; text-align: left; }
+.memory-list li {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 4px; border-bottom: 1px dashed rgba(0, 229, 204, 0.25);
+  font-size: 0.82rem; line-height: 1.4; color: var(--nms-white);
+}
+.memory-list li::before { content: "◆"; color: var(--nms-red-bright); font-size: 0.7em; margin-top: 3px; }
+.memory-list li span { flex: 1; }
+.memory-list li button {
+  flex: 0 0 auto; background: none; border: 1px solid rgba(255, 140, 0, 0.4);
+  color: var(--nms-orange); cursor: pointer; width: 24px; height: 24px; border-radius: 3px;
+}
+.memory-list .memory-empty { opacity: 0.55; font-style: italic; }
+.memory-list .memory-empty::before { content: none; }
+.memory-btns { display: flex; gap: 6px; }
+.memory-btns .btn-demo { margin-top: 0; font-size: 0.66rem; }
+.memory-forget { border-color: rgba(255, 140, 0, 0.5) !important; color: var(--nms-orange) !important; }
+
+#memory-btn.learned { color: var(--nms-orange); animation: mem-learned 0.9s ease-in-out 4; }
+@keyframes mem-learned { 50% { text-shadow: 0 0 12px var(--nms-orange); } }
+
+/* ====== v4.0: chips step aside while ATLAS speaks (they can't be used then anyway) ====== */
+body[data-atlas="speaking"] #chips { display: none; }
+
+/* ====== v4.0: short screens — the speech decode always wins the space ======
+   If the log is expanded on a laptop-height screen, it folds itself away while
+   ATLAS speaks (so glyphs + English stay visible), then reopens afterwards. */
+@media (max-height: 900px) and (min-width: 769px) {
+  /* log expanded (and ATLAS not speaking): the orb gives up some height so the input bar never clips */
+  body:has(#history:not(.collapsed)):not([data-atlas="speaking"]) #orb-arch { width: min(340px, 78vw, 27dvh); }
+  body[data-atlas="speaking"] #history-list { display: none; }
+  body[data-atlas="speaking"] #transcript { display: none; } /* the question returns with the next turn */
+  body[data-atlas="speaking"] #history .history-label { margin-bottom: 0; border-bottom-color: transparent; padding-bottom: 0; }
+}
+/* very short landscape screens (phones held sideways, small laptops zoomed in):
+   no room for the log bar at all; the orb shrinks while ATLAS speaks */
+@media (max-height: 520px) and (orientation: landscape) and (min-width: 769px) {
+  #app { grid-template-rows: 44px 1fr; grid-template-areas: "header header header" "left centre right"; gap: 6px; padding: 6px; }
+  #history { display: none; }
+  #orb-arch { width: min(300px, 34vw, 34dvh); transition: width 0.3s ease; }
+  body[data-atlas="speaking"] #orb-arch { width: min(300px, 34vw, 20dvh); }
+  body[data-atlas="speaking"] #orb-arch #status-line { font-size: 0.5rem; letter-spacing: 0.12em; padding: 2px 6px; }
+  #silence-btn { margin-top: 4px; }
+  #speech-decode { padding: 8px 12px; margin-top: 4px; }
+  .sd-glyphs { max-height: 4em; line-height: 1.7; }
+  #sd-english { max-height: 3.2em; margin-top: 4px; padding-top: 6px; }
+  #transcript { margin: 6px auto; }
+  #chips { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; margin-bottom: 4px; }
+  .chip { flex: 0 0 auto; }
+}
+
+/* v4.0: centre box is only the current question / notices — invisible when empty */
+#transcript:empty { background: transparent; border-color: transparent; }
+.log-count.bump { animation: log-bump 0.9s ease-out; }
+@keyframes log-bump { 30% { background: var(--nms-teal); color: #000; box-shadow: 0 0 10px var(--nms-teal); } }
+
+/* ====== v4.0: real-time translation effect ====== */
+#sd-glyphs .sd-g { transition: text-shadow 0.4s, opacity 0.25s; }
+#sd-glyphs .sd-g.sd-now { text-shadow: 0 0 10px var(--nms-teal), 0 0 18px rgba(0, 229, 204, 0.6); opacity: 1; }
+#sd-english .sd-scr {
+  font-family: 'NMSGlyphs', monospace;
+  color: var(--nms-teal);
+  text-shadow: 0 0 8px rgba(0, 229, 204, 0.6);
+}
+
+/* ====== v4.0: INCOMING TRANSMISSION gate (returning visitors) ======
+   Browsers block speech until the visitor taps once; this screen asks for that tap
+   in-character, then ATLAS speaks the welcome-back greeting. */
+#transmission-gate {
+  position: fixed; inset: 0; z-index: 70;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 45%, rgba(40, 6, 6, 0.92) 0%, rgba(7, 10, 15, 0.97) 65%);
+  cursor: pointer; text-align: center;
+  transition: opacity 0.6s ease;
+}
+#transmission-gate.hidden { display: none; }
+#transmission-gate.leaving { opacity: 0; pointer-events: none; }
+#transmission-gate:focus-visible { outline: 2px solid var(--nms-teal); outline-offset: -6px; }
+.tg-inner { padding: 24px; }
+.tg-orb {
+  width: min(170px, 42vw); aspect-ratio: 1; margin: 0 auto 26px; border-radius: 50%;
+  background: url('../assets/atlas-orb-small.gif') center / 100% 100%;
+  -webkit-mask-image: radial-gradient(circle, #000 60%, transparent 72%);
+          mask-image: radial-gradient(circle, #000 60%, transparent 72%);
+  box-shadow: 0 0 40px rgba(255, 51, 34, 0.45);
+  animation: tg-pulse 2.6s ease-in-out infinite;
+}
+@keyframes tg-pulse { 50% { transform: scale(1.06); filter: brightness(1.35) saturate(1.3); } }
+.tg-title {
+  font-family: var(--font-head); color: var(--nms-red-bright);
+  letter-spacing: 0.35em; font-size: clamp(0.9rem, 3.2vw, 1.25rem);
+  text-shadow: 0 0 14px rgba(255, 51, 34, 0.7);
+}
+.tg-glyphs {
+  font-family: 'NMSGlyphs', monospace; color: var(--nms-teal);
+  font-size: 1rem; letter-spacing: 0.15em; margin: 12px 0 30px; opacity: 0.85;
+  text-shadow: 0 0 8px rgba(0, 229, 204, 0.6);
+}
+.tg-tap {
+  display: inline-block; font-family: var(--font-head); font-size: 0.78rem;
+  letter-spacing: 0.3em; color: var(--nms-teal);
+  border: 1px solid rgba(0, 229, 204, 0.5); padding: 10px 20px; border-radius: 4px;
+  animation: tg-blink 1.6s steps(1) infinite;
+}
+.tg-tap span { color: var(--nms-orange); }
+@keyframes tg-blink { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .tg-orb, .tg-tap { animation: none; } }
