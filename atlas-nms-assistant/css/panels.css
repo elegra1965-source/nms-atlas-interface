@@ -229,7 +229,11 @@
 .planet-scan .p-key { color: var(--nms-teal); flex: 0 0 auto; }
 .system-scan .s-key { color: var(--nms-teal); flex: 0 0 auto; }
 .system-scan { font-size: 0.72rem; line-height: 1.7; color: var(--nms-white); }
-.planet-scan .haven-glyph { font-family: var(--font-head); letter-spacing: 0.12em; color: var(--nms-orange); }
+.planet-scan .haven-glyph { font-family: var(--font-head); letter-spacing: 0.12em; color: var(--nms-orange); text-align: center; font-size: 0.7rem; }
+.planet-scan .haven-portal { margin-top: 8px; padding: 6px 6px 4px; border: 1px solid rgba(255, 140, 0, 0.3); background: rgba(0, 0, 0, 0.25); }
+.planet-scan .haven-portal-k { color: var(--nms-teal); font-size: 0.58rem; letter-spacing: 0.14em; margin-bottom: 4px; }
+.planet-scan .haven-glyphs { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin-bottom: 3px; }
+.planet-scan .haven-glyphs img { width: 100%; aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 0 3px rgba(0, 229, 204, 0.5)); }
 .planet-scan .haven-map {
   display: block; margin-top: 8px; padding: 6px 10px;
   border: 1px solid rgba(0, 229, 204, 0.35); color: var(--nms-teal);

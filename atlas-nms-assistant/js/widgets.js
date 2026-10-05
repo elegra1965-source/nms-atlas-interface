@@ -322,7 +322,12 @@ const Widgets = (() => {
       '<div class="stat-row"><span class="p-key">WEATHER:</span><span class="stat-val' + (w.extreme ? '" style="color:var(--nms-orange)' : '') + '">' + (w.extreme ? '⚠ ' : '') + esc(w.weather.toUpperCase()) + '</span></div>' +
       '<div class="stat-row"><span class="p-key">FLORA:</span><span class="stat-val">' + esc(w.flora.toUpperCase()) + '</span></div>' +
       '<div class="stat-row"><span class="p-key">FAUNA:</span><span class="stat-val">' + esc(w.fauna.toUpperCase()) + '</span></div>' +
-      '<div class="stat-row"><span class="p-key">PORTAL:</span><span class="stat-val haven-glyph" title="Portal address">' + esc(w.glyph) + '</span></div>' +
+      '</div>' +
+      // portal address: glyphs (what most Travellers dial with) + hex underneath
+      '<div class="haven-portal" title="Portal address">' +
+        '<div class="haven-portal-k">PORTAL ADDRESS</div>' +
+        '<div class="haven-glyphs">' + w.glyph.split('').map(ch => '<img src="assets/glyphs/g-' + esc(ch) + '.webp" alt="' + esc(ch) + '" title="' + esc(ch) + '">').join('') + '</div>' +
+        '<div class="haven-glyph">' + esc(w.glyph) + '</div>' +
       '</div>' +
       '<a class="haven-map" href="' + mapUrl + '" target="_blank" rel="noopener">◈ SHOW ON GALACTIC MAP</a>' +
       '<div class="haven-credit">CHARTED BY ' + esc(w.by.toUpperCase()) + ' · VIA <a href="https://havenmap.online" target="_blank" rel="noopener">VOYAGER\'S HAVEN</a></div>';

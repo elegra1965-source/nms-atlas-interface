@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v98'; // v4.2 alliances, Haven worlds, mobile scroll hints
+const CACHE = 'atlas-v99'; // v4.2 + portal glyphs in System Scan
 
 const ASSETS = [
   './',
