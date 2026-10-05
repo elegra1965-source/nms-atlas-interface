@@ -6,6 +6,8 @@ A voice-first AI companion themed on *No Man's Sky*. Speak to the Atlas and it s
 
 Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
+![ATLAS interface: the orb, live HUD panels and transmission log](screenshots/01-interface.jpg)
+
 ## Highlights (v4.2)
 
 - **Voice in, voice out**, with wake word, continuous mode, hold-to-talk and interruptions
@@ -14,6 +16,11 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Real worlds in the System Scan.** Planets charted by players on [Voyager's Haven](https://havenmap.online), with portal address, discoverer and a link to the [Galactic Map](https://map.nomansskyhub.app)
 - **Galactic Alliances.** Between expeditions the countdown panel becomes an alliances briefing. Log up to three of your own alliances and ATLAS knows who you fly with
 - **Phone-friendly**, with arrows that show when a tile strip scrolls sideways
+
+<p>
+  <img src="screenshots/02-system-scan.jpg" alt="System Scan showing a real Voyager's Haven world with portal glyphs and hex address" width="320">
+  <img src="screenshots/03-alliances.jpg" alt="Galactic Alliances panel with the Traveller's own alliances" width="290">
+</p>
 
 ## Where the code is
 
