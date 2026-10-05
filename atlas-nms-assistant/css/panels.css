@@ -228,6 +228,17 @@
 }
 .planet-scan .p-key { color: var(--nms-teal); flex: 0 0 auto; }
 .system-scan .s-key { color: var(--nms-teal); flex: 0 0 auto; }
+.system-scan { font-size: 0.72rem; line-height: 1.7; color: var(--nms-white); }
+.planet-scan .haven-glyph { font-family: var(--font-head); letter-spacing: 0.12em; color: var(--nms-orange); }
+.planet-scan .haven-map {
+  display: block; margin-top: 8px; padding: 6px 10px;
+  border: 1px solid rgba(0, 229, 204, 0.35); color: var(--nms-teal);
+  text-decoration: none; letter-spacing: 0.12em; font-size: 0.68rem;
+  transition: border-color .2s, box-shadow .2s, color .2s;
+}
+.planet-scan .haven-map:hover { border-color: var(--nms-orange); color: var(--nms-white); box-shadow: 0 0 10px rgba(255, 140, 0, 0.35); }
+.planet-scan .haven-credit { margin-top: 6px; font-size: 0.58rem; letter-spacing: 0.08em; opacity: 0.6; line-height: 1.5; }
+.planet-scan .haven-credit a { color: var(--nms-teal); text-decoration: none; }
 
 /* gallery → galactic atlas map link */
 #gallery-map-link {
@@ -469,4 +480,41 @@
 .sister-modal-link:hover {
   border-color: var(--nms-teal);
   box-shadow: 0 0 10px rgba(0, 229, 204, 0.4);
-  color: var(--nms-w
+  color: var(--nms-white);
+}
+
+/* ====== ALLIANCES (between expeditions, v4.2) ====== */
+.alliance-panel { font-size: 0.72rem; line-height: 1.7; color: var(--nms-white); }
+.alliance-panel .al-lead { color: var(--nms-orange); letter-spacing: 0.12em; margin-bottom: 6px; text-shadow: 0 0 8px rgba(255, 140, 0, 0.45); }
+.alliance-panel .al-key { color: var(--nms-teal); flex: 0 0 auto; margin-right: 8px; }
+.alliance-panel .stat-val { text-align: right; }
+.alliance-panel .al-yours { margin: 4px 0 10px; padding: 8px 10px; border: 1px solid rgba(255, 140, 0, 0.4); background: rgba(255, 140, 0, 0.04); }
+.alliance-panel .al-sub { display: flex; justify-content: space-between; color: var(--nms-orange); letter-spacing: 0.14em; font-size: 0.66rem; margin-bottom: 4px; }
+.alliance-panel .al-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-bottom: 1px dashed rgba(0, 229, 204, 0.15); }
+.alliance-panel .al-tag { color: var(--nms-orange); font-family: var(--font-head); letter-spacing: 0.08em; flex: 0 0 auto; }
+.alliance-panel .al-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alliance-panel .al-del { background: none; border: 0; color: var(--nms-teal); cursor: pointer; font-size: 0.7rem; opacity: 0.7; padding: 0 2px; }
+.alliance-panel .al-del:hover { opacity: 1; color: var(--nms-orange); }
+.alliance-panel .al-empty { opacity: 0.55; font-size: 0.62rem; letter-spacing: 0.08em; }
+.alliance-panel .al-form { display: flex; gap: 4px; margin-top: 6px; }
+.alliance-panel .al-form input {
+  min-width: 0; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(0, 229, 204, 0.3); color: var(--nms-white);
+  font: inherit; font-size: 0.68rem; padding: 4px 6px; letter-spacing: 0.06em;
+}
+.alliance-panel #al-tag { flex: 0 0 4.2em; text-transform: uppercase; }
+.alliance-panel #al-name { flex: 1; }
+.alliance-panel .al-form input:focus { outline: none; border-color: var(--nms-orange); }
+.alliance-panel .al-form button {
+  flex: 0 0 auto; background: rgba(0, 229, 204, 0.12); border: 1px solid rgba(0, 229, 204, 0.45); color: var(--nms-teal);
+  font: inherit; font-size: 0.62rem; letter-spacing: 0.12em; padding: 4px 8px; cursor: pointer;
+}
+.alliance-panel .al-form button:hover { border-color: var(--nms-orange); color: var(--nms-white); }
+@media (max-width: 768px) { .alliance-panel .al-form input { font-size: 16px; } } /* stops iOS zoom on focus */
+.alliance-panel .al-link {
+  display: block; margin-top: 8px; padding: 6px 10px;
+  border: 1px solid rgba(0, 229, 204, 0.35); color: var(--nms-teal);
+  text-decoration: none; letter-spacing: 0.12em; font-size: 0.68rem;
+  transition: border-color .2s, box-shadow .2s, color .2s;
+}
+.alliance-panel .al-link:hover { border-color: var(--nms-orange); color: var(--nms-white); box-shadow: 0 0 10px rgba(255, 140, 0, 0.35); }
+.alliance-panel .al-note { margin-top: 6px; font-size: 0.6rem; opacity: 0.65; line-height: 1.5; }

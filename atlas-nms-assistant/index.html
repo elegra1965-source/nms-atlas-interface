@@ -187,7 +187,7 @@
 
   <!-- HEADER -->
   <header id="header-bar">
-    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.0</span></div>
+    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.2</span></div>
     <div id="ticker"><div id="ticker-track">ESTABLISHING EXPEDITION UPLINK…</div></div>
     <div class="header-clocks">
       <span id="clock-utc">UTC --:--:--</span>
@@ -207,7 +207,7 @@
     <div class="widget" id="credits">
       <div class="widget-label">SIGNAL ORIGIN</div>
       <div class="credit-rows">
-        <div><span class="c-key">INTERFACE:</span>ATLAS v4.0</div>
+        <div><span class="c-key">INTERFACE:</span>ATLAS v4.2</div>
         <div><span class="c-key">FORGED BY:</span>ELEGRA1965</div>
         <div><span class="c-key">STARDATE:</span>06.2026</div>
         <div><span class="c-key">TRAVELLER:</span>T672B774</div>
@@ -231,8 +231,30 @@
       </a>
       <a id="gallery-map-link" href="https://galacticatlas.nomanssky.com/" target="_blank" rel="noopener">◈ OPEN GALACTIC ATLAS MAP</a>
     </div>
-    <div class="widget">
-      <div class="widget-label">EXPEDITION COUNTDOWN</div>
+    <div class="widget" id="exp-widget">
+      <div class="widget-label" id="exp-widget-label"><span id="exp-widget-title">EXPEDITION COUNTDOWN</span> <span id="al-toggle" class="widget-action" role="button" tabindex="0" title="Your alliances" aria-label="Show your alliances">⇄</span></div>
+      <!-- v4.2: shown automatically between expeditions (see setAllianceMode in widgets.js) -->
+      <div id="alliance-panel" class="alliance-panel" hidden>
+        <div class="al-lead" id="al-lead">NO EXPEDITION ACTIVE · THE ATLAS RECOMMENDS AN ALLIANCE</div>
+        <div class="al-yours">
+          <div class="al-sub">YOUR ALLIANCES <span id="al-count">0/3</span></div>
+          <div id="al-list" class="al-list"></div>
+          <form id="al-form" class="al-form" autocomplete="off">
+            <input id="al-tag" maxlength="4" placeholder="TAG" aria-label="Alliance tag (4 characters)">
+            <input id="al-name" maxlength="32" placeholder="Alliance name" aria-label="Alliance name">
+            <button type="submit">ADD</button>
+          </form>
+          <div class="al-note">Saved on this device only. ATLAS will know which alliances you fly with.</div>
+        </div>
+        <div class="stat-row"><span class="al-key">FOUND:</span><span class="stat-val">STATION DIRECTORS · STATION CORE</span></div>
+        <div class="stat-row"><span class="al-key">IDENTITY:</span><span class="stat-val">NAME · 4-CHAR TAG · EMBLEM · BANNER</span></div>
+        <div class="stat-row"><span class="al-key">JOIN:</span><span class="stat-val">VISIT ANY STATION THEY OWN</span></div>
+        <div class="stat-row"><span class="al-key">LIMIT:</span><span class="stat-val">UP TO 3 ALLIANCES</span></div>
+        <div class="stat-row"><span class="al-key">TRAVEL:</span><span class="stat-val">TELEPORTER TO ALLIANCE SYSTEMS</span></div>
+        <div class="stat-row"><span class="al-key">RANKINGS:</span><span class="stat-val">CORE → VIEW GALACTIC ALLIANCES</span></div>
+        <a class="al-link" href="https://www.nomanssky.com/cosmos-update/" target="_blank" rel="noopener">◈ ALLIANCES IN THE COSMOS UPDATE</a>
+        <div class="al-note">Rankings favour the most populous, active and expansive alliances. Countdown returns automatically when the next expedition launches.</div>
+      </div>
       <div class="exp-layout">
         <div id="exp-countdown" class="exp-countdown">CALCULATING…</div>
         <div class="exp-art-wrap">
@@ -368,5 +390,6 @@
 <script src="js/orbwrap.js"></script>
 <script src="js/pulse.js"></script>
 <script src="js/heartbeat.js"></script>
+<script src="js/scrollhints.js"></script>
 </body>
 </html>

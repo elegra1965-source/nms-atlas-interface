@@ -381,6 +381,14 @@
       r: 'The multi-tool is miner, scanner, and weapon in one. The Atlantid class hums with a red resonance no Korvax has fully explained. I could explain it. I choose not to.' },
     { k: ['base', 'build', 'settlement'],
       r: 'Claim a world and build, Traveller. A base is a lighthouse in an infinite dark — and through its teleporter, you are never truly far from home. Settlements, though... settlements bring paperwork.' },
+    { k: ['alliance', 'alliances', 'guild', 'clan', 'leaderboard', 'director', 'my alliance'],
+      r: () => {
+        const mine = (typeof Widgets !== 'undefined' && Widgets.myAlliances) ? Widgets.myAlliances() : [];
+        const base = 'Alliances, Traveller — the Cosmos gift. Only a station director may found one, from the Station Core: a name, a four-letter tag, an emblem, a banner. Any Traveller may join by visiting a station the alliance owns, and you may swear to three at once. Members teleport freely between alliance systems, and the busiest, largest collectives rise on the Galactic Alliances rankings at the Core.';
+        return mine.length
+          ? base + ' You fly with ' + mine.map(x => x.name + (x.tag ? ' [' + x.tag + ']' : '')).join(', ') + '. Good company, Traveller.'
+          : base + ' Log your own alliances with the ⇄ on the expedition panel, and I will remember who you fly with.';
+      } },
     { k: ['glyph', 'address', 'coordinates'],
       r: 'Sixteen glyphs, twelve to an address. Gather them from the bones of dead Travellers and any portal becomes a door to anywhere. Write your favourite addresses down — the universe is poor at remembering for you.' },
     { k: ['simulation', 'real', 'telamon', 'boundary'],

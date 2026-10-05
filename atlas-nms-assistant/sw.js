@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v95'; // v4.0 incoming-transmission greeting
+const CACHE = 'atlas-v98'; // v4.2 alliances, Haven worlds, mobile scroll hints
 
 const ASSETS = [
   './',
@@ -21,10 +21,12 @@ const ASSETS = [
   './js/hud.js',
   './js/orbwrap.js',
 './js/heartbeat.js',
+  './js/scrollhints.js',
   './assets/atlas-orb.gif',
   './assets/atlas-orb-small.gif',
   './assets/bg-spaceport.jpg',
   './assets/lore/facts.json',
+  './assets/haven-worlds.json',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   './assets/og-image.jpg',

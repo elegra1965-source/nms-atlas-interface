@@ -275,7 +275,65 @@ const Widgets = (() => {
                   'POWER GENERATION', 'ALCHEMICAL', 'BOOMING', 'DECLINING', 'BLACK MARKET'];
   const S_CONF = ['TRANQUIL', 'STABLE', 'TESTY', 'PERILOUS', 'AT WAR'];
 
+  /* ---------- REAL WORLDS (Voyager's Haven snapshot, same data as the Weather App) ---------- */
+  // First scan of the day = today's featured world (date-seeded, same for every traveller);
+  // tapping ⟳ scans another real charted world. Falls back to the procedural scan if the
+  // snapshot can't load (e.g. offline before first cache).
+  let HAVEN = null, havenFirst = true;
+  const H_BIOME = { Lush: 'LUSH', Frozen: 'FROZEN', Toxic: 'TOXIC', Scorched: 'SCORCHED', Radioactive: 'IRRADIATED',
+                    Volcanic: 'VOLCANIC', Dead: 'BARREN', Marsh: 'PARADISE' };
+  const H_STAR = { Yellow: '#f0c040', Red: '#ff5a3c', Green: '#3cff8a', Blue: '#5ab4ff', Purple: '#b07cff' };
+  const H_CONF = { None: 'NONE', Low: 'LOW', Default: 'MODERATE', Medium: 'MEDIUM', High: 'HIGH', Pirate: 'PIRATE' };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }
+  async function loadHaven() {
+    try { HAVEN = await (await fetch('assets/haven-worlds.json')).json(); } catch (e) { HAVEN = null; }
+  }
+  function havenWorld() {
+    const all = [];
+    Object.keys(HAVEN.P).forEach(b => HAVEN.P[b].forEach(p => all.push([b, p])));
+    if (!all.length) return null;
+    const day = Math.floor(Date.now() / 86400000);
+    const [b, p] = havenFirst ? all[(day * 7) % all.length] : pick(all);
+    havenFirst = false;
+    const s = HAVEN.sys[p[0]];
+    if (!s) return null;
+    return { biome: b, name: p[1], weather: p[3], flora: p[4], fauna: p[5], by: p[7], extreme: !!p[8],
+             sys: s[0], galaxy: s[1], glyph: s[2], race: s[3], star: s[4], econ: s[5], conflict: s[6],
+             gIndex: (HAVEN.meta.galaxies || {})[s[1]] || 0 };
+  }
+  function scanHaven(w) {
+    const colour = H_STAR[w.star] || '#f0c040';
+    const mapUrl = 'https://map.nomansskyhub.app/?arrival=1&addr=' + encodeURIComponent(w.glyph) + '&galaxy=' + w.gIndex;
+    document.getElementById('system-scan').innerHTML =
+      '<span class="s-name"><span class="star-dot" style="background:' + colour + ';color:' + colour + '"></span>' +
+      '<span class="s-name-text">' + esc(w.sys.toUpperCase()) + ' SYSTEM</span></span>' +
+      '<div class="stat-row"><span class="s-key">GALAXY:</span><span class="stat-val">' + esc(w.galaxy.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">STAR:</span><span class="stat-val" style="color:' + colour + '">' + esc(w.star.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">RACE:</span><span class="stat-val">' + esc(w.race.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">ECONOMY:</span><span class="stat-val">' + esc(w.econ.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">CONFLICT:</span><span class="stat-val">' + esc(H_CONF[w.conflict] || w.conflict.toUpperCase()) + '</span></div>';
+    document.getElementById('planet-scan').innerHTML =
+      '<div class="planet-head">' +
+      '<div class="planet-vis">' + planetSVG(H_BIOME[w.biome] || 'BARREN') + '</div>' +
+      '<span class="p-name">' + esc(w.name.toUpperCase()) + '</span>' +
+      '</div>' +
+      '<div class="planet-rows">' +
+      '<div class="stat-row"><span class="p-key">BIOME:</span><span class="stat-val">' + esc(w.biome.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">WEATHER:</span><span class="stat-val' + (w.extreme ? '" style="color:var(--nms-orange)' : '') + '">' + (w.extreme ? '⚠ ' : '') + esc(w.weather.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">FLORA:</span><span class="stat-val">' + esc(w.flora.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">FAUNA:</span><span class="stat-val">' + esc(w.fauna.toUpperCase()) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">PORTAL:</span><span class="stat-val haven-glyph" title="Portal address">' + esc(w.glyph) + '</span></div>' +
+      '</div>' +
+      '<a class="haven-map" href="' + mapUrl + '" target="_blank" rel="noopener">◈ SHOW ON GALACTIC MAP</a>' +
+      '<div class="haven-credit">CHARTED BY ' + esc(w.by.toUpperCase()) + ' · VIA <a href="https://havenmap.online" target="_blank" rel="noopener">VOYAGER\'S HAVEN</a></div>';
+    // links shouldn't trigger a rescan
+    document.querySelectorAll('#planet-scan a').forEach(a => a.addEventListener('click', e => e.stopPropagation()));
+    window.ATLAS_SCAN = w; // current real world, available to the rest of the interface
+  }
+
   function scanPlanet() {
+    const real = HAVEN && havenWorld();
+    if (real) { scanHaven(real); return; }
     // star system
     const sysName = (pick(P_SYL) + pick(P_SYL).toLowerCase() + '-' + (100 + Math.floor(Math.random() * 899))).toUpperCase();
     const [cls, colour] = pick(S_CLASS);
@@ -448,11 +506,84 @@ const Widgets = (() => {
     return `ENDS IN ${plural(d, 'DAY')} ${plural(h, 'HOUR')}`;
   }
 
+  /* ---------- v4.2: ALLIANCE MODE (between expeditions) ----------
+     When the current expedition's end time passes, the countdown panel swaps to an
+     Alliances briefing (Cosmos update). As soon as the live feed reports a new expedition
+     with a future end date, the countdown comes back. Fully automatic.
+     The ⇄ button on the panel flips between countdown and alliances at any time.
+     Every Traveller (the site owner included) can save up to 3 of their own alliances —
+     stored on their device only, and passed to ATLAS so it knows who they fly with. */
+  const AL_KEY = 'atlasMyAlliances';
+  function myAlliances() {
+    try { const a = JSON.parse(localStorage.getItem(AL_KEY) || '[]'); return Array.isArray(a) ? a.slice(0, 3) : []; }
+    catch (e) { return []; }
+  }
+  function saveAlliances(a) { try { localStorage.setItem(AL_KEY, JSON.stringify(a.slice(0, 3))); } catch (e) {} }
+  function renderAlliances() {
+    const list = document.getElementById('al-list'), form = document.getElementById('al-form'), count = document.getElementById('al-count');
+    if (!list) return;
+    const a = myAlliances();
+    list.innerHTML = a.length
+      ? a.map((x, i) => '<div class="al-item"><span class="al-tag">[' + esc(x.tag) + ']</span><span class="al-name">' + esc(x.name) +
+          '</span><button type="button" class="al-del" data-i="' + i + '" aria-label="Remove ' + esc(x.name) + '">✕</button></div>').join('')
+      : '<div class="al-empty">NONE LOGGED — ADD THE ALLIANCES YOU FLY WITH</div>';
+    if (form) form.style.display = a.length >= 3 ? 'none' : '';
+    if (count) count.textContent = a.length + '/3';
+  }
+  function initAlliances() {
+    const form = document.getElementById('al-form'), list = document.getElementById('al-list'), tog = document.getElementById('al-toggle');
+    if (form) form.addEventListener('submit', e => {
+      e.preventDefault();
+      const tag = document.getElementById('al-tag').value.trim().toUpperCase().slice(0, 4);
+      const name = document.getElementById('al-name').value.trim().slice(0, 32);
+      if (!name) { document.getElementById('al-name').focus(); return; }
+      const a = myAlliances();
+      if (a.length >= 3) return;
+      a.push({ tag: tag || name.replace(/[^A-Za-z0-9]/g, '').slice(0, 4).toUpperCase(), name });
+      saveAlliances(a); form.reset(); renderAlliances();
+    });
+    if (list) list.addEventListener('click', e => {
+      const b = e.target.closest('.al-del'); if (!b) return;
+      const a = myAlliances(); a.splice(+b.dataset.i, 1); saveAlliances(a); renderAlliances();
+    });
+    if (tog) {
+      const flip = () => { allianceManual = !allianceView; applyAllianceView(); };
+      tog.addEventListener('click', flip);
+      tog.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+    }
+    renderAlliances();
+  }
+  let allianceAuto = null, allianceManual = null, allianceView = null;
+  function setAllianceMode(on) {
+    if (allianceAuto === on) return;
+    allianceAuto = on;
+    allianceManual = null; // a new state (expedition ended / started) resets any manual flip
+    applyAllianceView();
+  }
+  function applyAllianceView() {
+    const on = allianceManual !== null ? allianceManual : !!allianceAuto;
+    allianceView = on;
+    const panel = document.getElementById('alliance-panel');
+    if (!panel) return;
+    panel.hidden = !on;
+    ['.exp-layout', '#exp-bar', '#exp-countdown-name', '.exp-share'].forEach(sel => {
+      const el = document.querySelector('#exp-widget ' + sel);
+      if (el) el.style.display = on ? 'none' : '';
+    });
+    const title = document.getElementById('exp-widget-title');
+    if (title) title.textContent = on ? (allianceAuto ? 'GALACTIC ALLIANCES · BETWEEN EXPEDITIONS' : 'GALACTIC ALLIANCES') : 'EXPEDITION COUNTDOWN';
+    const lead = document.getElementById('al-lead');
+    if (lead) lead.textContent = allianceAuto ? 'NO EXPEDITION ACTIVE · THE ATLAS RECOMMENDS AN ALLIANCE' : 'COSMOS UPDATE · ⇄ RETURNS TO THE COUNTDOWN';
+    const tog = document.getElementById('al-toggle');
+    if (tog) tog.title = on ? 'Back to expedition countdown' : 'Your alliances';
+  }
+
   /* ---------- EXPEDITION COUNTDOWN CLOCK (left panel, ticks every second) ---------- */
   function tickExpCountdown() {
     const el = document.getElementById('exp-countdown');
     const nameEl = document.getElementById('exp-countdown-name');
     const bar = document.getElementById('exp-bar-fill');
+    setAllianceMode(!!EXPEDITION.end && new Date(EXPEDITION.end) <= new Date());
     if (!EXPEDITION.end) {
       el.textContent = 'DURATION UNKNOWN';
       if (bar) bar.style.width = '0%';
@@ -708,6 +839,7 @@ const Widgets = (() => {
     });
 
     // expedition countdown clock: ticks every second
+    initAlliances();
     tickExpCountdown();
     setInterval(tickExpCountdown, 1000);
 
@@ -727,7 +859,8 @@ const Widgets = (() => {
     });
 
     // system scan: start + click to rescan
-    scanPlanet();
+    scanPlanet();                       // instant procedural placeholder
+    loadHaven().then(() => { if (HAVEN) scanPlanet(); }); // then today's real Haven world
     document.getElementById('planet-scan').addEventListener('click', scanPlanet);
     document.getElementById('system-scan').addEventListener('click', scanPlanet);
     document.getElementById('planet-rescan').addEventListener('click', scanPlanet);
@@ -765,5 +898,5 @@ const Widgets = (() => {
   // every expedition the wiki lists (oldest first), for questions about past ones
   function expeditionList() { return (WIKI || []).map(r => Object.assign({}, r)); }
 
-  return { init, expedition: () => EXPEDITION.name, expeditionInfo, expeditionList };
+  return { init, expedition: () => EXPEDITION.name, expeditionInfo, expeditionList, myAlliances };
 })();

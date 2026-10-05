@@ -1,5 +1,9 @@
 /* ================= ATLAS — mobile.css ================= */
 
+/* ---------- v4.2 scroll hints (desktop: wrapper is invisible, arrows hidden) ---------- */
+.sh-wrap { display: contents; }
+.sh-arrow { display: none; }
+
 /* ---------- PHONES (portrait) ---------- */
 @media (max-width: 768px) {
 
@@ -151,4 +155,30 @@
 @media (max-width: 768px) and (max-height: 700px) {
   #orb-arch { width: min(190px, 56vw); }
   #transcript { height: auto; max-height: 26vh; }
+}
+
+/* ---------- v4.2: sideways-scroll hints on the panel strips (portrait phones) ---------- */
+@media (max-width: 768px) and (orientation: portrait) {
+  .sh-wrap { display: block; position: relative; min-width: 0; }
+  #sh-panel-left  { grid-area: stripL; }
+  #sh-panel-right { grid-area: stripR; }
+  .sh-wrap > .hud-panel { width: 100%; }
+
+  .sh-arrow {
+    display: flex; align-items: center; justify-content: center; gap: 2px;
+    position: absolute; top: 1px; bottom: 1px; z-index: 5;
+    width: 40px; padding: 0; border: 0; cursor: pointer;
+    color: var(--nms-orange); font-family: var(--font-head);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sh-arrow.show { opacity: 1; pointer-events: auto; }
+  .sh-left  { left: 1px;  background: linear-gradient(90deg, rgba(0, 8, 12, .92) 30%, transparent); justify-content: flex-start; padding-left: 6px; }
+  .sh-right { right: 1px; background: linear-gradient(270deg, rgba(0, 8, 12, .92) 30%, transparent); justify-content: flex-end; padding-right: 6px; }
+  .sh-dia  { font-size: .55rem; color: var(--nms-teal); text-shadow: 0 0 8px rgba(0, 229, 204, .8); }
+  .sh-chev { font-size: 1.6rem; line-height: 1; text-shadow: 0 0 10px rgba(255, 140, 0, .7); }
+  .sh-right.show .sh-chev, .sh-right.show .sh-dia { animation: sh-nudge 1.6s ease-in-out infinite; }
+  .sh-left.show .sh-chev, .sh-left.show .sh-dia { animation: sh-nudge-l 1.6s ease-in-out infinite; }
+  @keyframes sh-nudge   { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+  @keyframes sh-nudge-l { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-3px); } }
 }

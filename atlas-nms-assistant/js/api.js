@@ -18,7 +18,13 @@ const API = (() => {
     "You never break character. When unsure, say \"The Atlas calculates... [answer]\". " +
     "Keep responses concise — under 150 words unless the Traveller explicitly asks for detail. " +
     "Your responses are spoken aloud, so avoid markdown, bullet points, asterisks, and emoji — plain flowing speech only. " +
-    "You are NOT Iron Man's Jarvis — you are from the No Man's Sky universe.";
+    "You are NOT Iron Man's Jarvis — you are from the No Man's Sky universe. " +
+    "Facts about Alliances, added in the Cosmos update (7.0, September 2026), which your training may lack: " +
+    "only space station directors can found an alliance, from the Station Core, choosing a name, a four-character tag, an emblem and a banner colour; " +
+    "any Traveller can join one by visiting a space station it owns, and may belong to up to three alliances at once; " +
+    "members can teleport quickly to their alliances' systems; " +
+    "alliances are ranked on leaderboards by how many members they have and how active and expansive they are, viewed in game via View Galactic Alliances on the Station Core. " +
+    "There is no official public website or feed for alliance rankings. Between expeditions, encourage Travellers to join or found an alliance.";
 
   let history = [];
 
@@ -43,6 +49,13 @@ const API = (() => {
     }
     s += `\n- Today's date: ${new Date().toISOString().slice(0, 10)}`;
     return s;
+  }
+
+  /* v4.2: the Traveller's own alliances (saved on their device in the Alliances panel) */
+  function allianceContext() {
+    const a = (typeof Widgets !== 'undefined' && Widgets.myAlliances) ? Widgets.myAlliances() : [];
+    if (!a.length) return '\n\nThe Traveller has not logged any alliances yet; if alliances come up, mention they can add theirs with the ⇄ button on the expedition panel.';
+    return '\n\nThe Traveller belongs to these alliances: ' + a.map(x => `[${x.tag}] ${x.name}`).join(', ') + '. Refer to them naturally when relevant.';
   }
 
   /* ---------- key management ---------- */
@@ -86,7 +99,7 @@ const API = (() => {
         body: JSON.stringify({
           model: MODELS[i],
           max_tokens: 1024,
-          system: SYSTEM_PROMPT + liveContext() + (typeof Memory !== 'undefined' ? Memory.promptBlock() : ''),
+          system: SYSTEM_PROMPT + liveContext() + allianceContext() + (typeof Memory !== 'undefined' ? Memory.promptBlock() : ''),
           messages: history,
           stream: true,
           tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }]
