@@ -4,6 +4,13 @@
 
 A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it speaks back.
 
+## What's new in v4.2
+
+- **Real worlds in the System Scan** — planets charted by players on Voyager's Haven (the same data as the NMS Weather app). The first scan each day is a featured world; tap ⟳ for another. Each shows the portal address, discoverer, and a **◈ SHOW ON GALACTIC MAP** link.
+- **Galactic Alliances** — when an expedition ends, the countdown panel becomes an alliances briefing (Cosmos update) and switches back by itself when the next expedition starts. Tap **⇄** on that panel any time to flip between them.
+- **Your alliances** — log up to three alliances (tag + name). They're stored only in your browser, and ATLAS knows who you fly with, in demo mode and with a key.
+- **Scroll arrows on phones** — the tile strips show ◆› / ‹◆ arrows when there's more to see sideways; tap to jump a tile.
+
 ## What's new in v4.0
 
 - **Faster replies** — ATLAS starts speaking as soon as the first sentence of an answer arrives, instead of waiting for the whole reply.
