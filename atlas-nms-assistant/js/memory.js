@@ -46,7 +46,9 @@ const Memory = (() => {
     try { window.dispatchEvent(new CustomEvent('atlas-memory-changed')); } catch (e) {}
   }
 
-  function name() { return localStorage.getItem(NAME_STORE) || ''; }
+  // falls back to the Traveller ID saved on the Hub (shared cookie on .nomansskyhub.app)
+  function hubName() { try { const m = document.cookie.match(/(?:^|; )nmsTraveller=([^;]*)/); return m ? (JSON.parse(decodeURIComponent(m[1])).n || '') : ''; } catch (e) { return ''; } }
+  function name() { return localStorage.getItem(NAME_STORE) || hubName(); }
   function setName(n) {
     const v = String(n || '').replace(/[^\p{L}\p{N} '\-]/gu, '').trim().slice(0, 40);
     if (v) localStorage.setItem(NAME_STORE, v);
