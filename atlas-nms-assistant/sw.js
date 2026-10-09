@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v104'; // alliance board: drop stale Haven entries
+const CACHE = 'atlas-v105'; // refresh live feeds on return to tab
 
 const ASSETS = [
   './',

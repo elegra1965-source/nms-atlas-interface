@@ -669,6 +669,12 @@ const Widgets = (() => {
   function initAllianceTicker() {
     updateAllianceTicker();
     setInterval(updateAllianceTicker, 15 * 60000);
+    // back on the tab after a while (phones pause timers in the background): refresh both live feeds
+    let lastLive = Date.now();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible' || Date.now() - lastLive < 2 * 60000) return;
+      lastLive = Date.now(); updateTicker(); updateAllianceTicker();
+    });
     const t = document.getElementById('al-ticker');
     if (t) t.addEventListener('click', () => t.classList.toggle('paused'));
     if (t && HAVEN_ALLIANCE_FEED) t.title = "Alliance leaderboard courtesy of Voyager's Haven (havenmap.online), built by u/IAmThe-Ekimo-1920 — tap to pause";

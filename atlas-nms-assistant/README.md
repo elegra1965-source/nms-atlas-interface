@@ -10,6 +10,7 @@ A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it spe
 - **Live alliance leaderboard** — the alliance ticker shows the top 10 Galactic Alliances (in-game rank, members, stations and 24-hour changes) and where your own logged alliances rank. Refreshed every 15 minutes. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/). The switch is `HAVEN_ALLIANCE_FEED` at the top of the alliances ticker section in `js/widgets.js`; with it off, the ticker shows an alliance briefing instead.
 
 - **Galactic Alliances tile** — a live top 5 tile (rank, members, stations, 24-hour changes) in the left panel, courtesy of Voyager's Haven by u/IAmThe-Ekimo-1920. On phones it takes the Visual Archive's old spot; the Atlas Archive and Visual Archive now share one stacked tile.
+- **Always current** — the expedition ticker refreshes every 5 minutes and the alliance ticker/tile every 15 (Voyager's Haven itself updates its leaderboard every few hours). Coming back to the tab after a while refreshes both straight away.
 - **Matched ticker speeds** — the alliance ticker is longer, so it gets proportionally more time and scrolls at the same speed as the expedition ticker.
 - **No more dead space on phones** — each sideways tile strip is now only as tall as the tiles you're looking at, and grows or shrinks as you swipe (so the tall System Scan no longer leaves empty space under the short tiles).
 
