@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v107'; // v4.4 Atlas Codex + expedition guide
+const CACHE = 'atlas-v108'; // chips: expedition + crafting first, two rows on phones
 
 const ASSETS = [
   './',
