@@ -221,6 +221,8 @@
       <div class="credit-foot">UNOFFICIAL FAN PROJECT · NO MAN'S SKY © HELLO GAMES</div>
     </div>
     </div>
+    <!-- v4.3: on phones the two archives share one tile (stacked); desktop is unchanged -->
+    <div class="widget-stack">
     <div class="widget">
       <div class="widget-label">ATLAS ARCHIVE <span id="lore-left-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive">⟳</span></div>
       <div id="lore-left" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
@@ -234,6 +236,12 @@
         </div>
       </a>
       <a id="gallery-map-link" href="https://galacticatlas.nomanssky.com/" target="_blank" rel="noopener">◈ OPEN GALACTIC ATLAS MAP</a>
+    </div>
+    </div>
+    <!-- v4.3: live alliance top 5 (Voyager's Haven, by u/IAmThe-Ekimo-1920) — filled by widgets.js -->
+    <div class="widget" id="al-board-widget" hidden>
+      <div class="widget-label">GALACTIC ALLIANCES <span class="al-live-dot" aria-hidden="true"></span><span class="al-live-k">LIVE</span></div>
+      <div id="al-board" class="al-board"></div>
     </div>
     <div class="widget" id="exp-widget">
       <div class="widget-label" id="exp-widget-label"><span id="exp-widget-title">EXPEDITION COUNTDOWN</span> <span id="al-toggle" class="widget-action" role="button" tabindex="0" title="Your alliances" aria-label="Show your alliances">⇄</span></div>

@@ -522,3 +522,18 @@
 }
 .alliance-panel .al-link:hover { border-color: var(--nms-orange); color: var(--nms-white); box-shadow: 0 0 10px rgba(255, 140, 0, 0.35); }
 .alliance-panel .al-note { margin-top: 6px; font-size: 0.6rem; opacity: 0.65; line-height: 1.5; }
+
+/* ---------- v4.3: live alliance top 5 tile ---------- */
+.al-board { display: flex; flex-direction: column; gap: 6px; font-size: 0.68rem; }
+.al-board .alb-row { display: flex; gap: 8px; align-items: flex-start; padding: 6px 8px; border: 1px solid rgba(0, 229, 204, 0.18); background: rgba(0, 229, 204, 0.03); }
+.al-board .alb-pos { flex: 0 0 1.4em; font-family: var(--font-head); color: var(--nms-orange); font-size: 0.9rem; line-height: 1.2; text-shadow: 0 0 8px rgba(255, 140, 0, 0.45); }
+.al-board .alb-main { flex: 1; min-width: 0; line-height: 1.35; }
+.al-board .alb-name { color: var(--nms-white); overflow-wrap: anywhere; }
+.al-board .alb-tag { color: var(--nms-teal); margin-right: 4px; }
+.al-board .alb-stat { color: rgba(220, 240, 245, 0.6); font-size: 0.62rem; }
+.al-board .up { color: #00ff88; } .al-board .dn { color: var(--nms-orange); }
+.al-board .alb-credit { font-size: 0.56rem; letter-spacing: 0.06em; opacity: 0.75; margin-top: 2px; line-height: 1.5; }
+.al-board .alb-credit a { color: var(--nms-teal); text-decoration: none; }
+.al-live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px #00ff88; margin: 0 4px 1px 6px; vertical-align: middle; animation: alb-pulse 1.6s ease-in-out infinite; }
+.al-live-k { color: #00ff88; font-size: 0.85em; }
+@keyframes alb-pulse { 50% { opacity: 0.35; } }

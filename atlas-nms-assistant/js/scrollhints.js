@@ -49,7 +49,7 @@
       if (!MQ.matches) { strip.style.height = ''; return; }
       const r = strip.getBoundingClientRect();
       let h = 0;
-      strip.querySelectorAll(':scope > .widget').forEach(w => {
+      strip.querySelectorAll(':scope > .widget, :scope > .widget-stack').forEach(w => {
         const b = w.getBoundingClientRect();
         const vis = Math.min(b.right, r.right) - Math.max(b.left, r.left);
         if (vis > Math.min(b.width, r.width) * 0.3) h = Math.max(h, w.offsetHeight);

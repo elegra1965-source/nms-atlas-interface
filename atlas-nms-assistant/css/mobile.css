@@ -2,6 +2,7 @@
 
 /* ---------- v4.2 scroll hints (desktop: wrapper is invisible, arrows hidden) ---------- */
 .sh-wrap { display: contents; }
+.widget-stack { display: contents; } /* v4.3: desktop keeps the archives as two widgets */
 .sh-arrow { display: none; }
 
 /* ---------- PHONES (portrait) ---------- */
@@ -71,6 +72,8 @@
   #panel-right { grid-area: stripR; }
 
   .widget { flex: 0 0 auto; min-width: 180px; max-width: 240px; }
+  .widget-stack { display: flex; flex-direction: column; gap: 14px; flex: 0 0 auto; width: 240px; }
+  .widget-stack > .widget { max-width: none; }
   .big-clock { font-size: 1.3rem; }
   .lore-fact { font-size: 0.7rem; }
   #gallery-frame { width: 200px; }

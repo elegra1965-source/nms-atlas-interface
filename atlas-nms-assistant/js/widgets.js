@@ -636,6 +636,31 @@ const Widgets = (() => {
         'TELEPORT TO YOUR ALLIANCES\' SYSTEMS', 'RANKINGS: STATION CORE → VIEW GALACTIC ALLIANCES');
     }
     el.textContent = segs.join(sep);
+    renderAllianceBoard(board);
+    syncTickerSpeed();
+  }
+  // v4.3: both tickers scroll at the same speed (the alliance text is longer, so it gets more time)
+  function syncTickerSpeed() {
+    const e = document.getElementById('ticker-track'), a = document.getElementById('al-ticker-track');
+    if (!e || !a || !e.scrollWidth || !a.scrollWidth) return;
+    const base = parseFloat(getComputedStyle(e).animationDuration) || 38;
+    a.style.animationDuration = (base * a.scrollWidth / e.scrollWidth).toFixed(1) + 's';
+  }
+  // v4.3: live top 5 tile (sits where the Visual Archive used to be on phones)
+  function renderAllianceBoard(board) {
+    const w = document.getElementById('al-board-widget'), box = document.getElementById('al-board');
+    if (!w || !box) return;
+    if (!board) { w.hidden = true; return; }
+    const tr = n => (typeof n === 'number' && n) ? ' <span class="' + (n > 0 ? 'up">▲' : 'dn">▼') + fmtN(Math.abs(n)) + '</span>' : '';
+    box.innerHTML = board.top.slice(0, 5).map(a => {
+      const L = a.latest, t = a.trend_24h || {};
+      return '<div class="alb-row"><span class="alb-pos">' + esc(L.activity_rank || '?') + '</span><div class="alb-main">' +
+        '<div class="alb-name"><span class="alb-tag">[' + esc(a.tag || '') + ']</span>' + esc(a.name || '') + '</div>' +
+        '<div class="alb-stat">' + fmtN(L.member_count) + ' MEMBERS' + tr(t.member_count) + ' · ' + fmtN(L.station_count) + ' STATIONS' + tr(t.station_count) + '</div></div></div>';
+    }).join('') +
+      '<div class="alb-credit">' + (board.total ? 'TOP 5 OF ' + fmtN(board.total) + ' · ' : '') +
+      'COURTESY OF <a href="https://havenmap.online" target="_blank" rel="noopener">VOYAGER\'S HAVEN</a> BY <a href="https://www.reddit.com/user/IAmThe-Ekimo-1920/" target="_blank" rel="noopener">u/IAmThe-Ekimo-1920</a></div>';
+    w.hidden = false;
   }
   function initAllianceTicker() {
     updateAllianceTicker();
@@ -806,6 +831,7 @@ const Widgets = (() => {
         countdownStr()
       ].join(sep);
     }
+    syncTickerSpeed();
     loadExpArt(); // refresh expedition art whenever ticker updates
   }
 
@@ -908,6 +934,7 @@ const Widgets = (() => {
     // expedition countdown clock: ticks every second
     initAlliances();
     initAllianceTicker();
+    window.addEventListener('resize', syncTickerSpeed);
     tickExpCountdown();
     setInterval(tickExpCountdown, 1000);
 
