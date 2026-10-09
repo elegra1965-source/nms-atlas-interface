@@ -47,7 +47,15 @@ const Memory = (() => {
   }
 
   // falls back to the Traveller ID saved on the Hub (shared cookie on .nomansskyhub.app)
-  function hubName() { try { const m = document.cookie.match(/(?:^|; )nmsTraveller=([^;]*)/); return m ? (JSON.parse(decodeURIComponent(m[1])).n || '') : ''; } catch (e) { return ''; } }
+  function hub() { try { const m = document.cookie.match(/(?:^|; )nmsTraveller=([^;]*)/); return m ? (JSON.parse(decodeURIComponent(m[1])) || {}) : {}; } catch (e) { return {}; } }
+  function hubName() { return hub().n || ''; }
+  // platform + home galaxy from the Hub's Traveller ID, worded like remembered facts
+  function hubFacts() {
+    const h = hub(), f = [];
+    if (h.p) f.push('Plays No Man\'s Sky on ' + h.p);
+    if (h.gn) f.push('Home galaxy: ' + h.gn);
+    return f;
+  }
   function name() { return localStorage.getItem(NAME_STORE) || hubName(); }
   function setName(n) {
     const v = String(n || '').replace(/[^\p{L}\p{N} '\-]/gu, '').trim().slice(0, 40);
@@ -59,6 +67,8 @@ const Memory = (() => {
   // text appended to Claude's system prompt
   function promptBlock() {
     const n = name(), items = list();
+    const seen = new Set(items.map(norm));
+    for (const f of hubFacts()) if (!seen.has(norm(f))) items.push(f);
     if (!n && !items.length) return '';
     let s = '\n\nWhat you remember about this Traveller from earlier visits (use it naturally when relevant, never recite it as a list):';
     if (n) s += `\n- Their name is ${n}. You may address them as "Traveller ${n}" now and then.`;
@@ -127,5 +137,5 @@ const Memory = (() => {
     return n;
   }
 
-  return { list, add, remove, clear, name, setName, promptBlock, learnLocal, worthChecking, applyUpdate, exportText, importText };
+  return { list, add, remove, clear, name, setName, hub, hubFacts, promptBlock, learnLocal, worthChecking, applyUpdate, exportText, importText };
 })();

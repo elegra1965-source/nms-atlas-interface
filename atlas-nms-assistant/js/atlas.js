@@ -1197,7 +1197,20 @@
     const ul = $('memory-list');
     ul.innerHTML = '';
     const items = Memory.list();
-    if (!items.length) {
+    // v4.5: what the Hub's Traveller ID shares with ATLAS (edit or remove it on the Hub)
+    const h = Memory.hub ? Memory.hub() : {};
+    if (h.n || h.p || h.gn) {
+      const li = document.createElement('li');
+      li.className = 'memory-linked';
+      const span = document.createElement('span');
+      span.textContent = 'From your Traveller ID: ' + [h.n, h.p, h.gn].filter(Boolean).join(' · ');
+      const a = document.createElement('a');
+      a.href = 'https://nomansskyhub.app/#traveller'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'EDIT';
+      a.title = 'Change it on the Hub';
+      li.append(span, a);
+      ul.appendChild(li);
+    }
+    if (!items.length && !(h.n || h.p || h.gn)) {
       const li = document.createElement('li');
       li.className = 'memory-empty';
       li.textContent = 'Nothing yet. Tell the Atlas about yourself — your name, platform, galaxy, base or ship.';

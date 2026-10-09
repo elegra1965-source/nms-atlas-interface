@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v111'; // Traveller ID name from the Hub
+const CACHE = 'atlas-v112'; // Traveller ID in ATLAS Memory
 
 const ASSETS = [
   './',
