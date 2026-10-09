@@ -165,6 +165,7 @@
   #sh-panel-left  { grid-area: stripL; }
   #sh-panel-right { grid-area: stripR; }
   .sh-wrap > .hud-panel { width: 100%; }
+  .sh-wrap > .hud-panel { transition: height .3s ease; } /* v4.3: height follows the visible tiles (scrollhints.js) */
 
   .sh-arrow {
     display: flex; align-items: center; justify-content: center; gap: 2px;

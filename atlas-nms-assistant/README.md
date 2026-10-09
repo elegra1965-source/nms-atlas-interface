@@ -9,6 +9,8 @@ A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it spe
 - **Two tickers, always visible** — the expedition ticker and a new **ALLIANCES** ticker now run full width under the ATLAS title, so neither gets squeezed on phones. Tap either one to pause it.
 - **Live alliance leaderboard** — the alliance ticker shows the top 10 Galactic Alliances (in-game rank, members, stations and 24-hour changes) and where your own logged alliances rank. Refreshed every 15 minutes. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/). The switch is `HAVEN_ALLIANCE_FEED` at the top of the alliances ticker section in `js/widgets.js`; with it off, the ticker shows an alliance briefing instead.
 
+- **No more dead space on phones** — each sideways tile strip is now only as tall as the tiles you're looking at, and grows or shrinks as you swipe (so the tall System Scan no longer leaves empty space under the short tiles).
+
 ## What's new in v4.2
 
 - **Real worlds in the System Scan** — planets charted by players on Voyager's Haven (the same data as the NMS Weather app). The first scan each day is a featured world; tap ⟳ for another. Each shows the portal address, discoverer, and a **◈ SHOW ON GALACTIC MAP** link.
