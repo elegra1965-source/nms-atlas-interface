@@ -778,7 +778,8 @@ const Widgets = (() => {
         const res = await fetch(url);
         if (!res.ok) continue;
         const j = await res.json();
-        if (j && typeof j.percentage === 'number' && (j.totalContribution > 0 || j.percentage > 0)) return j;
+        // any real answer is final: a 0% mission means "not live yet", so don't retry it elsewhere
+        return (j && typeof j.percentage === 'number' && (j.totalContribution > 0 || j.percentage > 0)) ? j : null;
       } catch (e) { /* try next */ }
     }
     return null;
