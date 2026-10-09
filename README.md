@@ -13,6 +13,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Voice in, voice out**, with wake word, continuous mode, hold-to-talk and interruptions
 - **Long-term memory** of what you tell it about yourself, stored only in your browser
 - **Live expedition ticker and countdown** from the official Galactic Atlas feed. It finds new expeditions by itself
+- **Galactic Alliances tile** with the live top 5 in the left panel (on phones it sits where the Visual Archive was; both archives now share one tile)
 - **Live alliance leaderboard ticker** under the expedition ticker: the top 10 Galactic Alliances with members, stations and 24-hour changes, plus where your own alliances rank. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/)
 - **Real worlds in the System Scan.** Planets charted by players on [Voyager's Haven](https://havenmap.online), with portal address, discoverer and a link to the [Galactic Map](https://map.nomansskyhub.app)
 - **Galactic Alliances.** Between expeditions the countdown panel becomes an alliances briefing. Log up to three of your own alliances and ATLAS knows who you fly with
