@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v99'; // v4.2 + portal glyphs in System Scan
+const CACHE = 'atlas-v100'; // v4.3 alliance ticker
 
 const ASSETS = [
   './',
@@ -54,7 +54,7 @@ self.addEventListener('fetch', e => {
       url.hostname.includes('nomanssky.com') || url.hostname.includes('allorigins.win') ||
       url.hostname.includes('corsproxy.io') || url.hostname.includes('azureedge.net') ||
       url.hostname.includes('elevenlabs.io') ||
-      url.pathname.startsWith('/nms-api/')) {
+      url.pathname.startsWith('/nms-api/') || url.pathname.startsWith('/haven-api/')) {
     return; // straight to network
   }
   // network-first for the static shell (HTML/JS/CSS), so a fresh deploy shows immediately;

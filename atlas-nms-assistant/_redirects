@@ -1,1 +1,2 @@
 /nms-api/*  https://galacticatlas-api.nomanssky.com/api/:splat  200
+/haven-api/alliances  https://havenmap.online/api/public/alliances?sort=score&limit=50  200

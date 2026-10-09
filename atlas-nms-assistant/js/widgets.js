@@ -545,11 +545,11 @@ const Widgets = (() => {
       const a = myAlliances();
       if (a.length >= 3) return;
       a.push({ tag: tag || name.replace(/[^A-Za-z0-9]/g, '').slice(0, 4).toUpperCase(), name });
-      saveAlliances(a); form.reset(); renderAlliances();
+      saveAlliances(a); form.reset(); renderAlliances(); updateAllianceTicker();
     });
     if (list) list.addEventListener('click', e => {
       const b = e.target.closest('.al-del'); if (!b) return;
-      const a = myAlliances(); a.splice(+b.dataset.i, 1); saveAlliances(a); renderAlliances();
+      const a = myAlliances(); a.splice(+b.dataset.i, 1); saveAlliances(a); renderAlliances(); updateAllianceTicker();
     });
     if (tog) {
       const flip = () => { allianceManual = !allianceView; applyAllianceView(); };
@@ -581,6 +581,67 @@ const Widgets = (() => {
     if (lead) lead.textContent = allianceAuto ? 'NO EXPEDITION ACTIVE · THE ATLAS RECOMMENDS AN ALLIANCE' : 'COSMOS UPDATE · ⇄ RETURNS TO THE COUNTDOWN';
     const tog = document.getElementById('al-toggle');
     if (tog) tog.title = on ? 'Back to expedition countdown' : 'Your alliances';
+  }
+
+  /* ---------- v4.3: GALACTIC ALLIANCES TICKER (always visible, under the expedition ticker) ----------
+     ╔══════════════════════════════════════════════════════════════════════╗
+     ║  SWITCH: set HAVEN_ALLIANCE_FEED to true once Voyager's Haven says   ║
+     ║  it's OK to show their leaderboard. Nothing else needs changing.     ║
+     ╚══════════════════════════════════════════════════════════════════════╝
+     ON  → live Top 10 from havenmap.online (proxied through /haven-api/ in _redirects),
+           refreshed every 15 min, with 24h trends and credit to Voyager's Haven.
+     OFF → an alliance briefing plus the Traveller's own logged alliances. */
+  const HAVEN_ALLIANCE_FEED = false;
+  const AL_FEED_URL = '/haven-api/alliances';
+  const fmtN = n => (typeof n === 'number' && isFinite(n)) ? Math.round(n).toLocaleString('en-GB') : '—';
+  const trend = n => (typeof n === 'number' && n) ? (n > 0 ? ' ▲' + fmtN(n) : ' ▼' + fmtN(-n)) : '';
+  async function loadAllianceBoard() {
+    if (!HAVEN_ALLIANCE_FEED) return null;
+    try {
+      const r = await fetch(AL_FEED_URL, { cache: 'no-store' });
+      if (!r.ok) return null;
+      const j = await r.json();
+      const list = (j && j.alliances || []).filter(a => a && a.latest);
+      if (!list.length) return null;
+      list.sort((a, b) => (a.latest.activity_rank || 1e9) - (b.latest.activity_rank || 1e9));
+      return { top: list.slice(0, 10), all: list, total: j.status && j.status.hg_total_alliances };
+    } catch (e) { return null; }
+  }
+  async function updateAllianceTicker() {
+    const el = document.getElementById('al-ticker-track');
+    if (!el) return;
+    const sep = '   ◆   ';
+    const mine = myAlliances();
+    const board = await loadAllianceBoard();
+    const segs = [];
+    if (board) {
+      segs.push('GALACTIC ALLIANCES — TOP 10' + (board.total ? ' OF ' + fmtN(board.total) : ''));
+      board.top.forEach(a => {
+        const L = a.latest, t = a.trend_24h || {};
+        segs.push('#' + (L.activity_rank || '?') + ' [' + a.tag + '] ' + a.name + ' · ' +
+          fmtN(L.member_count) + ' MEMBERS' + trend(t.member_count) + ' · ' +
+          fmtN(L.station_count) + ' STATIONS' + trend(t.station_count));
+      });
+      mine.forEach(m => {
+        const hit = board.all.find(a => a.tag && m.tag && a.tag.toUpperCase() === m.tag.toUpperCase());
+        segs.push('YOUR ALLIANCE [' + m.tag + '] ' + m.name +
+          (hit ? ' · RANK #' + (hit.latest.activity_rank || '?') + ' · ' + fmtN(hit.latest.member_count) + ' MEMBERS' : ' · NOT YET TRACKED BY VOYAGER\'S HAVEN'));
+      });
+      segs.push('LEADERBOARD VIA VOYAGER\'S HAVEN · HAVENMAP.ONLINE');
+    } else {
+      segs.push('GALACTIC ALLIANCES · COSMOS UPDATE');
+      if (mine.length) segs.push('YOUR ALLIANCES: ' + mine.map(m => '[' + m.tag + '] ' + m.name).join(' · '));
+      else segs.push('LOG YOUR ALLIANCES WITH ⇄ ON THE EXPEDITION PANEL');
+      segs.push('JOIN AT ANY SPACE STATION AN ALLIANCE OWNS', 'BELONG TO UP TO 3 AT ONCE',
+        'TELEPORT TO YOUR ALLIANCES\' SYSTEMS', 'RANKINGS: STATION CORE → VIEW GALACTIC ALLIANCES');
+    }
+    el.textContent = segs.join(sep);
+  }
+  function initAllianceTicker() {
+    updateAllianceTicker();
+    setInterval(updateAllianceTicker, 15 * 60000);
+    const t = document.getElementById('al-ticker');
+    if (t) t.addEventListener('click', () => t.classList.toggle('paused'));
   }
 
   /* ---------- EXPEDITION COUNTDOWN CLOCK (left panel, ticks every second) ---------- */
@@ -845,6 +906,7 @@ const Widgets = (() => {
 
     // expedition countdown clock: ticks every second
     initAlliances();
+    initAllianceTicker();
     tickExpCountdown();
     setInterval(tickExpCountdown, 1000);
 

@@ -13,7 +13,7 @@
   #app {
     height: auto;
     min-height: 100dvh;
-    grid-template-rows: 44px auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto;
     grid-template-columns: 1fr;
     grid-template-areas:
       "header"
@@ -29,8 +29,9 @@
   .brand-sub { display: none; }
   #clock-utc { display: none; }
   .clock-sep { display: none; }
-  #ticker { margin: 0 8px; }
-  #ticker-track { font-size: 0.6rem; }
+  #header-bar { padding: 5px 8px; min-height: 44px; }
+  .tk-label { font-size: 0.48rem; padding: 0 6px; }
+  #ticker-track, #al-ticker-track { font-size: 0.62rem; }
 
   /* orb smaller, GIF swapped for lighter version */
   #orb-arch { width: min(240px, 68vw); }
@@ -89,7 +90,7 @@
   #app {
     height: 100dvh;
     overflow: hidden;
-    grid-template-rows: 38px 1fr;
+    grid-template-rows: auto 1fr;
     grid-template-columns: 155px 1fr 155px;
     grid-template-areas:
       "header header header"
@@ -121,7 +122,8 @@
   #orb-arch  { width: min(100px, 22vw); }
   #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.gif'); }
   #transcript { height: auto; max-height: 16vh; min-height: 0; }
-  #ticker-track { font-size: 0.55rem; }
+  #ticker-track, #al-ticker-track { font-size: 0.55rem; }
+  #header-bar { min-height: 38px; padding: 4px 8px; }
   #mic-btn { flex-basis: 42px; height: 42px; }
   #send-btn { flex-basis: 38px; height: 42px; }
   #text-input { height: 42px; }
@@ -139,7 +141,7 @@
   .brand { font-size: 0.9rem; letter-spacing: 0.18em; white-space: nowrap; }
   .brand-sub { display: none; }
   .header-clocks { font-size: 0.7rem; }
-  #ticker-track { font-size: 0.62rem; }
+  #ticker-track, #al-ticker-track { font-size: 0.62rem; }
   #orb-arch { width: min(300px, 34vw, 40dvh); }
   .hud-panel { padding: 10px; gap: 12px; }
   .widget-label { font-size: 0.56rem; }

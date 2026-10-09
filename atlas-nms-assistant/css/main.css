@@ -75,7 +75,7 @@ html, body {
   display: grid;
   height: 100vh;
   height: 100dvh;
-  grid-template-rows: 52px 1fr auto; /* log row sizes itself: slim bar collapsed, taller expanded */
+  grid-template-rows: auto 1fr auto; /* log row sizes itself: slim bar collapsed, taller expanded */
   grid-template-columns: 250px 1fr 250px;
   grid-template-areas:
     "header header header"
@@ -93,7 +93,9 @@ html, body {
   grid-area: header;
   overflow: hidden;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 18px;
+  flex-wrap: wrap; row-gap: 5px;
+  min-height: 52px;
+  padding: 6px 18px;
   background: var(--nms-panel-bg);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 140, 0, 0.35);
@@ -115,19 +117,30 @@ html, body {
   flex: 0 0 auto;
 }
 
-/* ====== EXPEDITION TICKER ====== */
-#ticker {
-  flex: 1 1 auto;
-  overflow: hidden;
-  margin: 0 18px;
-  min-width: 0;
+/* ====== TICKERS (v4.3: expedition + alliances, full width under the brand row) ====== */
+#ticker-bar { flex: 1 0 100%; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tk {
+  display: flex; align-items: stretch; min-width: 0;
   border: 1px solid rgba(0, 229, 204, 0.4);
   border-radius: 4px;
-  padding: 2px 0;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  cursor: pointer;
+  background: rgba(0, 10, 14, 0.35);
 }
-#ticker-track {
+.tk-label {
+  flex: 0 0 auto; display: flex; align-items: center;
+  padding: 0 8px;
+  font-family: var(--font-head);
+  font-size: 0.56rem; letter-spacing: 0.18em;
+  color: #001014; background: var(--nms-teal);
+}
+#al-ticker { border-color: rgba(255, 140, 0, 0.45); }
+#al-ticker .tk-label { background: var(--nms-orange); }
+.tk-window {
+  flex: 1 1 auto; overflow: hidden; min-width: 0; padding: 3px 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+#ticker-track, #al-ticker-track {
   display: inline-block;
   white-space: nowrap;
   padding-left: 100%;
@@ -139,9 +152,9 @@ html, body {
   animation: ticker-scroll 38s linear infinite;
   will-change: transform;
 }
-#ticker:hover #ticker-track,
-#ticker.paused #ticker-track { animation-play-state: paused; }
-#ticker { cursor: pointer; }
+#al-ticker-track { color: var(--nms-teal); text-shadow: 0 0 8px rgba(0, 229, 204, 0.4); animation-duration: 60s; }
+.tk:hover .tk-window > div,
+.tk.paused .tk-window > div { animation-play-state: paused; }
 @keyframes ticker-scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-100%); }
@@ -446,7 +459,8 @@ html, body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  #ticker-track { animation: none !important; padding-left: 0; }
+  #ticker-track, #al-ticker-track { animation: none !important; padding-left: 0; }
+  .tk-window { overflow-x: auto; }
   #bg-scanlines { display: none; }
 }
 
@@ -621,7 +635,7 @@ body[data-atlas="speaking"] #chips { display: none; }
 /* very short landscape screens (phones held sideways, small laptops zoomed in):
    no room for the log bar at all; the orb shrinks while ATLAS speaks */
 @media (max-height: 520px) and (orientation: landscape) and (min-width: 769px) {
-  #app { grid-template-rows: 44px 1fr; grid-template-areas: "header header header" "left centre right"; gap: 6px; padding: 6px; }
+  #app { grid-template-rows: auto 1fr; grid-template-areas: "header header header" "left centre right"; gap: 6px; padding: 6px; }
   #history { display: none; }
   #orb-arch { width: min(300px, 34vw, 34dvh); transition: width 0.3s ease; }
   body[data-atlas="speaking"] #orb-arch { width: min(300px, 34vw, 20dvh); }

@@ -187,14 +187,18 @@
 
   <!-- HEADER -->
   <header id="header-bar">
-    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.2</span></div>
-    <div id="ticker"><div id="ticker-track">ESTABLISHING EXPEDITION UPLINK…</div></div>
+    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.3</span></div>
     <div class="header-clocks">
       <span id="clock-utc">UTC --:--:--</span>
       <span class="clock-sep">|</span>
       <span id="clock-local">LOCAL --:--:--</span>
       <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds">♪</button>
       <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings">⚙</button>
+    </div>
+    <!-- v4.3: two full-width tickers — expedition, then galactic alliances (always visible) -->
+    <div id="ticker-bar">
+      <div id="ticker" class="tk"><span class="tk-label">EXPEDITION</span><div class="tk-window"><div id="ticker-track">ESTABLISHING EXPEDITION UPLINK…</div></div></div>
+      <div id="al-ticker" class="tk" title="Galactic alliances — tap to pause"><span class="tk-label">ALLIANCES</span><div class="tk-window"><div id="al-ticker-track">GALACTIC ALLIANCES · ESTABLISHING UPLINK…</div></div></div>
     </div>
   </header>
 
@@ -207,7 +211,7 @@
     <div class="widget" id="credits">
       <div class="widget-label">SIGNAL ORIGIN</div>
       <div class="credit-rows">
-        <div><span class="c-key">INTERFACE:</span>ATLAS v4.2</div>
+        <div><span class="c-key">INTERFACE:</span>ATLAS v4.3</div>
         <div><span class="c-key">FORGED BY:</span>ELEGRA1965</div>
         <div><span class="c-key">STARDATE:</span>06.2026</div>
         <div><span class="c-key">TRAVELLER:</span>T672B774</div>
