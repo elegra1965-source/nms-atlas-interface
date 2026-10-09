@@ -721,7 +721,7 @@ const Widgets = (() => {
 
   /* ---------- SHARE BUTTONS (X / Reddit / Copy link) ---------- */
   function initShareButtons() {
-    const shareUrl = 'https://nms-atlas-interface-ai.netlify.app';
+    const shareUrl = 'https://atlas.nomansskyhub.app';
     const shareText = 'Speak to the Atlas — a free, voice-driven No Man’s Sky companion with a LIVE expedition tracker.';
 
     const xBtn = document.getElementById('share-x');

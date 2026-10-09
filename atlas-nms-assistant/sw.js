@@ -70,3 +70,23 @@ self.addEventListener('fetch', e => {
     }).catch(() => caches.match(e.request).then(hit => hit || caches.match('./index.html')))
   );
 });
+
+// 2026-10-09: RETIRED_HOST — on the old *.netlify.app address this worker cleans up after itself:
+// drops any push sign-up (so alerts don't arrive twice once the app is reinstalled from
+// https://atlas.nomansskyhub.app), clears its caches, unregisters and sends open windows to the new address.
+if (/\.netlify\.app$/.test(self.location.hostname)) {
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', e => e.waitUntil((async () => {
+    try {
+      const s = self.registration.pushManager && await self.registration.pushManager.getSubscription();
+      if (s) {
+        await fetch('/api/push-subscribe', { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: s.endpoint }) }).catch(() => {});
+        await s.unsubscribe();
+      }
+    } catch (err) {}
+    try { for (const k of await caches.keys()) await caches.delete(k); } catch (err) {}
+    await self.registration.unregister();
+    const wins = await self.clients.matchAll({ type: 'window' });
+    wins.forEach(c => { const u = new URL(c.url); c.navigate('https://atlas.nomansskyhub.app' + u.pathname + u.search).catch(() => {}); });
+  })()));
+}
