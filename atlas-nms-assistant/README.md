@@ -4,6 +4,12 @@
 
 A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it speaks back.
 
+## What's new in v4.5
+
+- **Expedition alerts.** 🔔 EXPEDITION ALERTS under the countdown opens the Weather station's alert settings: a notification the day a new expedition starts and 24 hours before the current one ends.
+- **Knows your name.** If you saved a Traveller ID on the Hub, ATLAS greets you by it (a name you tell ATLAS still wins).
+- **Quieter expedition check.** Looking ahead for the next mission no longer hits outside proxy sites or fills the console with errors.
+
 ## What's new in v4.4
 
 - **Atlas Codex — real game data.** Ask "how do I make a warp cell?", "where do I find sodium nitrate?", "what can I refine ferrite dust into?" or "what is a living pearl?" and ATLAS answers with the actual crafting recipes, refiner combinations, sources and values, read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com) (`js/codex.js`). Works in demo mode too — no API key needed — and the facts are the wiki's, not a guess. Tap **CRAFTING HELP** to start a question.
