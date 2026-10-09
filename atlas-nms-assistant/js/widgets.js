@@ -656,15 +656,23 @@ const Widgets = (() => {
     if (!w || !box) return;
     if (!board) { w.hidden = true; return; }
     const tr = n => (typeof n === 'number' && n) ? ' <span class="' + (n > 0 ? 'up">▲' : 'dn">▼') + fmtN(Math.abs(n)) + '</span>' : '';
-    box.innerHTML = board.top.slice(0, 5).map(a => {
+    const top = board.top.slice(0, 10);
+    box.innerHTML = top.map((a, i) => {
       const L = a.latest, t = a.trend_24h || {};
-      return '<div class="alb-row"><span class="alb-pos">' + esc(L.activity_rank || '?') + '</span><div class="alb-main">' +
+      return '<div class="alb-row' + (i >= 5 ? ' alb-more' : '') + '"><span class="alb-pos">' + esc(L.activity_rank || '?') + '</span><div class="alb-main">' +
         '<div class="alb-name"><span class="alb-tag">[' + esc(a.tag || '') + ']</span>' + esc(a.name || '') + '</div>' +
         '<div class="alb-stat">' + fmtN(L.member_count) + ' MEMBERS' + tr(t.member_count) + ' · ' + fmtN(L.station_count) + ' STATIONS' + tr(t.station_count) + '</div></div></div>';
     }).join('') +
-      '<div class="alb-credit">' + (board.total ? 'TOP 5 OF ' + fmtN(board.total) + ' · ' : '') +
+      (top.length > 5 ? '<button type="button" class="alb-toggle" aria-expanded="' + box.classList.contains('open') + '">' + (box.classList.contains('open') ? '▴ SHOW TOP 5 ONLY' : '▾ SHOW 6–' + top.length) + '</button>' : '') +
+      '<div class="alb-credit">' + (board.total ? 'TOP ' + top.length + ' OF ' + fmtN(board.total) + ' · ' : '') +
       'COURTESY OF <a href="https://havenmap.online" target="_blank" rel="noopener">VOYAGER\'S HAVEN</a> BY <a href="https://www.reddit.com/user/IAmThe-Ekimo-1920/" target="_blank" rel="noopener">u/IAmThe-Ekimo-1920</a></div>';
     w.hidden = false;
+    const tg = box.querySelector('.alb-toggle');
+    if (tg) tg.addEventListener('click', () => {
+      const open = box.classList.toggle('open');
+      tg.setAttribute('aria-expanded', open);
+      tg.textContent = open ? '▴ SHOW TOP 5 ONLY' : '▾ SHOW 6–' + top.length;
+    });
   }
   function initAllianceTicker() {
     updateAllianceTicker();

@@ -541,3 +541,8 @@
 /* v4.5: link to expedition push alerts (sent by the Weather app) */
 .exp-alert-link{display:block;width:max-content;max-width:100%;margin:8px auto 2px;padding:7px 14px;border-radius:8px;border:1px solid rgba(240,165,0,.45);background:rgba(240,165,0,.06);color:#f0a500;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-decoration:none;transition:border-color .2s,box-shadow .2s}
 .exp-alert-link:hover,.exp-alert-link:focus-visible{border-color:#f0a500;box-shadow:0 0 14px rgba(240,165,0,.3)}
+
+/* v4.5: alliance tile shows 5, expands to the full top 10 */
+.al-board:not(.open) .alb-more { display: none; }
+.al-board .alb-toggle { align-self: center; margin: 2px 0; padding: 5px 12px; border: 1px solid rgba(0, 229, 204, 0.35); background: rgba(0, 229, 204, 0.05); color: var(--nms-teal); font-family: inherit; font-size: 0.6rem; letter-spacing: 0.12em; cursor: pointer; }
+.al-board .alb-toggle:hover, .al-board .alb-toggle:focus-visible { border-color: var(--nms-teal); box-shadow: 0 0 10px rgba(0, 229, 204, 0.25); }

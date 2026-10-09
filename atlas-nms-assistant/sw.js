@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v112'; // Traveller ID in ATLAS Memory
+const CACHE = 'atlas-v113'; // alliance tile expands to top 10
 
 const ASSETS = [
   './',
