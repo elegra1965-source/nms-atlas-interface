@@ -4,6 +4,11 @@
 
 A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it speaks back.
 
+## What's new in v4.3
+
+- **Two tickers, always visible** — the expedition ticker and a new **ALLIANCES** ticker now run full width under the ATLAS title, so neither gets squeezed on phones. Tap either one to pause it.
+- **Live alliance leaderboard** — the alliance ticker shows the top 10 Galactic Alliances (in-game rank, members, stations and 24-hour changes) and where your own logged alliances rank. Refreshed every 15 minutes. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/). The switch is `HAVEN_ALLIANCE_FEED` at the top of the alliances ticker section in `js/widgets.js`; with it off, the ticker shows an alliance briefing instead.
+
 ## What's new in v4.2
 
 - **Real worlds in the System Scan** — planets charted by players on Voyager's Haven (the same data as the NMS Weather app). The first scan each day is a featured world; tap ⟳ for another. Each shows the portal address, discoverer, and a **◈ SHOW ON GALACTIC MAP** link.
@@ -82,6 +87,10 @@ The app is a full PWA: installable from the browser, offline UI (AI calls need i
 The header shows a scrolling live feed of the current expedition's progress (tier, completion %, faction standings, time remaining), pulled from the official Galactic Atlas API. On Netlify the included `_redirects` file proxies the API (required for CORS); elsewhere it falls back to a public CORS proxy, and offline it shows a static countdown. The ticker finds a new expedition by itself (it checks the next mission numbers every few minutes), and ATLAS's spoken answers about "the expedition" — in demo mode and with a key — read from the same live data, so they move on automatically too. The feed gives progress numbers but not names or dates, so ATLAS also reads the community wiki's [List of Expeditions](https://nomanssky.fandom.com/wiki/List_of_Expeditions) table (number, name, start, end) straight from the browser, re-checked every 3 hours and immediately when a new mission appears. A new expedition picks up its real name and dates automatically — no code edit. Only in the short gap before the wiki lists a new expedition does it show as "GALACTIC MISSION #N".
 
 The same wiki table also powers questions about **any** expedition, past, current or next, with no API key: tap **EXPEDITION STATUS**, or ask things like "what was the previous expedition?", "tell me about expedition 12", "the Adrift expedition", "how many expeditions have there been?" or "when is the next expedition?". With a key, Claude is also given the six most recent expeditions with their dates.
+
+## Alliance ticker
+
+Under the expedition ticker. Data comes from Voyager's Haven's public alliance endpoint (`havenmap.online/api/public/alliances`). It doesn't send CORS headers, so `_redirects` proxies it at `/haven-api/alliances`, the same way the expedition feed is proxied at `/nms-api/`. If the feed is unreachable, the ticker falls back to the alliance briefing and your own alliances. Thanks to [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/) for Voyager's Haven.
 
 ## Conversation memory
 

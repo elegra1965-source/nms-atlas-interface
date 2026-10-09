@@ -591,7 +591,7 @@ const Widgets = (() => {
      ON  → live Top 10 from havenmap.online (proxied through /haven-api/ in _redirects),
            refreshed every 15 min, with 24h trends and credit to Voyager's Haven.
      OFF → an alliance briefing plus the Traveller's own logged alliances. */
-  const HAVEN_ALLIANCE_FEED = false;
+  const HAVEN_ALLIANCE_FEED = true; // ON 2026-10-09 -- credit Voyager's Haven + u/IAmThe-Ekimo-1920
   const AL_FEED_URL = '/haven-api/alliances';
   const fmtN = n => (typeof n === 'number' && isFinite(n)) ? Math.round(n).toLocaleString('en-GB') : '—';
   const trend = n => (typeof n === 'number' && n) ? (n > 0 ? ' ▲' + fmtN(n) : ' ▼' + fmtN(-n)) : '';
@@ -627,7 +627,7 @@ const Widgets = (() => {
         segs.push('YOUR ALLIANCE [' + m.tag + '] ' + m.name +
           (hit ? ' · RANK #' + (hit.latest.activity_rank || '?') + ' · ' + fmtN(hit.latest.member_count) + ' MEMBERS' : ' · NOT YET TRACKED BY VOYAGER\'S HAVEN'));
       });
-      segs.push('LEADERBOARD VIA VOYAGER\'S HAVEN · HAVENMAP.ONLINE');
+      segs.push('LEADERBOARD COURTESY OF VOYAGER\'S HAVEN · HAVENMAP.ONLINE · BUILT BY U/IAMTHE-EKIMO-1920 · THANK YOU');
     } else {
       segs.push('GALACTIC ALLIANCES · COSMOS UPDATE');
       if (mine.length) segs.push('YOUR ALLIANCES: ' + mine.map(m => '[' + m.tag + '] ' + m.name).join(' · '));
@@ -642,6 +642,7 @@ const Widgets = (() => {
     setInterval(updateAllianceTicker, 15 * 60000);
     const t = document.getElementById('al-ticker');
     if (t) t.addEventListener('click', () => t.classList.toggle('paused'));
+    if (t && HAVEN_ALLIANCE_FEED) t.title = "Alliance leaderboard courtesy of Voyager's Haven (havenmap.online), built by u/IAmThe-Ekimo-1920 — tap to pause";
   }
 
   /* ---------- EXPEDITION COUNTDOWN CLOCK (left panel, ticks every second) ---------- */

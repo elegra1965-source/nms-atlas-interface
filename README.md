@@ -8,11 +8,12 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 ![ATLAS interface: the orb, live HUD panels and transmission log](screenshots/01-interface.jpg)
 
-## Highlights (v4.2)
+## Highlights (v4.3)
 
 - **Voice in, voice out**, with wake word, continuous mode, hold-to-talk and interruptions
 - **Long-term memory** of what you tell it about yourself, stored only in your browser
 - **Live expedition ticker and countdown** from the official Galactic Atlas feed. It finds new expeditions by itself
+- **Live alliance leaderboard ticker** under the expedition ticker: the top 10 Galactic Alliances with members, stations and 24-hour changes, plus where your own alliances rank. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/)
 - **Real worlds in the System Scan.** Planets charted by players on [Voyager's Haven](https://havenmap.online), with portal address, discoverer and a link to the [Galactic Map](https://map.nomansskyhub.app)
 - **Galactic Alliances.** Between expeditions the countdown panel becomes an alliances briefing. Log up to three of your own alliances and ATLAS knows who you fly with
 - **Phone-friendly**, with arrows that show when a tile strip scrolls sideways
@@ -31,5 +32,10 @@ The whole site lives in [`atlas-nms-assistant/`](atlas-nms-assistant/). That fol
 The code is MIT licensed (see `atlas-nms-assistant/LICENSE`). Game names and imagery belong to Hello Games and are not covered by that licence.
 
 *An unofficial, fan-made project. Not affiliated with, sponsored by, or endorsed by Hello Games or Anthropic.*
+
+## Credits
+
+- Live expedition data: the official Galactic Atlas API by Hello Games
+- Real worlds and the alliance leaderboard: [Voyager's Haven](https://havenmap.online), built and run by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/). Thanks for opening up the Haven API. Haven's data belongs to Haven and its contributors.
 
 Built by elegra1965.
