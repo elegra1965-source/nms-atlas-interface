@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v109'; // expedition probe stops at the first real answer; robots/sitemap
+const CACHE = 'atlas-v110'; // expedition alerts link
 
 const ASSETS = [
   './',
