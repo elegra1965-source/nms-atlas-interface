@@ -601,7 +601,11 @@ const Widgets = (() => {
       const r = await fetch(AL_FEED_URL, { cache: 'no-store' });
       if (!r.ok) return null;
       const j = await r.json();
-      const list = (j && j.alliances || []).filter(a => a && a.latest);
+      // keep only alliances seen in Haven's latest refresh: ones Haven can no longer find
+      // ("missing") keep their old rank forever, which showed up as two #2s
+      const all = (j && j.alliances || []).filter(a => a && a.latest && a.status !== 'missing');
+      const newest = Math.max(0, ...all.map(a => Date.parse((a.latest.observed_at || '').replace(' ', 'T') + 'Z') || 0));
+      const list = all.filter(a => newest - (Date.parse((a.latest.observed_at || '').replace(' ', 'T') + 'Z') || 0) < 2 * 86400e3);
       if (!list.length) return null;
       list.sort((a, b) => (a.latest.activity_rank || 1e9) - (b.latest.activity_rank || 1e9));
       return { top: list.slice(0, 10), all: list, total: j.status && j.status.hg_total_alliances };
