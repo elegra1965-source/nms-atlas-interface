@@ -555,7 +555,7 @@
     return DEMO_FALLBACK[demoFallbackIdx];
   }
 
-  function runDemo(userText) {
+  function runDemo(userText, preset) {
     busy = true;
     const myTurn = turnId;
     newTurnTranscript();
@@ -565,7 +565,7 @@
     HUD.setState('thinking');
     setTimeout(() => {
       if (myTurn !== turnId) return; // interrupted while "thinking"
-      const reply = demoReply(userText);
+      const reply = preset || demoReply(userText);
       addHistory('atlas', reply);
       API.remember(userText, reply); // demo chats survive reloads too
       // the glyph + English decode is the reveal; the full text goes to the log.
@@ -594,8 +594,52 @@
   /* ---------- main pipeline: text → Claude → TTS ---------- */
   let busy = false;
 
+  /* v4.4 — Atlas Codex: recipes, refiner combos, where to find things and expedition milestones,
+     read live from the NMS Wiki (js/codex.js). Answered the same way with or without an API key,
+     so the facts are the wiki's, not a guess. Anything the Codex can't answer goes on as before. */
+  function expName() {
+    try { const i = Widgets.expeditionInfo && Widgets.expeditionInfo(); return i && i.name ? i.name : ''; } catch (e) { return ''; }
+  }
+  async function askCodex(userText) {
+    if (typeof NMSCodex === 'undefined') return false;
+    const intent = NMSCodex.detect(userText);
+    if (!intent) return false;
+    busy = true; HUD.setState('thinking');
+    let reply = null;
+    try { reply = await NMSCodex.answer(intent, { expeditionName: expName() }); } catch (e) { reply = null; }
+    busy = false;
+    if (!reply) { HUD.setState('idle'); return false; }
+    runDemo(userText, reply);
+    if (intent.kind === 'milestones') openGuide(intent.phase);
+    return true;
+  }
+
+  /* ---------- v4.4 expedition guide modal ---------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }
+  async function openGuide(phase) {
+    const m = $('guide-modal'), body = $('guide-body');
+    if (!m) return;
+    m.classList.remove('hidden'); bleep(740);
+    const name = expName();
+    body.textContent = 'Contacting the archive…';
+    let g = null;
+    try { g = name && typeof NMSCodex !== 'undefined' ? await NMSCodex.expedition(name) : null; } catch (e) { g = null; }
+    if (!g || !g.phases.length) { body.textContent = 'The archive has no milestone list for this expedition yet, Traveller. Try again later.'; return; }
+    $('guide-title').textContent = g.title.replace(/^Expedition (\d+):\s*/, 'EXPEDITION $1 · ').toUpperCase();
+    $('guide-src').href = g.url;
+    body.innerHTML = g.phases.map(p =>
+      '<details class="guide-phase"' + ((phase ? p.phase === phase : p.phase === 1) ? ' open' : '') + '><summary>PHASE ' + p.phase +
+        ' <span>' + p.milestones.length + ' MILESTONES</span></summary><ol>' +
+        p.milestones.map(x => '<li><b>' + esc(x.name) + '</b><span class="g-req">' + esc(x.req) + '</span>' +
+          (x.hint ? '<span class="g-hint">◈ ' + esc(x.hint) + '</span>' : '') +
+          (x.rewards.length ? '<span class="g-rew">REWARDS: ' + esc(x.rewards.join(' · ')) + '</span>' : '') + '</li>').join('') +
+      '</ol></details>').join('');
+    if (phase) { const el = body.querySelector('details[open]'); if (el) el.scrollIntoView({ block: 'start' }); }
+  }
+
   async function ask(userText) {
     if (busy || !userText.trim()) return;
+    if (await askCodex(userText)) return;
     if (!API.hasKey()) { runDemo(userText); return; }
     busy = true;
     const myTurn = ++turnId;
@@ -924,6 +968,18 @@
       $('mic-btn').classList.add('disabled');
       $('mic-btn').title = 'Voice input not supported in this browser — type instead (Chrome/Edge support voice)';
       $('auto-btn').style.display = 'none';
+    }
+
+    // v4.4 expedition guide + crafting help
+    if ($('guide-chip')) $('guide-chip').addEventListener('click', () => { bleep(660); ask('Show me the expedition milestones'); });
+    if ($('craft-chip')) $('craft-chip').addEventListener('click', () => {
+      bleep(660); const ti = $('text-input'); ti.value = 'How do I make '; ti.focus();
+      try { ti.setSelectionRange(ti.value.length, ti.value.length); } catch (e) {}
+    });
+    if ($('guide-close')) {
+      const closeGuide = () => $('guide-modal').classList.add('hidden');
+      $('guide-close').addEventListener('click', closeGuide);
+      $('guide-modal').addEventListener('click', e => { if (e.target === $('guide-modal')) closeGuide(); });
     }
 
     // faction chip — local dossier, no API needed

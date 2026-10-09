@@ -8,8 +8,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 ![ATLAS interface: the orb, live HUD panels and transmission log](screenshots/01-interface.jpg)
 
-## Highlights (v4.3)
+## Highlights (v4.4)
 
+- **Atlas Codex:** ask how to craft or refine anything, where to find it, or what an item is used for — real recipes and sources read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com), no API key needed
+- **Expedition guide:** every milestone of the current expedition by phase, with hints and rewards
 - **Voice in, voice out**, with wake word, continuous mode, hold-to-talk and interruptions
 - **Long-term memory** of what you tell it about yourself, stored only in your browser
 - **Live expedition ticker and countdown** from the official Galactic Atlas feed. It finds new expeditions by itself
@@ -37,6 +39,7 @@ The code is MIT licensed (see `atlas-nms-assistant/LICENSE`). Game names and ima
 ## Credits
 
 - Live expedition data: the official Galactic Atlas API by Hello Games
+- Recipes, sources and expedition milestones: the [No Man's Sky Wiki](https://nomanssky.fandom.com) community (CC BY-SA)
 - Real worlds and the alliance leaderboard: [Voyager's Haven](https://havenmap.online), built and run by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/). Thanks for opening up the Haven API. Haven's data belongs to Haven and its contributors.
 
 Built by elegra1965.

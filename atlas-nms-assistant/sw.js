@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v105'; // refresh live feeds on return to tab
+const CACHE = 'atlas-v107'; // v4.4 Atlas Codex + expedition guide
 
 const ASSETS = [
   './',
@@ -22,6 +22,7 @@ const ASSETS = [
   './js/orbwrap.js',
 './js/heartbeat.js',
   './js/scrollhints.js',
+  './js/codex.js',
   './assets/atlas-orb.gif',
   './assets/atlas-orb-small.gif',
   './assets/bg-spaceport.jpg',
@@ -53,7 +54,7 @@ self.addEventListener('fetch', e => {
   if (url.hostname.includes('anthropic.com') || url.hostname.includes('open-meteo.com') ||
       url.hostname.includes('nomanssky.com') || url.hostname.includes('allorigins.win') ||
       url.hostname.includes('corsproxy.io') || url.hostname.includes('azureedge.net') ||
-      url.hostname.includes('elevenlabs.io') ||
+      url.hostname.includes('elevenlabs.io') || url.hostname.includes('fandom.com') ||
       url.pathname.startsWith('/nms-api/') || url.pathname.startsWith('/haven-api/')) {
     return; // straight to network
   }

@@ -4,6 +4,11 @@
 
 A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it speaks back.
 
+## What's new in v4.4
+
+- **Atlas Codex — real game data.** Ask "how do I make a warp cell?", "where do I find sodium nitrate?", "what can I refine ferrite dust into?" or "what is a living pearl?" and ATLAS answers with the actual crafting recipes, refiner combinations, sources and values, read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com) (`js/codex.js`). Works in demo mode too — no API key needed — and the facts are the wiki's, not a guess. Tap **CRAFTING HELP** to start a question.
+- **Expedition guide.** Tap **EXPEDITION GUIDE** (or ask "phase 2 milestones") for every milestone of the current expedition by phase — what to do, the extra hint, and the rewards — also from the wiki, and it follows each new expedition automatically.
+
 ## What's new in v4.3
 
 - **Two tickers, always visible** — the expedition ticker and a new **ALLIANCES** ticker now run full width under the ATLAS title, so neither gets squeezed on phones. Tap either one to pause it.

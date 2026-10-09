@@ -160,6 +160,16 @@
   </div>
 </div>
 
+<!-- ====== v4.4 EXPEDITION GUIDE (milestones from the NMS Wiki, via js/codex.js) ====== -->
+<div id="guide-modal" class="modal hidden">
+  <div class="modal-box welcome-box guide-box">
+    <button id="guide-close" class="modal-x" aria-label="Close expedition guide">✕</button>
+    <h2 id="guide-title">EXPEDITION GUIDE</h2>
+    <div id="guide-body" class="guide-body">Contacting the archive…</div>
+    <p class="key-note">Milestones, hints and rewards from the <a id="guide-src" href="https://nomanssky.fandom.com/wiki/List_of_Expeditions" target="_blank" rel="noopener">No Man's Sky Wiki</a> community. Tip: ask the Atlas "phase 3 milestones", or "how do I make a warp cell".</p>
+  </div>
+</div>
+
 <!-- ====== SISTER PROJECTS POPUP ====== -->
 <div id="sister-modal" class="modal hidden">
   <div class="modal-box sister-box">
@@ -187,7 +197,7 @@
 
   <!-- HEADER -->
   <header id="header-bar">
-    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.3</span></div>
+    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.4</span></div>
     <div class="header-clocks">
       <span id="clock-utc">UTC --:--:--</span>
       <span class="clock-sep">|</span>
@@ -211,7 +221,7 @@
     <div class="widget" id="credits">
       <div class="widget-label">SIGNAL ORIGIN</div>
       <div class="credit-rows">
-        <div><span class="c-key">INTERFACE:</span>ATLAS v4.3</div>
+        <div><span class="c-key">INTERFACE:</span>ATLAS v4.4</div>
         <div><span class="c-key">FORGED BY:</span>ELEGRA1965</div>
         <div><span class="c-key">STARDATE:</span>06.2026</div>
         <div><span class="c-key">TRAVELLER:</span>T672B774</div>
@@ -329,6 +339,8 @@
       <button class="chip" data-prompt="What should I explore today, Atlas?">GUIDE ME</button>
       <button class="chip" data-prompt="What is the status of the current expedition?">EXPEDITION STATUS</button>
       <button class="chip" id="faction-chip">WHAT FACTION ARE YOU?</button>
+      <button class="chip" id="guide-chip">EXPEDITION GUIDE</button>
+      <button class="chip" id="craft-chip" title="Recipes, refiner combos and where to find things — from the NMS Wiki">CRAFTING HELP</button>
     </div>
 
     <div id="input-bar">
@@ -398,6 +410,7 @@
 <script src="js/memory.js"></script>
 <script src="js/api.js"></script>
 <script src="js/voice.js"></script>
+<script src="js/codex.js"></script>
 <script src="js/atlas.js"></script>
 <script src="js/orbwrap.js"></script>
 <script src="js/pulse.js"></script>
