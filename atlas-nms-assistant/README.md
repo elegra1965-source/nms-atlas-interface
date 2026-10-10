@@ -30,7 +30,7 @@ A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it spe
 
 - **Real worlds in the System Scan** — planets charted by players on Voyager's Haven (the same data as the NMS Weather app). The first scan each day is a featured world; tap ⟳ for another. Each shows the portal address, discoverer, and a **◈ SHOW ON GALACTIC MAP** link.
 - **Galactic Alliances** — when an expedition ends, the countdown panel becomes an alliances briefing (Cosmos update) and switches back by itself when the next expedition starts. Tap **⇄** on that panel any time to flip between them.
-- **Your alliances** — log up to three alliances (tag + name). They're stored only in your browser, and ATLAS knows who you fly with, in demo mode and with a key.
+- **Your alliances** — log up to three alliances (tag + name). They're stored only in your browser, and ATLAS knows who you fly with, with or without a key.
 - **Scroll arrows on phones** — the tile strips show ◆› / ‹◆ arrows when there's more to see sideways; tap to jump a tile.
 
 ## What's new in v4.0
@@ -101,7 +101,7 @@ The app is a full PWA: installable from the browser, offline UI (AI calls need i
 
 ## Expedition ticker
 
-The header shows a scrolling live feed of the current expedition's progress (tier, completion %, faction standings, time remaining), pulled from the official Galactic Atlas API. On Netlify the included `_redirects` file proxies the API (required for CORS); elsewhere it falls back to a public CORS proxy, and offline it shows a static countdown. The ticker finds a new expedition by itself (it checks the next mission numbers every few minutes), and ATLAS's spoken answers about "the expedition" — in demo mode and with a key — read from the same live data, so they move on automatically too. The feed gives progress numbers but not names or dates, so ATLAS also reads the community wiki's [List of Expeditions](https://nomanssky.fandom.com/wiki/List_of_Expeditions) table (number, name, start, end) straight from the browser, re-checked every 3 hours and immediately when a new mission appears. A new expedition picks up its real name and dates automatically — no code edit. Only in the short gap before the wiki lists a new expedition does it show as "GALACTIC MISSION #N".
+The header shows a scrolling live feed of the current expedition's progress (tier, completion %, faction standings, time remaining), pulled from the official Galactic Atlas API. On Netlify the included `_redirects` file proxies the API (required for CORS); elsewhere it falls back to a public CORS proxy, and offline it shows a static countdown. The ticker finds a new expedition by itself (it checks the next mission numbers every few minutes), and ATLAS's spoken answers about "the expedition" — with or without a key — read from the same live data, so they move on automatically too. The feed gives progress numbers but not names or dates, so ATLAS also reads the community wiki's [List of Expeditions](https://nomanssky.fandom.com/wiki/List_of_Expeditions) table (number, name, start, end) straight from the browser, re-checked every 3 hours and immediately when a new mission appears. A new expedition picks up its real name and dates automatically — no code edit. Only in the short gap before the wiki lists a new expedition does it show as "GALACTIC MISSION #N".
 
 The same wiki table also powers questions about **any** expedition, past, current or next, with no API key: tap **EXPEDITION STATUS**, or ask things like "what was the previous expedition?", "tell me about expedition 12", "the Adrift expedition", "how many expeditions have there been?" or "when is the next expedition?". With a key, Claude is also given the six most recent expeditions with their dates.
 
@@ -113,7 +113,7 @@ Under the expedition ticker. Data comes from Voyager's Haven's public alliance e
 
 The last 20 exchanges persist in localStorage and reload on next visit; **⌫ PURGE** clears them.
 
-Long-term memory (v4.0) is separate: short facts about you in `atlas_memory`, plus your name in `atlas_traveller_name`, also localStorage only. With an API key, after a message where you talk about yourself, ATLAS makes one tiny extra request to the cheapest Claude model to decide whether anything is worth remembering (a fraction of a penny). In demo mode it picks up a few simple phrases ("my name is…", "I play on PS5"). **◈ MEMORY → FORGET ALL** wipes it.
+Long-term memory (v4.0) is separate: short facts about you in `atlas_memory`, plus your name in `atlas_traveller_name`, also localStorage only. With an API key, after a message where you talk about yourself, ATLAS makes one tiny extra request to the cheapest Claude model to decide whether anything is worth remembering (a fraction of a penny). Without a key it picks up a few simple phrases ("my name is…", "I play on PS5"). **◈ MEMORY → FORGET ALL** wipes it.
 
 ---
 *ATLAS is a fan project. No Man's Sky is the property of Hello Games.*

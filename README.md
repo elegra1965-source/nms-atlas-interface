@@ -2,7 +2,7 @@
 
 **Live:** [atlas.nomansskyhub.app](https://atlas.nomansskyhub.app)
 
-A voice-first AI companion themed on *No Man's Sky*. Speak to the Atlas and it speaks back, with a live HUD around it: the current expedition, real community-charted worlds, your local weather and lore from across the universe. Free demo mode for everyone; add your own Anthropic API key for full conversation.
+A voice-first AI companion themed on *No Man's Sky*. Speak to the Atlas and it speaks back, with a live HUD around it: the current expedition, real community-charted worlds, your local weather and lore from across the universe. Free for everyone with no key: the NMS Archive answers No Man's Sky questions from built-in lore and the live NMS Wiki, at no cost. Add your own Anthropic API key for full open conversation.
 
 Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
