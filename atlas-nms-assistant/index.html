@@ -50,9 +50,9 @@
 <!-- ====== API KEY MODAL ====== -->
 <div id="key-modal" class="modal hidden">
   <div class="modal-box">
-    <h2>ATLAS ACTIVATION</h2>
-    <p>Enter your Anthropic API key to activate ATLAS.<br>
-       The key is stored only on this device.</p>
+    <h2>ATLAS SETTINGS</h2>
+    <p>ATLAS already works free, answering from the No Man's Sky archive. Choose its voice below.<br>
+       Optional: add your own Anthropic key for free-flowing conversation beyond the archive. The key is stored only on this device.</p>
     <div class="key-row">
       <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
       <button id="key-toggle" type="button" title="Show/hide">◉</button>
@@ -88,7 +88,7 @@
     </div>
     <p class="key-note">VOICE CHARACTER shapes any voice; its deep Atlas resonance needs the optional ElevenLabs key. A pasted voice ID overrides the character's own voice (add the voice to My Voices in your ElevenLabs account first), while the character keeps shaping its tone.</p>
     <button id="key-save" class="btn-primary">INITIALISE</button>
-    <button id="demo-skip" class="btn-demo">CONTINUE IN FREE DEMO MODE</button>
+    <button id="demo-skip" class="btn-demo">CONTINUE FREE — NMS ARCHIVE</button>
     <button id="open-memory" class="btn-demo" type="button">◈ ATLAS MEMORY — WHAT IT REMEMBERS ABOUT YOU</button>
     <p class="key-note">Create a key free at console.anthropic.com, then add a small prepaid credit there (even $5 lasts months — a chat costs a penny or two). Note: this is separate from any Claude.ai subscription. The key is sent only to Anthropic and stored only on this device.</p>
     <p class="key-note key-warn">⚠ Keep your key private, like a password. A typical chat costs only a penny or two, and you can set spending limits — or revoke the key — anytime at console.anthropic.com.</p>
@@ -113,11 +113,12 @@
     <button id="welcome-close" class="modal-x" aria-label="Close welcome message">✕</button>
     <h2>WELCOME, TRAVELLER</h2>
     <p><strong>Everything here is free to use, forever.</strong><br>
-       Tap the orb or the mic and speak — the Atlas answers aloud with the lore of the
-       No Man's Sky universe. No account, no cost.</p>
-    <p>To unlock the Atlas's <strong>FULL AI potential</strong> — true conversation about
-       anything — tap the <strong>⚙ cog</strong> (top right) and add your own Anthropic
-       API key. The cog is also where you choose the Atlas's <strong>voice</strong>.</p>
+       Tap the orb or the mic and ask anything about No Man's Sky — how to craft or refine
+       something, where to find a resource, how to get a freighter, the expedition milestones,
+       the lore. The Atlas answers aloud from the NMS archive. No account, no cost.</p>
+    <p>The <strong>⚙ cog</strong> (top right) is where you choose the Atlas's
+       <strong>voice</strong>. Optional extra: add your own Anthropic key there for free-flowing
+       conversation beyond the archive.</p>
     <button id="welcome-begin" class="btn-primary">BEGIN</button>
   </div>
 </div>
@@ -199,7 +200,7 @@
 
   <!-- HEADER -->
   <header id="header-bar">
-    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.4</span></div>
+    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.5</span></div>
     <div class="header-clocks">
       <span id="clock-utc">UTC --:--:--</span>
       <span class="clock-sep">|</span>
@@ -223,7 +224,7 @@
     <div class="widget" id="credits">
       <div class="widget-label">SIGNAL ORIGIN</div>
       <div class="credit-rows">
-        <div><span class="c-key">INTERFACE:</span>ATLAS v4.4</div>
+        <div><span class="c-key">INTERFACE:</span>ATLAS v4.5</div>
         <div><span class="c-key">FORGED BY:</span>ELEGRA1965</div>
         <div><span class="c-key">STARDATE:</span>06.2026</div>
         <div><span class="c-key">TRAVELLER:</span>T672B774</div>

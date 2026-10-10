@@ -295,6 +295,7 @@
       var ib = it.info || {}, out = [];
       var isThing = /resource|product|technology|item|building|ingredient|consumable|curiosity|trade|fish|plant|substance/i.test((ib.kind || '') + ' ' + (ib.category || ''));
       if (intent.kind === 'about' && !isThing) return null; // lore questions: leave them to the Atlas
+      if ((intent.kind === 'make' || intent.kind === 'find') && (!isThing || /catalog|^list of/i.test(it.title || ''))) return null; // ships, pets, places: the archive lookup answers those
       if (intent.kind === 'make' || intent.kind === 'about') {
         if (it.craft.length) out.push('Craft ' + it.title + ' from ' + ings(it.craft[0]) + (it.craft[0].blueprint ? ' — you\'ll need its blueprint first' : '') + '.');
         if (it.refine.length) out.push('In a refiner: ' + it.refine.slice(0, 3).map(function (r) { return ings(r) + ' make ' + r.out; }).join('; or ') + '.');
@@ -321,5 +322,98 @@
     });
   }
 
-  root.NMSCodex = { item: item, usedIn: usedIn, expedition: expedition, detect: detect, answer: answer, plain: plain };
+
+  /* ---------- v4.5: the Atlas archive — answer ANY No Man's Sky question from the wiki ----------
+     lookup(question): searches the NMS Wiki for the subject, reads the page's opening lines
+     (plus its "Obtaining" / "Location" style section for how-do-I questions) and returns a short
+     spoken answer. Free, no key. Returns null when the wiki has nothing on it. Cached 24h. */
+  var FILLER = /^(?:(?:hey|hi|ok|okay|so|please|atlas|traveller|can you|could you|would you|do you know|i want to know|i'd like to know|tell me|tell me about|explain|describe|what(?:'s| is| are| was| were)?|who(?:'s| is| are| was)?|where(?:'s| is| are| do i find| can i find)?|when(?:'s| is| are| did| does)?|why(?:'s| is| are| do| does)?|which|how(?:'s| is| are| do i| do you| can i| does| to)?|is there|are there|does|do|can i|should i|about|a|an|the|me|some|any|more|info|information|on|of)\s+)+/;
+  function lookupSubject(q) {
+    var t = String(q || '').toLowerCase().replace(/[’']/g, "'").replace(/[?!.,;:]+/g, ' ').replace(/\s+/g, ' ').trim();
+    t = t.replace(/\b(in|on|for) (no man'?s sky|nms|the game|this game)\b/g, ' ').replace(/\b(no man'?s sky|nms)\b/g, ' ');
+    var how = /\b(how (?:do|can|could|should) (?:i|you|we)|how to|where (?:do|can|is|are)|get|getting|obtain|unlock|find|reach|start|begin|buy|summon|tame|repair|fix|upgrade|build|install)\b/.test(t);
+    t = t.replace(FILLER, '').replace(/^(get|getting|obtain|unlock|find|reach|start|begin|buy|summon|tame|repair|fix|upgrade|build|install|make|use|do|go to|travel to|become|play|join)\s+(?:a |an |the |my |more |some )?/, '').trim();
+    t = t.replace(/\s+(work|works|do|does|mean|means|for|is|are)$/, '').trim();
+    return { subject: t, how: how };
+  }
+  function noTemplates(wt) {
+    var prev; do { prev = wt; wt = wt.replace(/\{\{[^{}]*\}\}/g, ''); } while (wt !== prev);
+    wt = wt.replace(/\{\|[\s\S]*?\|\}/g, '').replace(/^\s*\[\[(?:File|Image):.*$/gim, '').replace(/<gallery[\s\S]*?<\/gallery>/gi, '');
+    return wt;
+  }
+  function sentences(text, n, maxWords) {
+    var ss = String(text || '').split(/(?<=[.!?])\s+(?=[A-Z0-9"])/).filter(function (x) { return x.length > 2; });
+    var out = [], words = 0;
+    for (var i = 0; i < ss.length && out.length < n; i++) {
+      var w = ss[i].split(/\s+/).length; if (out.length && words + w > maxWords) break;
+      out.push(ss[i]); words += w;
+    }
+    return out.join(' ');
+  }
+  function paragraph(wt) {
+    return noTemplates(wt).replace(/^\s*=+[^=\n]+=+\s*$/gm, '\n').split(/\n\s*\n/)
+      .map(function (p) { return p.split('\n').filter(function (l) { return !/^\s*[*#:|!;]/.test(l); }).join(' '); })
+      .map(plain).filter(function (p) { return /[a-z]{3}/.test(p) && p.length > 40; });
+  }
+  // the wiki also hosts thousands of player pages (bases, events, businesses, discovered ships);
+  // the Atlas answers from the game's own pages
+  function playerPage(wt) {
+    return /\|\s*(civilized|discovered|discoveredlink|builder|creator|owner|founder)\s*=\s*[^\s|}]/i.test(wt) ||
+      /\{\{\s*(Base|Event|Civilized|Civ|Business|Player)[^|}]*infobox/i.test(wt) ||
+      /\b(is a player base|is a player-made|is a business|is an? (?:upcoming |annual )?(?:community )?event|discovered by|uploaded by)\b/i.test(noTemplates(wt).slice(0, 1500));
+  }
+  var SYN = [[/\b(tame|pet|pets|companions?|adopt)\b/, 'Companion'], [/\b(cent(?:er|re) of the galaxy|galactic cent(?:er|re)|galaxy cent(?:er|re))\b/, 'Galaxy Centre'],
+    [/\brepair(?:ing)? (?:my |a |the )?(?:ship|starship)\b/, 'Damaged Machinery'], [/\bexotic (?:ships?|starships?)\b/, 'Starship'], [/\batlas path\b/, 'The Atlas Path'], [/\bsettlements?\b/, 'Settlement'],
+    [/\b(next galaxy|new galaxy|other galaxies|change galaxy)\b/, 'Galaxy'], [/\bportals?\b/, 'Portal'], [/\bglyphs?\b/, 'Portal glyph'],
+    [/\bliving ships?\b/, 'Living Ship'], [/\bspace anomaly\b/, 'Space Anomaly'], [/\bmulti-?tools?\b/, 'Multi-Tool'], [/\b(purple|green|blue|red|yellow) (?:star|stars|system|systems)\b/, 'Star'],
+    [/\b(sentinel ships?|sentinel interceptors?)\b/, 'Sentinel Interceptor'], [/\bderelict freighters?\b/, 'Derelict Freighter'], [/\bfrigates?\b/, 'Frigate']];
+  function lookup(question) {
+    var q = lookupSubject(question); if (!q.subject || q.subject.length < 3) return Promise.resolve(null);
+    var raw = String(question || '').toLowerCase();
+    for (var k = 0; k < SYN.length; k++) if (SYN[k][0].test(raw)) { q.subject = SYN[k][1].toLowerCase(); break; }
+    var key = 'look2:' + q.subject + (q.how ? ':how' : ''), hit = cacheGet(key, 864e5);
+    if (hit !== undefined) return Promise.resolve(hit);
+    var words = q.subject.split(' ').filter(function (w) { return w.length >= 4; });
+    return get({ action: 'query', list: 'search', srsearch: q.subject, srlimit: 10, srnamespace: 0 }).then(function (j) {
+      var hits = ((j.query && j.query.search) || []).map(function (h) { return h.title; })
+        .filter(function (h) { return !/\/|^List of|disambiguation|^Category|^Version|^Patch|^Update|catalogue|\((?:Outlaws|Atlas Rises|Foundation|NEXT|Pathfinder|Beyond|Origins|pre-)/i.test(h); });
+      if (!hits.length) return null;
+      var lower = q.subject.replace(/s$/, '');
+      hits.sort(function (a, b) {
+        var sa = a.toLowerCase().replace(/s$/, '') === lower ? 2 : words.some(function (w) { return a.toLowerCase().indexOf(w.replace(/s$/, '')) >= 0; }) ? 1 : 0;
+        var sb = b.toLowerCase().replace(/s$/, '') === lower ? 2 : words.some(function (w) { return b.toLowerCase().indexOf(w.replace(/s$/, '')) >= 0; }) ? 1 : 0;
+        return sb - sa;
+      });
+      var tries = hits.slice(0, 4);
+      function attempt(i) {
+        if (i >= tries.length) return null;
+        return get({ action: 'parse', page: tries[i], prop: 'wikitext', redirects: 1 }).then(function (p) {
+          var wt = (p.parse && p.parse.wikitext && p.parse.wikitext['*']) || '', title = (p.parse && p.parse.title) || tries[i];
+          if (!wt || playerPage(wt)) return attempt(i + 1);
+          var first = wt.search(/^==[^=]/m), intro = paragraph(first < 0 ? wt : wt.slice(0, first));
+          var sum = paragraph(section(wt, 'Summary'));
+          var lead = (intro.join(' ').length > 90 ? intro : sum.length ? sum : intro).join(' ');
+          if (!lead) return attempt(i + 1);
+          var text = sentences(lead, 3, 60);
+          var hay = (title + ' ' + text).toLowerCase();
+          if (words.length && !words.some(function (w) { return hay.indexOf(w.replace(/s$/, '')) >= 0; })) return attempt(i + 1);
+          if (q.how) {
+            var secs = ['Obtaining', 'Acquisition', 'How to obtain', 'How to get', 'Getting', 'Unlocking', 'Location', 'Locations', 'Taming', 'Adopting', 'Purchasing', 'Summoning', 'Walkthrough', 'Usage', 'Gameplay'];
+            for (var s2 = 0; s2 < secs.length; s2++) {
+              var raw2 = section(wt, secs[s2]); if (!raw2) continue;
+              var sp = paragraph(raw2);
+              if (sp.length) { text += ' ' + sentences(sp.join(' '), 2, 45); break; }
+              var bl = noTemplates(raw2).split('\n').filter(function (l) { return /^\s*\*/.test(l); }).map(function (l) { return plain(l.replace(/^\s*\*+/, '')); }).filter(Boolean);
+              if (bl.length) { text += ' ' + bl.slice(0, 2).join(' '); break; }
+            }
+          }
+          var out = text.replace(/\s*,?\s*\(?see (?:below|above)\)?/gi, '').replace(/\s+([,.])/g, '$1').replace(/\s+/g, ' ').trim() + CREDIT;
+          cacheSet(key, out); return out;
+        });
+      }
+      return attempt(0);
+    }).catch(function () { return null; });
+  }
+
+  root.NMSCodex = { lookup: lookup, item: item, usedIn: usedIn, expedition: expedition, detect: detect, answer: answer, plain: plain };
 })(typeof window !== 'undefined' ? window : globalThis);

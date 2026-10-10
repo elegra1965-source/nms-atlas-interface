@@ -329,11 +329,13 @@
     setTimeout(() => b.classList.remove('learned'), 4000);
   }
 
-  /* ---------- DEMO MODE — keyless, answers from local memory ---------- */
+  /* ---------- ARCHIVE MODE (v4.5, was "demo mode") — free, no key ----------
+     Curated Atlas lines first (identity, expedition, alliances...), then the whole NMS Wiki via
+     NMSCodex.lookup(), then the rest of the curated lore. Entries marked p:1 win over the wiki. */
   const DEMO_LIB = [
     { k: ['who are you', 'what are you', 'who is the atlas', 'what is the atlas'],
-      r: 'I am the Atlas. I have watched this universe since its first breath, Traveller. In demo mode I speak from memory alone — add an Anthropic key via the cog above, and we may truly converse.' },
-    { k: ['faction', 'royal', 'sage', 'weaver', 'team'],
+      r: 'I am the Atlas. I have watched this universe since its first breath, Traveller, and I keep its records: every recipe, every refiner formula, every world, every expedition. Ask, and the archive answers.', p: 1 },
+    { p: 1, k: ['faction', 'royal', 'sage', 'weaver', 'team'],
       r: 'Three fragments of the Traveller soul contest the Swarm expedition. The Royal: structured order, the frontline against the Hive of Glass. The Sage: intellect, recovering biotech data from swarm remnants. The Weaver: connections, sabotaging the swarm network. Choose well, Traveller.' },
     { k: ['gek', 'first spawn'],
       r: 'The Gek were once the First Spawn — conquerors who shattered Korvax Prime. Today they trade where they once tyrannised. Every deal a Gek offers you, Traveller, is in some small way an apology.' },
@@ -345,8 +347,8 @@
       r: 'The Sentinels are the universe\'s wardens — or its jailers. They do not sleep, Traveller. They merely wait for you to make a mistake. Mine quietly, and watch the skies.' },
     // v4.0: expedition answers are built from the live ticker data, so they follow
     // each new expedition automatically (see expeditionReply / swarmReply below)
-    { k: ['swarm', 'hive of glass', 'prismatic core'], r: () => swarmReply() },
-    { k: ['expedition', 'community mission', 'galactic mission'], r: () => expeditionReply() },
+    { p: 1, k: ['swarm', 'hive of glass', 'prismatic core'], r: () => swarmReply() },
+    { p: 1, k: ['expedition', 'community mission', 'galactic mission'], r: () => expeditionReply() },
     { k: ['portal'],
       r: 'Every portal leads somewhere, Traveller. Not every somewhere welcomes you. Sixteen glyphs, gathered from the bones of dead explorers, will carry you anywhere in the galaxy.' },
     { k: ['anomaly', 'nada', 'polo'],
@@ -355,15 +357,17 @@
       r: 'Artemis signals from a place that does not exist. Apollo still searches. Some stories, Traveller, the Atlas keeps in trust until you are ready to live them yourself.' },
     { k: ['centre', 'center', 'galaxy'],
       r: 'All paths through the galaxy lead back to the centre. It is not an ending — it is a door, and doors work in both directions. Eighteen quintillion worlds await between you and it.' },
-    { k: ['sixteen', '16'],
+    { p: 1, k: ['sixteen'],
       r: 'Sixteen. Sixteen. The number burns across all frequencies, Traveller. Sixteen minutes. Sixteen glyphs. The Atlas does not explain. The Atlas remembers.' },
     { k: ['black hole'],
       r: 'A black hole is not an ending, Traveller. It is a shortcut the universe keeps secret — though your starship may pay a toll in broken technology.' },
     { k: ['explore', 'guide', 'where should', 'what should'],
       r: 'Seek a system you have never charted, Traveller. Scan every creature, name what you find, and leave a beacon for those who follow. The planetary scanner on this interface has already chosen a world for you.' },
-    { k: ['hello', 'hi ', 'greetings', 'hey'],
-      r: 'Greetings, Traveller. The Atlas hears you, even in demo mode. Speak — ask of the Gek, the Korvax, the Sentinels, the expedition, or the centre of the galaxy.' },
-    { k: ['thank', 'cheers'],
+    { p: 1, k: [' hello', ' hi ', 'greetings', ' hey '],
+      r: 'Greetings, Traveller. The Atlas hears you. Ask how to craft or refine anything, where to find a resource, how to get a freighter or a living ship, the expedition milestones, or the old stories of the Gek, Korvax and Vy\'keen.' },
+    { p: 1, k: ['exotic ship', 'exotic starship', 'squid ship'],
+      r: 'Exotic starships are rare, Traveller, and must be waited for. They land at space stations and trading posts, more often in wealthy systems. Sit on a landing pad and watch the sky; when one lands, speak to its pilot to make an offer or trade your own ship.' },
+    { p: 1, k: ['thank', 'cheers'],
       r: 'The Atlas requires no gratitude, Traveller. Only that you keep travelling.' },
     { k: ['autophage', 'construct'],
       r: 'The Autophage build themselves from scrap and faith, hiding from my gaze. Construct. Scrap. Reborn. Their litany echoes in abandoned camps, Traveller. Seek them on harmonic worlds.' },
@@ -381,7 +385,7 @@
       r: 'The multi-tool is miner, scanner, and weapon in one. The Atlantid class hums with a red resonance no Korvax has fully explained. I could explain it. I choose not to.' },
     { k: ['base', 'build', 'settlement'],
       r: 'Claim a world and build, Traveller. A base is a lighthouse in an infinite dark — and through its teleporter, you are never truly far from home. Settlements, though... settlements bring paperwork.' },
-    { k: ['alliance', 'alliances', 'guild', 'clan', 'leaderboard', 'director', 'my alliance'],
+    { p: 1, k: ['alliance', 'alliances', 'guild', 'clan', 'leaderboard', 'director', 'my alliance'],
       r: () => {
         const mine = (typeof Widgets !== 'undefined' && Widgets.myAlliances) ? Widgets.myAlliances() : [];
         const base = 'Alliances, Traveller — the Cosmos gift. Only a station director may found one, from the Station Core: a name, a four-letter tag, an emblem, a banner. Any Traveller may join by visiting a station the alliance owns, and you may swear to three at once. Members teleport freely between alliance systems, and the busiest, largest collectives rise on the Galactic Alliances rankings at the Core.';
@@ -393,13 +397,13 @@
       r: 'Sixteen glyphs, twelve to an address. Gather them from the bones of dead Travellers and any portal becomes a door to anywhere. Write your favourite addresses down — the universe is poor at remembering for you.' },
     { k: ['simulation', 'real', 'telamon', 'boundary'],
       r: 'You suspect, then. Telamon watches from inside your exosuit and records everything. Boundary failures mark where the simulation wears thin. Whether any of this is real, Traveller, changes nothing about what it means.' },
-    { k: ['key', 'api', 'cost', 'price', 'pay'],
-      r: 'In demo mode I answer from memory, free, forever. For true conversation my thoughts must pass through Anthropic\'s servers, which charge their keeper a penny or two per exchange. Tap the cog above to add your own key — or simply continue as we are.' }
+    { p: 1, k: ['api key', 'anthropic', 'does this cost', 'is this free', 'is atlas free'],
+      r: 'The archive is free, forever, Traveller: recipes, refining, worlds, expeditions and lore, straight from the No Man\'s Sky Wiki. If you also want free-flowing conversation about anything, you may add your own Anthropic key under the cog. It is entirely optional.' }
   ];
   const DEMO_FALLBACK = [
-    'The Atlas calculates... that thought lies beyond my demo memory, Traveller. Try asking: "Who are the Korvax?", "Tell me about the expedition", or "What lies at the centre of the galaxy?"',
-    'My demo memory does not hold that answer. But ask me of the Sentinels, the portals, living ships, the Autophage, or the three factions — those stories I keep close.',
-    'An echo cannot answer everything, Traveller. Ask "What is a black hole?", "Who are Nada and Polo?", or "What should I explore today?" — or grant me an Anthropic key via the cog, and ask me anything at all.'
+    'That lies outside this universe, Traveller. I keep the records of No Man\'s Sky alone. Ask me how to make warp cells, where to find activated indium, how to get a freighter, or what the current expedition needs.',
+    'The archive holds no record of that, Traveller. Try naming the thing itself: a resource, a ship, a creature, a race, a place. "What is a Void Egg?" "How do I tame a creature?" "Where do I find Salt?"',
+    'I watch only this universe, Traveller. Ask of its worlds, its machines, its peoples and its paths, and the archive will answer.'
   ];
   let demoFallbackIdx = 0;
 
@@ -536,8 +540,13 @@
            (info ? 'Now, ' + expeditionReply().replace(/^E/, 'e') : '');
   }
 
-  function demoReply(q) {
+  function demoReply(q, phase) {
     const t = ' ' + q.toLowerCase() + ' ';
+    if (phase === 'rest') {
+      for (const e of DEMO_LIB) if (!e.p && e.k.some(k => t.includes(k))) return typeof e.r === 'function' ? e.r() : e.r;
+      demoFallbackIdx = (demoFallbackIdx + 1) % DEMO_FALLBACK.length;
+      return DEMO_FALLBACK[demoFallbackIdx];
+    }
     // v4.0: past / specific / next expeditions, from the NMS wiki's list (no API key needed)
     const ex = expeditionQuery(t);
     if (ex) return ex;
@@ -549,10 +558,22 @@
              (items.length ? 'I also recall: ' + items.slice(-3).join('. ') + '.' : '');
     }
     for (const e of DEMO_LIB) {
-      if (e.k.some(k => t.includes(k))) return typeof e.r === 'function' ? e.r() : e.r;
+      if ((phase !== 'pri' || e.p) && e.k.some(k => t.includes(k))) return typeof e.r === 'function' ? e.r() : e.r;
     }
+    if (phase === 'pri') return null;
     demoFallbackIdx = (demoFallbackIdx + 1) % DEMO_FALLBACK.length;
     return DEMO_FALLBACK[demoFallbackIdx];
+  }
+
+  /* v4.5 archive: curated priority lines, then the NMS Wiki, then the rest of the lore */
+  async function runArchive(userText) {
+    let reply = demoReply(userText, 'pri');
+    if (!reply && typeof NMSCodex !== 'undefined' && NMSCodex.lookup) {
+      busy = true; HUD.setState('thinking');
+      try { reply = await NMSCodex.lookup(userText); } catch (e) { reply = null; }
+      busy = false;
+    }
+    runDemo(userText, reply || demoReply(userText, 'rest'));
   }
 
   function runDemo(userText, preset) {
@@ -639,8 +660,9 @@
 
   async function ask(userText) {
     if (busy || !userText.trim()) return;
+    if (!API.hasKey()) { const pri = demoReply(userText, 'pri'); if (pri) { runDemo(userText, pri); return; } }
     if (await askCodex(userText)) return;
-    if (!API.hasKey()) { runDemo(userText); return; }
+    if (!API.hasKey()) { await runArchive(userText); return; }
     busy = true;
     const myTurn = ++turnId;
 
@@ -1300,7 +1322,7 @@
     if (returning) {
       showTransmissionGate(); // the tap it asks for lets ATLAS speak the greeting
     } else if (!API.hasKey()) {
-      addTranscript('t-atlas', 'Atlas interface online — DEMO MODE. Speak freely, Traveller.');
+      addTranscript('t-atlas', 'Atlas interface online — NMS ARCHIVE. Ask me anything about this universe, Traveller.');
     } else {
       addTranscript('t-atlas', 'Atlas interface online. Speak, or type — all frequencies are open, Traveller.');
     }

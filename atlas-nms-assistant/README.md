@@ -6,13 +6,14 @@ A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it spe
 
 ## What's new in v4.5
 
+- **NMS Archive: no more demo mode.** Without a key ATLAS now answers *any* No Man's Sky question from the [No Man's Sky Wiki](https://nomanssky.fandom.com): "how do I get a freighter?", "how do I tame a creature?", "what is a dissonant system?", "who is Artemis?". It finds the game's own page (skipping player bases and events), speaks its opening lines and, for how-do-I questions, its Obtaining/Location section. Recipes, refining and expedition milestones still come from the Codex. Off-topic questions get a polite "I keep the records of this universe only". Free for everyone, no key, no cost to anyone (`NMSCodex.lookup` in `js/codex.js`).
 - **Expedition alerts.** 🔔 EXPEDITION ALERTS under the countdown opens the Weather station's alert settings: a notification the day a new expedition starts and 24 hours before the current one ends.
 - **Knows your name.** If you saved a Traveller ID on the Hub, ATLAS greets you by it (a name you tell ATLAS still wins).
 - **Quieter expedition check.** Looking ahead for the next mission no longer hits outside proxy sites or fills the console with errors.
 
 ## What's new in v4.4
 
-- **Atlas Codex — real game data.** Ask "how do I make a warp cell?", "where do I find sodium nitrate?", "what can I refine ferrite dust into?" or "what is a living pearl?" and ATLAS answers with the actual crafting recipes, refiner combinations, sources and values, read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com) (`js/codex.js`). Works in demo mode too — no API key needed — and the facts are the wiki's, not a guess. Tap **CRAFTING HELP** to start a question.
+- **Atlas Codex — real game data.** Ask "how do I make a warp cell?", "where do I find sodium nitrate?", "what can I refine ferrite dust into?" or "what is a living pearl?" and ATLAS answers with the actual crafting recipes, refiner combinations, sources and values, read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com) (`js/codex.js`). Works without an API key too — and the facts are the wiki's, not a guess. Tap **CRAFTING HELP** to start a question.
 - **Expedition guide.** Tap **EXPEDITION GUIDE** (or ask "phase 2 milestones") for every milestone of the current expedition by phase — what to do, the extra hint, and the rewards — also from the wiki, and it follows each new expedition automatically.
 
 ## What's new in v4.3
@@ -48,16 +49,16 @@ ATLAS is a **free, unofficial fan project**. The creator receives **no money wha
 
 ## How the AI works — open and honest
 
-Almost everything here runs in your browser at no cost to anyone: the HUD, the orb, the live expedition ticker, the countdown, the planet scanner, the weather, and **demo mode** — where ATLAS answers from a built-in memory of No Man's Sky lore, spoken aloud, completely free, forever.
+Almost everything here runs in your browser at no cost to anyone: the HUD, the orb, the live expedition ticker, the countdown, the planet scanner, the weather, and the **NMS Archive** — where ATLAS answers your No Man's Sky questions from the community wiki and its own lore, spoken aloud, completely free, forever.
 
-The one exception is the full AI brain. When you ask ATLAS a free-form question, the thinking doesn't happen in your browser — it happens on **Anthropic's servers**, and Anthropic charges for that computing the same way an electricity meter charges for power. That is why full conversation needs your own Anthropic API key. Creating the key at console.anthropic.com is free, but the API account is prepaid: you add a small credit there (even $5 lasts months) before the key works. Important: this Console balance is completely separate from a Claude.ai Pro/Max subscription — a subscription does not include API credit. Your key, your account, your control: a typical chat costs a penny or two, billed by Anthropic directly to you, and you can set spending limits or revoke the key there at any time. Nothing passes through — or to — the creator of ATLAS.
+The one optional extra is the full AI brain, for free-flowing conversation beyond the archive. When you ask it something, the thinking doesn't happen in your browser — it happens on **Anthropic's servers**, and Anthropic charges for that computing the same way an electricity meter charges for power. That is why full conversation needs your own Anthropic API key. Creating the key at console.anthropic.com is free, but the API account is prepaid: you add a small credit there (even $5 lasts months) before the key works. Important: this Console balance is completely separate from a Claude.ai Pro/Max subscription — a subscription does not include API credit. Your key, your account, your control: a typical chat costs a penny or two, billed by Anthropic directly to you, and you can set spending limits or revoke the key there at any time. Nothing passes through — or to — the creator of ATLAS.
 
-No key? No problem. ATLAS simply stays in demo mode. The choice is entirely yours.
+No key? No problem. ATLAS answers from the NMS Archive. The choice is entirely yours.
 
 ## Quick start
 
 1. Host the folder anywhere (Netlify drag-and-drop works — zip the contents and drop on app.netlify.com). **Voice features require HTTPS**, so opening index.html directly from disk gives you typed chat only.
-2. Open the site. Enter your Anthropic API key (from console.anthropic.com) when prompted. It is stored only in your browser's localStorage and sent only to Anthropic.
+2. Open the site and ask away. Optional: add an Anthropic API key (from console.anthropic.com) under the cog for free-flowing conversation. It is stored only in your browser's localStorage and sent only to Anthropic.
 3. Tap the mic button and speak, or type and press Enter. ATLAS replies in text and voice.
 
 ## Controls
