@@ -96,7 +96,10 @@
       document.documentElement.classList.toggle("calm", on);
       save(on); sync();
     });
-    document.body.appendChild(b);
+    // A site can give the switch a home of its own (the Galactic Map puts it in its
+    // settings panel, since a floating pill would sit on top of the map's own panels).
+    var slot = document.getElementById("nmsCalmSlot");
+    (slot || document.body).appendChild(b);
   }
   if(document.body) mount();
   else document.addEventListener("DOMContentLoaded", mount);

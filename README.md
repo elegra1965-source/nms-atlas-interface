@@ -21,6 +21,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Real worlds in the System Scan.** Planets charted by players on [Voyager's Haven](https://havenmap.online), with portal address, discoverer and a link to the [Galactic Map](https://map.nomansskyhub.app)
 - **Galactic Alliances.** Between expeditions the countdown panel becomes an alliances briefing. Log up to three of your own alliances and ATLAS knows who you fly with
 - **Phone-friendly**, with arrows that show when a tile strip scrolls sideways
+- **Calm mode.** A small **Calm** switch in the bottom-left corner swaps the patterned and image backgrounds for a plain dark one, for anyone who finds the page busy. It's shared across the whole No Man's Sky Hub family (one switch turns it on for every site) and lives in `atlas-nms-assistant/calm.js`.
 
 <p>
   <img src="screenshots/02-system-scan.jpg" alt="System Scan showing a real Voyager's Haven world with portal glyphs and hex address" width="320">
