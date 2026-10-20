@@ -38,7 +38,12 @@ const API = (() => {
             'which may describe an older expedition as current:';
     s += `\n- Current expedition / community mission: ${e.name}` + (e.known ? '' : ' (newly started; its official name is not in this feed — say so if asked)');
     if (e.phase) s += ` — phase: ${e.phase}`;
-    if (e.live) s += `\n- Progress: tier ${e.live.tier} of ${e.live.totalTiers}, ${Number(e.live.percentage).toFixed(1)}% complete`;
+    if (e.live) s += `\n- Progress: tier ${e.live.tier} of ${e.live.totalTiers}` +
+      (e.live.tierPercentage != null ? `, ${Number(e.live.tierPercentage).toFixed(1)}% through the current tier` : '') +
+      ` (${Number(e.live.percentage).toFixed(1)}% overall)`;
+    if (e.live && /RESEARCH/i.test(e.phase || '')) s += '\n- This mission is the Space Anomaly\'s Community Research (Hello Games\' Galactic Atlas page "Community Research"): ' +
+      'the Anomaly gathers research data from Travellers across realities, and as more universal data is submitted the Quicksilver Synthesis Companion unlocks additional collectables. ' +
+      'If asked how the community research is doing, give the tier and the % through the current tier, as the official page does.';
     if (e.live && e.live.teams && e.live.teams.length) s += `\n- Faction standings (contribution): ${e.live.teams.map(t => `${t.name} ${t.total}`).join(', ')}`;
     if (e.ended) s += '\n- It has now ended; the next one has not started yet.';
     else if (e.msLeft !== null) s += `\n- Ends in about ${Math.round(e.msLeft / 3600000)} hours` + (e.endEstimated ? ' (an estimate — Hello Games has not published an exact end date)' : '');

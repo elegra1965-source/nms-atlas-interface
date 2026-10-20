@@ -348,6 +348,7 @@
     // v4.0: expedition answers are built from the live ticker data, so they follow
     // each new expedition automatically (see expeditionReply / swarmReply below)
     { p: 1, k: ['swarm', 'hive of glass', 'prismatic core'], r: () => swarmReply() },
+    { p: 1, k: ['community research', 'research progress', 'quicksilver synthesis', 'quicksilver companion', 'anomaly research'], r: () => researchReply() },
     { p: 1, k: ['expedition', 'community mission', 'galactic mission'], r: () => expeditionReply() },
     { k: ['portal'],
       r: 'Every portal leads somewhere, Traveller. Not every somewhere welcomes you. Sixteen glyphs, gathered from the bones of dead explorers, will carry you anywhere in the galaxy.' },
@@ -430,12 +431,24 @@
   function progressWords(info) {
     const L = info.live;
     if (!L) return 'The live progress feed is quiet right now — watch the ticker above.';
-    let s = `The community stands at tier ${L.tier} of ${L.totalTiers}, ${Number(L.percentage).toFixed(1).replace(/\.0$/, '')} percent complete.`;
+    const pct = v => Number(v).toFixed(1).replace(/\.0$/, '');
+    let s = L.tierPercentage != null
+      ? `The community stands at tier ${L.tier} of ${L.totalTiers}, ${pct(L.tierPercentage)} percent through this tier.`
+      : `The community stands at tier ${L.tier} of ${L.totalTiers}, ${pct(L.percentage)} percent complete.`;
     if (L.teams && L.teams.length) {
       const lead = L.teams.slice().sort((a, b) => b.total - a.total)[0];
       if (lead && lead.name) s += ` The ${titleCase(lead.name)} lead the standings.`;
     }
     return s;
+  }
+  /* v4.6: "what's the community research at?" -- same live feed as the Galactic Atlas 'Community Research' page */
+  function researchReply() {
+    const info = expInfo(), L = info && info.live;
+    if (!L) return 'The research uplink is quiet right now, Traveller. Hello Games keeps the live figure on the Galactic Atlas, under Community Research.';
+    const pct = v => Number(v).toFixed(1).replace(/\.0$/, '');
+    return `The Space Anomaly's Community Research stands at tier ${L.tier} of ${L.totalTiers}` +
+      (L.tierPercentage != null ? `, ${pct(L.tierPercentage)} percent through this tier` : `, ${pct(L.percentage)} percent complete`) +
+      ', Traveller. As more universal data is submitted, the Quicksilver Synthesis Companion unlocks additional collectables.';
   }
   function expeditionReply() {
     const info = expInfo();

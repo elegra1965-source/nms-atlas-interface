@@ -378,7 +378,7 @@ const Widgets = (() => {
   // while there's no live reading for it yet.
   const KNOWN_MISSIONS = {
     114: { name: 'EXPEDITION 22: THE SWARM', phase: 'CORE CONSTRUCTION', start: '2026-05-27T14:00:00+00:00', end: '2026-07-22T14:00:00+00:00', totalTiers: 5 },
-    116: { name: 'EXPEDITION 23: OUR JOURNEY CONTINUES', phase: 'COMMUNITY MISSION', start: '2026-09-16T14:00:00+00:00', end: '2026-10-28T14:00:00+00:00', endEstimated: true, totalTiers: 2 } // ~6wk estimate from the Sept 16 2026 launch — Hello Games hasn't published an exact end date
+    116: { name: 'EXPEDITION 23: OUR JOURNEY CONTINUES', phase: 'COMMUNITY RESEARCH', start: '2026-09-16T14:00:00+00:00', end: '2026-10-28T14:00:00+00:00', endEstimated: true, totalTiers: 2 } // ~6wk estimate from the Sept 16 2026 launch — Hello Games hasn't published an exact end date
   };
   const MISSION_LS_KEY = 'atlasMissionId';
   const EXPEDITION = { name: '', phase: '', mission: 0, start: null, end: null, endEstimated: false, totalTiers: 5, known: false };
@@ -818,13 +818,18 @@ const Widgets = (() => {
     const data = await probeForCurrentMission();
     LIVE = data ? {
       tier: data.currentTier, totalTiers: data.totalTiers || EXPEDITION.totalTiers,
-      percentage: data.percentage, teams: data.teamTotals || [], at: Date.now()
+      percentage: data.percentage, tierPercentage: (typeof data.tierPercentage === 'number' ? data.tierPercentage : null),
+      teams: data.teamTotals || [], at: Date.now()
     } : LIVE;
     if (data) {
       const teamsArr = data.teamTotals || [];
       const segs = [
         `${EXPEDITION.name} — LIVE`,
-        `${EXPEDITION.phase}: TIER ${data.currentTier}/${data.totalTiers || EXPEDITION.totalTiers} — ${data.percentage.toFixed(1)}% COMPLETE`
+        // tierPercentage = progress through the current tier: the number Hello Games' own
+        // Galactic Atlas 'Community Research' sidebar shows (TIER 2 - 41.1%)
+        typeof data.tierPercentage === 'number'
+          ? `${EXPEDITION.phase}: TIER ${data.currentTier} OF ${data.totalTiers || EXPEDITION.totalTiers} — ${data.tierPercentage.toFixed(1)}%`
+          : `${EXPEDITION.phase}: TIER ${data.currentTier}/${data.totalTiers || EXPEDITION.totalTiers} — ${data.percentage.toFixed(1)}% COMPLETE`
       ];
       if (teamsArr.length) {
         // this expedition has a faction/team split — show it; a community-only

@@ -15,6 +15,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Expedition guide:** every milestone of the current expedition by phase, with hints and rewards
 - **Voice in, voice out**, with wake word, continuous mode, hold-to-talk and interruptions
 - **Long-term memory** of what you tell it about yourself, stored only in your browser
+- **Community Research, live.** The ticker shows the Space Anomaly's Community Research tier and progress (e.g. *Tier 2 of 2 — 41%*), the same figure as Hello Games' [Galactic Atlas](https://galacticatlas.nomanssky.com/poi/community-research) sidebar, and you can ask ATLAS *"what's the community research at?"*, with or without a key.
 - **Live expedition ticker and countdown** from the official Galactic Atlas feed. It finds new expeditions by itself
 - **Galactic Alliances tile** with the live top 5 in the left panel (on phones it sits where the Visual Archive was; both archives now share one tile)
 - **Live alliance leaderboard ticker** under the expedition ticker: the top 10 Galactic Alliances with members, stations and 24-hour changes, plus where your own alliances rank. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/)
