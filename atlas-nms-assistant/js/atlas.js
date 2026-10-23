@@ -589,6 +589,20 @@
     runDemo(userText, reply || demoReply(userText, 'rest'));
   }
 
+  /* 2026-10-20: archive answers come from the English NMS Wiki. In another language they are
+     spoken with an English voice (so they don't sound garbled) and a one-line note says why. */
+  const T = (s, v) => (window.NMS_T ? NMS_T(s, v) : s.replace(/\{(\w+)\}/g, (m, k) => (v && v[k] != null ? v[k] : m)));
+  const notEnglish = () => !!(window.NMS_LANG && NMS_LANG() !== 'en');
+  let archiveNoteShown = false;
+  function archiveNote() {
+    if (!notEnglish() || archiveNoteShown) return;
+    archiveNoteShown = true;
+    addTranscript('t-atlas', T('Archive answers come from the English NMS Wiki, so they are in English. With your own Anthropic key (⚙), the Atlas talks in your language.'));
+  }
+  window.addEventListener('atlas-no-voice', () => {
+    addTranscript('t-atlas', T('This device has no voice for your language yet, so the Atlas speaks English for now. You can add one in your phone or computer\'s text-to-speech settings.'));
+  });
+
   function runDemo(userText, preset) {
     busy = true;
     const myTurn = turnId;
@@ -600,6 +614,7 @@
     setTimeout(() => {
       if (myTurn !== turnId) return; // interrupted while "thinking"
       const reply = preset || demoReply(userText);
+      archiveNote();
       addHistory('atlas', reply);
       API.remember(userText, reply); // demo chats survive reloads too
       // the glyph + English decode is the reveal; the full text goes to the log.
@@ -612,6 +627,7 @@
         if (!spoke) addTranscript('t-atlas', reply);
       };
       Voice.speak(reply, {
+        english: notEnglish(),
         onStart: () => { spoke = true; HUD.setState('speaking'); startDecode(reply); },
         onProgress: f => { if (myTurn === turnId) decodeProgress(0, f); },
         onEnd: () => { showReply(); if (myTurn !== turnId) return; settleIdle(); busy = false; endDecode(reply); maybeAutoListen(); }
@@ -818,7 +834,7 @@
     if (busy) return;
     Voice.stopWakeListening(); // never run two recognisers at once
     if (!Voice.supported()) {
-      addTranscript('t-error', 'Voice input unavailable in this browser — use the text field, Traveller. (Chrome and Edge support voice.)');
+      addTranscript('t-error', T('Voice input unavailable in this browser — use the text field, Traveller. (Chrome and Edge support voice.)'));
       return;
     }
     Voice.startListening({
@@ -843,11 +859,11 @@
         $('mic-btn').classList.remove('active');
         HUD.setState('idle');
         if (err === 'not-allowed' || err === 'service-not-allowed') {
-          addTranscript('t-error', 'Microphone access denied. Grant permission, Traveller.');
+          addTranscript('t-error', T('Microphone access denied. Grant permission, Traveller.'));
         } else if (err === 'no-speech') {
           // silent timeout — no message needed
         } else if (err === 'unsupported') {
-          addTranscript('t-error', 'Voice input unavailable in this browser — use the text field.');
+          addTranscript('t-error', T('Voice input unavailable in this browser — use the text field.'));
         }
       }
     });
@@ -935,11 +951,11 @@
       localStorage.setItem('atlas_wake', wakeEnabled ? '1' : '0');
       renderWake(); bleep(wakeEnabled ? 1050 : 440);
       if (wakeEnabled) {
-        addTranscript('t-atlas', 'Wake word armed. Say "Atlas" and I will listen, Traveller. (Experimental — keeps the microphone open; works best in Chrome or Edge on desktop.)');
+        addTranscript('t-atlas', T('Wake word armed. Say "Atlas" and I will listen, Traveller. (Experimental — keeps the microphone open; works best in Chrome or Edge on desktop.)'));
         Voice.startWakeListening(onWakeWord);
       } else {
         Voice.stopWakeListening();
-        addTranscript('t-atlas', 'Wake word disarmed. Tap the mic or the orb to speak.');
+        addTranscript('t-atlas', T('Wake word disarmed. Tap the mic or the orb to speak.'));
       }
     });
 
@@ -979,7 +995,7 @@
       logPlaceholder();
       updateLogCount();
       bleep(300, 0.12);
-      addTranscript('t-atlas', 'Transmissions purged, Traveller. This conversation never happened. (What I remember about you is kept — see ◈ MEMORY.)');
+      addTranscript('t-atlas', T('Transmissions purged, Traveller. This conversation never happened. (What I remember about you is kept — see ◈ MEMORY.)'));
     });
 
     // v4.0: collapsible transmission log
@@ -1037,6 +1053,7 @@
       bumpLogCount();
       let spoke = false;
       Voice.speak(info, {
+        english: notEnglish(),
         onStart: () => { spoke = true; HUD.setState('speaking'); startDecode(info); },
         onProgress: f => decodeProgress(0, f),
         onEnd: () => { settleIdle(); busy = false; endDecode(info); }
@@ -1134,7 +1151,7 @@
     });
     $('voice-test').addEventListener('click', () => {
       saveVoicePrefs();
-      Voice.speak('Greetings, Traveller. This is the voice of the Atlas.');
+      Voice.speak(T('Greetings, Traveller. This is the voice of the Atlas.'));
     });
     // repopulate when device voices finish loading (async on most browsers)
     if ('speechSynthesis' in window) {
@@ -1150,7 +1167,7 @@
     if (greeted) return;
     greeted = true;
     const nm = Memory.name();
-    const msg = `Atlas interface online. I have been waiting, Traveller${nm ? ' ' + nm : ''}. Speak, or type — all frequencies are open.`;
+    const msg = T('Atlas interface online. I have been waiting, Traveller{name}. Speak, or type — all frequencies are open.', { name: nm ? ' ' + nm : '' });
     addTranscript('t-atlas', msg);
     // speak greeting only after a user gesture has occurred (key save click counts)
     Voice.speak(msg, {
@@ -1170,9 +1187,9 @@
   function returnGreeting() {
     const nm = Memory.name();
     const exp = (typeof Widgets !== 'undefined' && Widgets.expedition) ? titleCase(Widgets.expedition()) : '';
-    let msg = `Welcome back, Traveller${nm ? ' ' + nm : ''}.`;
-    if (exp) msg += ` ${exp.replace(/^Expedition (\d+):/, 'Expedition $1 —')} is under way.`;
-    msg += ' ' + nextClosingLine();
+    let msg = T('Welcome back, Traveller{name}.', { name: nm ? ' ' + nm : '' });
+    if (exp) msg += ' ' + T('{exp} is under way.', { exp: exp.replace(/^Expedition (\d+):/, 'Expedition $1 —') });
+    msg += ' ' + T(nextClosingLine());
     return msg;
   }
 
@@ -1335,9 +1352,9 @@
     if (returning) {
       showTransmissionGate(); // the tap it asks for lets ATLAS speak the greeting
     } else if (!API.hasKey()) {
-      addTranscript('t-atlas', 'Atlas interface online — NMS ARCHIVE. Ask me anything about this universe, Traveller.');
+      addTranscript('t-atlas', T('Atlas interface online — NMS ARCHIVE. Ask me anything about this universe, Traveller.'));
     } else {
-      addTranscript('t-atlas', 'Atlas interface online. Speak, or type — all frequencies are open, Traveller.');
+      addTranscript('t-atlas', T('Atlas interface online. Speak, or type — all frequencies are open, Traveller.'));
     }
 
     // welcome popup — shown every launch when no key is set

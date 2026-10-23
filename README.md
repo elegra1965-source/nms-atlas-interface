@@ -23,11 +23,14 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Galactic Alliances.** Between expeditions the countdown panel becomes an alliances briefing. Log up to three of your own alliances and ATLAS knows who you fly with
 - **Phone-friendly**, with arrows that show when a tile strip scrolls sideways
 - **Calm mode.** A small **Calm** switch in the bottom-left corner swaps the patterned and image backgrounds for a plain dark one, for anyone who finds the page busy. It's shared across the whole No Man's Sky Hub family (one switch turns it on for every site) and lives in `atlas-nms-assistant/calm.js`.
+- **Your language.** The 🌐 button switches the page between English, Español, Deutsch, Nederlands, Polski, Français, Português (Brasil) and Italiano. With your own key, ATLAS answers in your language, and the voice and microphone use it too (free voices built into your device; if it has none for your language, ATLAS says so and speaks English). Answers from the free NMS Archive stay in English, with a note saying so. The choice is shared by the whole No Man's Sky Hub family: pick it once and every site follows (a small cookie on `.nomansskyhub.app`, nothing goes to a server). On a first visit the page offers your phone's language once instead of switching by itself. Names, glyphs and portal addresses stay as they are. It lives in `atlas-nms-assistant/lang.js` (the same file on every site), with one small pack per language in `lang/` and a font for Polish letters in `fonts/`.
 
 <p>
   <img src="screenshots/02-system-scan.jpg" alt="System Scan showing a real Voyager's Haven world with portal glyphs and hex address" width="320">
   <img src="screenshots/03-alliances.jpg" alt="Galactic Alliances panel with the Traveller's own alliances" width="290">
 </p>
+
+<img src="screenshots/04-languages.jpg" alt="ATLAS on a phone: the language picker (left) and the interface in Deutsch (right)" width="560">
 
 ## Where the code is
 

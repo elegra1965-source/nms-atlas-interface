@@ -4,6 +4,12 @@
 ======================================================= */
 const Widgets = (() => {
 
+  /* 2026-10-20: languages (lang.js). Text written straight into the page is translated by
+     lang.js itself; the two scrolling tickers join many pieces into one line, so their
+     fixed words are translated here before joining. */
+  const T = (s, v) => (window.NMS_T ? NMS_T(s, v) : String(s).replace(/\{(\w+)\}/g, (m, k) => (v && v[k] != null ? v[k] : m)));
+  const TR = s => (window.NMS_TR ? NMS_TR(s) : s);
+
   /* ---------- CLOCKS ---------- */
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -619,25 +625,25 @@ const Widgets = (() => {
     const board = await loadAllianceBoard();
     const segs = [];
     if (board) {
-      segs.push('GALACTIC ALLIANCES — TOP 10' + (board.total ? ' OF ' + fmtN(board.total) : ''));
+      segs.push(T('GALACTIC ALLIANCES — TOP 10') + (board.total ? ' ' + T('OF {n}', { n: fmtN(board.total) }) : ''));
       board.top.forEach(a => {
         const L = a.latest, t = a.trend_24h || {};
         segs.push('#' + (L.activity_rank || '?') + ' [' + a.tag + '] ' + a.name + ' · ' +
-          fmtN(L.member_count) + ' MEMBERS' + trend(t.member_count) + ' · ' +
-          fmtN(L.station_count) + ' STATIONS' + trend(t.station_count));
+          fmtN(L.member_count) + ' ' + T('MEMBERS') + trend(t.member_count) + ' · ' +
+          fmtN(L.station_count) + ' ' + T('STATIONS') + trend(t.station_count));
       });
       mine.forEach(m => {
         const hit = board.all.find(a => a.tag && m.tag && a.tag.toUpperCase() === m.tag.toUpperCase());
-        segs.push('YOUR ALLIANCE [' + m.tag + '] ' + m.name +
-          (hit ? ' · RANK #' + (hit.latest.activity_rank || '?') + ' · ' + fmtN(hit.latest.member_count) + ' MEMBERS' : ' · NOT YET TRACKED BY VOYAGER\'S HAVEN'));
+        segs.push(T('YOUR ALLIANCE') + ' [' + m.tag + '] ' + m.name +
+          (hit ? ' · ' + T('RANK') + ' #' + (hit.latest.activity_rank || '?') + ' · ' + fmtN(hit.latest.member_count) + ' ' + T('MEMBERS') : ' · ' + T('NOT YET TRACKED BY VOYAGER\'S HAVEN')));
       });
-      segs.push('LEADERBOARD COURTESY OF VOYAGER\'S HAVEN · HAVENMAP.ONLINE · BUILT BY U/IAMTHE-EKIMO-1920 · THANK YOU');
+      segs.push(T('LEADERBOARD COURTESY OF VOYAGER\'S HAVEN · HAVENMAP.ONLINE · BUILT BY U/IAMTHE-EKIMO-1920 · THANK YOU'));
     } else {
-      segs.push('GALACTIC ALLIANCES · COSMOS UPDATE');
-      if (mine.length) segs.push('YOUR ALLIANCES: ' + mine.map(m => '[' + m.tag + '] ' + m.name).join(' · '));
-      else segs.push('LOG YOUR ALLIANCES WITH ⇄ ON THE EXPEDITION PANEL');
-      segs.push('JOIN AT ANY SPACE STATION AN ALLIANCE OWNS', 'BELONG TO UP TO 3 AT ONCE',
-        'TELEPORT TO YOUR ALLIANCES\' SYSTEMS', 'RANKINGS: STATION CORE → VIEW GALACTIC ALLIANCES');
+      segs.push(T('GALACTIC ALLIANCES · COSMOS UPDATE'));
+      if (mine.length) segs.push(T('YOUR ALLIANCES:') + ' ' + mine.map(m => '[' + m.tag + '] ' + m.name).join(' · '));
+      else segs.push(T('LOG YOUR ALLIANCES WITH ⇄ ON THE EXPEDITION PANEL'));
+      segs.push(T('JOIN AT ANY SPACE STATION AN ALLIANCE OWNS'), T('BELONG TO UP TO 3 AT ONCE'),
+        T('TELEPORT TO YOUR ALLIANCES\' SYSTEMS'), T('RANKINGS: STATION CORE → VIEW GALACTIC ALLIANCES'));
     }
     el.textContent = segs.join(sep);
     renderAllianceBoard(board);
@@ -812,6 +818,13 @@ const Widgets = (() => {
     return bestData;
   }
 
+  // a new language: redraw both tickers in it
+  let tickerLang = 'en';
+  document.addEventListener('nms-lang', e => {
+    const l = e.detail && e.detail.lang; if (!l || l === tickerLang) return; tickerLang = l;
+    try { updateTicker(); updateAllianceTicker(); } catch (err) {}
+  });
+
   async function updateTicker() {
     const el = document.getElementById('ticker-track');
     const sep = '   ◆   ';
@@ -846,14 +859,14 @@ const Widgets = (() => {
         segs.push(`STANDINGS: ${teams}`);
       }
       segs.push(countdownStr());
-      el.textContent = segs.join(sep);
+      el.textContent = segs.map(TR).join(sep);
     } else {
       // offline or the API hasn't responded — say so honestly rather than guessing numbers
       el.textContent = [
         `${EXPEDITION.name}`,
         'CHECKING TRANSMISSION — RETRYING SHORTLY',
         countdownStr()
-      ].join(sep);
+      ].map(TR).join(sep);
     }
     syncTickerSpeed();
     loadExpArt(); // refresh expedition art whenever ticker updates

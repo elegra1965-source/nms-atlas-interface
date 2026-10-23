@@ -4,6 +4,10 @@
 
 A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it speaks back.
 
+## What's new in v4.6
+
+- **Your language.** The 🌐 button in the header switches ATLAS between English, Español, Deutsch, Nederlands, Polski, Français, Português (Brasil) and Italiano: the HUD, tickers, weather and scan text, greetings and messages. With your own key, Claude replies in that language, and the microphone and voice use it (free voices built into your device; if there's none for your language, ATLAS says so once and speaks English). NMS Archive answers come from the English wiki, so they stay in English and are spoken with an English voice, with a one-time note. The choice is shared by every No Man's Sky Hub site (cookie on `.nomansskyhub.app`). Names, glyphs and hex addresses stay as they are. `lang.js` + `lang/` + `fonts/` (Polish letters).
+
 ## What's new in v4.5
 
 - **NMS Archive: no more demo mode.** Without a key ATLAS now answers *any* No Man's Sky question from the [No Man's Sky Wiki](https://nomanssky.fandom.com): "how do I get a freighter?", "how do I tame a creature?", "what is a dissonant system?", "who is Artemis?". It finds the game's own page (skipping player bases and events), speaks its opening lines and, for how-do-I questions, its Obtaining/Location section. Recipes, refining and expedition milestones still come from the Codex. Off-topic questions get a polite "I keep the records of this universe only". Free for everyone, no key, no cost to anyone (`NMSCodex.lookup` in `js/codex.js`).
@@ -98,6 +102,7 @@ The app is a full PWA: installable from the browser, offline UI (AI calls need i
 - `js/` — atlas.js (core), voice.js (speech), api.js (Claude), memory.js (long-term memory), pulse.js (sound-reactive orb), widgets.js (weather/clock/lore), hud.js (orb state machine)
 - `assets/` — Atlas orb GIF, spaceport background, icons, 56 NMS lore facts
 - `manifest.json`, `sw.js` — PWA install + offline cache
+- `lang.js`, `lang/`, `fonts/` — language picker and translations, shared by every Hub site
 
 ## Expedition ticker
 

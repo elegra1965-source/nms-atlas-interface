@@ -26,6 +26,14 @@ const API = (() => {
     "alliances are ranked on leaderboards by how many members they have and how active and expansive they are, viewed in game via View Galactic Alliances on the Station Core. " +
     "There is no official public website or feed for alliance rankings. Between expeditions, encourage Travellers to join or found an alliance.";
 
+  /* 2026-10-20: reply in the language picked in the 🌐 list (lang.js) */
+  const LANG_NAMES = { es: 'Spanish', de: 'German', nl: 'Dutch', pl: 'Polish', fr: 'French', 'pt-BR': 'Brazilian Portuguese', it: 'Italian' };
+  function langLine() {
+    const n = LANG_NAMES[window.NMS_LANG ? NMS_LANG() : 'en'];
+    return n ? `\n\nThe Traveller has chosen ${n}. Always reply in ${n}, using the official ${n} No Man's Sky terms where you know them. ` +
+      'Keep proper nouns (system, planet, galaxy, alliance and Traveller names), portal glyphs and hex addresses exactly as they are.' : '';
+  }
+
   let history = [];
 
   /* v4.0: the current expedition from the live Galactic Atlas feed (same source as the
@@ -104,7 +112,7 @@ const API = (() => {
         body: JSON.stringify({
           model: MODELS[i],
           max_tokens: 1024,
-          system: SYSTEM_PROMPT + liveContext() + allianceContext() + (typeof Memory !== 'undefined' ? Memory.promptBlock() : ''),
+          system: SYSTEM_PROMPT + liveContext() + allianceContext() + (typeof Memory !== 'undefined' ? Memory.promptBlock() : '') + langLine(),
           messages: history,
           stream: true,
           tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }]

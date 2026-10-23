@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#CC1A1A">
 <title>ATLAS — No Man's Sky AI Companion: Voice Guide &amp; Expedition Tracker</title>
 <script src="/calm.js?v=1"></script>
+<script src="/lang.js?v=1"></script>
 <meta name="description" content="A free, voice-driven No Man's Sky companion. Live expedition tracking, lore, and the Atlas itself — speak, Traveller.">
 <meta property="og:title" content="ATLAS — A No Man's Sky AI Companion">
 <meta property="og:description" content="Talk to the Atlas. Live expedition tracker, faction standings, lore archive and a voice interface — free, no account needed.">
@@ -135,7 +136,7 @@
   <div class="tg-inner">
     <div class="tg-orb" aria-hidden="true"></div>
     <div class="tg-title">INCOMING TRANSMISSION</div>
-    <div class="tg-glyphs" aria-hidden="true">INCOMING TRANSMISSION</div>
+    <div class="tg-glyphs" aria-hidden="true" translate="no">INCOMING TRANSMISSION</div>
     <div class="tg-tap">TAP TO RECEIVE <span>▸</span></div>
   </div>
 </div>
@@ -233,11 +234,12 @@
 
   <!-- HEADER -->
   <header id="header-bar">
-    <div class="brand">A T L A S <span class="brand-sub">— INTERFACE v4.5</span></div>
+    <div class="brand" translate="no">A T L A S <span class="brand-sub">— INTERFACE v4.5</span></div>
     <div class="header-clocks">
       <span id="clock-utc">UTC --:--:--</span>
       <span class="clock-sep">|</span>
       <span id="clock-local">LOCAL --:--:--</span>
+      <button id="lang-btn" type="button" data-lang-btn title="Language" aria-label="Language">🌐<b data-lang-code translate="no">EN</b></button>
       <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds">♪</button>
       <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings">⚙</button>
     </div>
@@ -296,7 +298,7 @@
         <div class="al-lead" id="al-lead">NO EXPEDITION ACTIVE · THE ATLAS RECOMMENDS AN ALLIANCE</div>
         <div class="al-yours">
           <div class="al-sub">YOUR ALLIANCES <span id="al-count">0/3</span></div>
-          <div id="al-list" class="al-list"></div>
+          <div id="al-list" class="al-list" translate="no"></div>
           <form id="al-form" class="al-form" autocomplete="off">
             <input id="al-tag" maxlength="4" placeholder="TAG" aria-label="Alliance tag (4 characters)">
             <input id="al-name" maxlength="32" placeholder="Alliance name" aria-label="Alliance name">
@@ -362,7 +364,7 @@
       <button id="silence-btn" class="hidden" aria-label="Stop ATLAS speaking">■ END TRANSMISSION</button>
     </div>
 
-    <div id="speech-decode" class="hidden" aria-hidden="true">
+    <div id="speech-decode" class="hidden" aria-hidden="true" translate="no">
       <div id="sd-glyphs" class="sd-line sd-glyphs"></div>
       <div id="sd-english" class="sd-line"></div>
     </div>

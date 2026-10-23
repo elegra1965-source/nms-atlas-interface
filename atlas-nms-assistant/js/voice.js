@@ -11,11 +11,19 @@ const Voice = (() => {
 
   function supported() { return !!SR; }
 
+  /* 2026-10-20: languages. Speech and the microphone follow the language picked in the
+     🌐 list (lang.js). Archive answers come from the English NMS Wiki, so atlas.js asks
+     for those to be spoken in English (speak(text, { english: true })). */
+  const LANG_TAGS = { en: 'en-GB', es: 'es-ES', de: 'de-DE', nl: 'nl-NL', pl: 'pl-PL', fr: 'fr-FR', 'pt-BR': 'pt-BR', it: 'it-IT' };
+  function uiLang() { try { return window.NMS_LANG ? NMS_LANG() : 'en'; } catch (e) { return 'en'; } }
+  function langTag() { return LANG_TAGS[uiLang()] || 'en-GB'; }
+  let speakEnglish = false;
+
   function initRecognition() {
     if (!SR) return null;
     const r = new SR();
     r.continuous = false;
-    r.lang = 'en-GB';
+    r.lang = langTag();
     r.interimResults = true;
     r.maxAlternatives = 1;
 
@@ -65,7 +73,7 @@ const Voice = (() => {
     const r = new SR();
     r.continuous = true;
     r.interimResults = true;
-    r.lang = 'en-GB';
+    r.lang = langTag();
     r.onresult = (e) => {
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const t = e.results[i][0].transcript.toLowerCase();
@@ -155,6 +163,33 @@ const Voice = (() => {
       voices.find(v => v.lang === 'en-GB') ||
       voices.find(v => v.lang && v.lang.startsWith('en')) ||
       voices[0];
+  }
+
+  /* the device voice for the chosen language: the Traveller's own pick if it speaks that
+     language, else an exact match (es-ES), else any voice of that language (es-US) */
+  const noVoiceWarned = {};
+  function voiceFor(tag) {
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) return null;
+    const norm = s => String(s || '').replace('_', '-').toLowerCase();
+    const t = tag.toLowerCase(), base = t.slice(0, 2);
+    const saved = localStorage.getItem(VOICE_STORE);
+    const mine = saved && voices.find(v => v.name === saved);
+    if (mine && norm(mine.lang).startsWith(base)) return mine;
+    return voices.find(v => norm(v.lang) === t) || voices.find(v => norm(v.lang).startsWith(base)) || null;
+  }
+  function applyVoice(u) {
+    const tag = speakEnglish ? 'en-GB' : langTag();
+    if (tag.startsWith('en')) { if (preferredVoice) u.voice = preferredVoice; u.lang = 'en-GB'; return; }
+    const v = voiceFor(tag);
+    if (v) { u.voice = v; u.lang = String(v.lang || tag).replace('_', '-'); return; }
+    // this device has no voice for the language: speak English, and say so once
+    if (preferredVoice) u.voice = preferredVoice;
+    u.lang = 'en-GB';
+    if (voicesReady && !noVoiceWarned[tag]) {
+      noVoiceWarned[tag] = 1;
+      try { window.dispatchEvent(new CustomEvent('atlas-no-voice', { detail: tag })); } catch (e) {}
+    }
   }
 
   function listVoices() {
@@ -437,8 +472,7 @@ const Voice = (() => {
       const chunkText = chunks[idx++], chunkStart = offset;
       offset += chunkText.length;
       const u = new SpeechSynthesisUtterance(chunkText);
-      if (preferredVoice) u.voice = preferredVoice;
-      u.lang = 'en-GB';
+      applyVoice(u);
       const p = PRESETS[getPreset()];
       u.rate = p.bRate;
       u.pitch = p.bPitch;
@@ -476,6 +510,7 @@ const Voice = (() => {
   function speak(text, cbs = {}) {
     if (!text) { cbs.onEnd && cbs.onEnd(); return; }
     stopSpeaking();
+    speakEnglish = !!cbs.english;
     const clean = cleanForSpeech(text);
     lastSpoken = clean.toLowerCase();
     if (getElKey() && getSource() !== 'device') speakEleven(clean, cbs);
@@ -492,6 +527,7 @@ const Voice = (() => {
 
   function startStream(cbs = {}) {
     stopSpeaking();
+    speakEnglish = false;
     stream = {
       gen: speechGen, queue: [], playing: false, closed: false, count: 0,
       started: false, ended: false, cbs,
@@ -566,8 +602,7 @@ const Voice = (() => {
     if (!('speechSynthesis' in window)) { onProgress && onProgress(1); done(); return; }
     const prog = progressTracker(text.length, PRESETS[getPreset()].bRate, onProgress);
     const u = new SpeechSynthesisUtterance(text);
-    if (preferredVoice) u.voice = preferredVoice;
-    u.lang = 'en-GB';
+    applyVoice(u);
     const p = PRESETS[getPreset()];
     u.rate = p.bRate;
     u.pitch = p.bPitch;
