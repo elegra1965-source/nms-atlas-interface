@@ -327,7 +327,7 @@
       </div>
       <div id="exp-bar" class="exp-bar" title="Time remaining — drains as the expedition ends"><div id="exp-bar-fill"></div></div>
       <div id="exp-countdown-name" class="exp-countdown-name"></div>
-      <a class="exp-alert-link" href="https://weather.nomansskyhub.app/?alerts=exp" target="_blank" rel="noopener" title="Notifications when an expedition starts and 24 hours before it ends">🔔 EXPEDITION ALERTS</a>
+      <button type="button" class="exp-alert-link" id="expAlertBtn" title="Notifications when an expedition starts and 24 hours before it ends">🔔 EXPEDITION ALERTS</button>
       <div class="exp-share">
         <span class="exp-share-label">SHARE TRANSMISSION</span>
         <div class="exp-share-btns">
@@ -455,5 +455,7 @@
 <script src="js/pulse.js"></script>
 <script src="js/heartbeat.js"></script>
 <script src="js/scrollhints.js"></script>
+<script src="nms-push.js"></script>
+<script>if (window.NMS_PUSH) NMS_PUSH.wire(document.getElementById('expAlertBtn'), 'atlas', { label: '🔔 EXPEDITION ALERTS', onLabel: '🔔 EXPEDITION ALERTS ON', okMsg: 'Expedition alerts on. You’ll hear when one starts and 24 hours before it ends.', fallbackHref: 'https://weather.nomansskyhub.app/?alerts=exp' });</script>
 </body>
 </html>

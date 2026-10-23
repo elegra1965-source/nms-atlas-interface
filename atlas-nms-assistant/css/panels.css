@@ -546,3 +546,6 @@
 .al-board:not(.open) .alb-more { display: none; }
 .al-board .alb-toggle { align-self: center; margin: 2px 0; padding: 5px 12px; border: 1px solid rgba(0, 229, 204, 0.35); background: rgba(0, 229, 204, 0.05); color: var(--nms-teal); font-family: inherit; font-size: 0.6rem; letter-spacing: 0.12em; cursor: pointer; }
 .al-board .alb-toggle:hover, .al-board .alb-toggle:focus-visible { border-color: var(--nms-teal); box-shadow: 0 0 10px rgba(0, 229, 204, 0.25); }
+/* 2026-10-23: the alerts link is now an on/off button (nms-push.js) */
+.exp-alert-link.on{border-color:rgba(0,255,136,.5);background:rgba(0,255,136,.06);color:#00ff88}
+button.exp-alert-link{cursor:pointer}

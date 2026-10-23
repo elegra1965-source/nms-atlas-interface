@@ -10,7 +10,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 ## Highlights (v4.5)
 
-- **Expedition alerts and Traveller ID.** 🔔 EXPEDITION ALERTS under the countdown sets up new-expedition / ends-in-24h notifications (sent by the Weather station), and ATLAS greets you by the Traveller ID name saved on the Hub.
+- **Expedition alerts and Traveller ID.** 🔔 EXPEDITION ALERTS under the countdown turns on new-expedition / ends-in-24h notifications from ATLAS itself, in your language (`nms-push.js`; sent by the Weather station's alert server), and ATLAS greets you by the Traveller ID name saved on the Hub.
 - **Atlas Codex:** ask how to craft or refine anything, where to find it, or what an item is used for — real recipes and sources read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com), no API key needed
 - **Expedition guide:** every milestone of the current expedition by phase, with hints and rewards
 - **Voice in, voice out**, with wake word, continuous mode, hold-to-talk and interruptions

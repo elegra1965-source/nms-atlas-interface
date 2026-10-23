@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v118'; // v4.5 NMS archive (free, no key)
+const CACHE = 'atlas-v119'; // v4.5 NMS archive (free, no key)
 
 const ASSETS = [
   './',
@@ -90,3 +90,20 @@ if (/\.netlify\.app$/.test(self.location.hostname)) {
     wins.forEach(c => { const u = new URL(c.url); c.navigate('https://atlas.nomansskyhub.app' + u.pathname + u.search).catch(() => {}); });
   })()));
 }
+
+// --- Push alerts (2026-10-23): sent by the Weather station's alert server, signed up via nms-push.js ---
+self.addEventListener('push', event => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (e) { data = { title: '◈ No Man\'s Sky Hub', body: event.data ? event.data.text() : '' }; }
+  event.waitUntil(self.registration.showNotification(data.title || '◈ No Man\'s Sky Hub', {
+    body: data.body || '', icon: data.icon || 'assets/icons/icon-192.png', badge: 'badge-96.png', tag: data.tag || 'nms-alert', data: data.url || './'
+  }));
+});
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const abs = new URL(event.notification.data || './', self.registration.scope);
+  event.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) { if (c.url.split('#')[0] === abs.href && 'focus' in c) return c.focus(); }
+    return clients.openWindow ? clients.openWindow(abs.href) : null;
+  }));
+});
