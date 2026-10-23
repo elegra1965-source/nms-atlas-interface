@@ -68,7 +68,7 @@ const Widgets = (() => {
   };
 
   function weatherIcon(code) {
-    function wi(file) { return '<img class="weather-icon" src="assets/weather-icons/' + file + '.png" width="30" height="30" style="image-rendering:pixelated">'; }
+    function wi(file) { return '<img class="weather-icon" alt="" src="assets/weather-icons/' + file + '.png" width="30" height="30" style="image-rendering:pixelated">'; }
     if (code === 0 || code === 1) return wi(4);           // clear / mainly clear
     if (code <= 3 || code === 45 || code === 48) return wi(12); // cloudy / overcast / fog
     if (code >= 95) return wi(13);                        // thunderstorm

@@ -399,7 +399,7 @@
     { k: ['simulation', 'real', 'telamon', 'boundary'],
       r: 'You suspect, then. Telamon watches from inside your exosuit and records everything. Boundary failures mark where the simulation wears thin. Whether any of this is real, Traveller, changes nothing about what it means.' },
     { p: 1, k: ['api key', 'anthropic', 'does this cost', 'is this free', 'is atlas free'],
-      r: 'The archive is free, forever, Traveller: recipes, refining, worlds, expeditions and lore, straight from the No Man\'s Sky Wiki. If you also want free-flowing conversation about anything, you may add your own Anthropic key under the cog. It is entirely optional.' }
+      r: 'The archive is free, forever, Traveller: recipes, refining, worlds, expeditions and lore, straight from the No Man\'s Sky Wiki. Add your own Anthropic key under the cog and I become a true AI that can talk about anything, in your language. It is entirely optional.' }
   ];
   const DEMO_FALLBACK = [
     'That lies outside this universe, Traveller. I keep the records of No Man\'s Sky alone. Ask me how to make warp cells, where to find activated indium, how to get a freighter, or what the current expedition needs.',

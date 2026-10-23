@@ -55,14 +55,14 @@ ATLAS is a **free, unofficial fan project**. The creator receives **no money wha
 
 Almost everything here runs in your browser at no cost to anyone: the HUD, the orb, the live expedition ticker, the countdown, the planet scanner, the weather, and the **NMS Archive** — where ATLAS answers your No Man's Sky questions from the community wiki and its own lore, spoken aloud, completely free, forever.
 
-The one optional extra is the full AI brain, for free-flowing conversation beyond the archive. When you ask it something, the thinking doesn't happen in your browser — it happens on **Anthropic's servers**, and Anthropic charges for that computing the same way an electricity meter charges for power. That is why full conversation needs your own Anthropic API key. Creating the key at console.anthropic.com is free, but the API account is prepaid: you add a small credit there (even $5 lasts months) before the key works. Important: this Console balance is completely separate from a Claude.ai Pro/Max subscription — a subscription does not include API credit. Your key, your account, your control: a typical chat costs a penny or two, billed by Anthropic directly to you, and you can set spending limits or revoke the key there at any time. Nothing passes through — or to — the creator of ATLAS.
+The one optional extra is the full AI brain: with it, ATLAS becomes a true AI that can talk about anything, in your language, not just No Man's Sky. When you ask it something, the thinking doesn't happen in your browser — it happens on **Anthropic's servers**, and Anthropic charges for that computing the same way an electricity meter charges for power. That is why full conversation needs your own Anthropic API key. Creating the key at console.anthropic.com is free, but the API account is prepaid: you add a small credit there (even $5 lasts months) before the key works. Important: this Console balance is completely separate from a Claude.ai Pro/Max subscription — a subscription does not include API credit. Your key, your account, your control: a typical chat costs a penny or two, billed by Anthropic directly to you, and you can set spending limits or revoke the key there at any time. Nothing passes through — or to — the creator of ATLAS.
 
-No key? No problem. ATLAS answers from the NMS Archive. The choice is entirely yours.
+No key? No problem. ATLAS answers No Man's Sky questions from the NMS Archive (in English). The choice is entirely yours.
 
 ## Quick start
 
 1. Host the folder anywhere (Netlify drag-and-drop works — zip the contents and drop on app.netlify.com). **Voice features require HTTPS**, so opening index.html directly from disk gives you typed chat only.
-2. Open the site and ask away. Optional: add an Anthropic API key (from console.anthropic.com) under the cog for free-flowing conversation. It is stored only in your browser's localStorage and sent only to Anthropic.
+2. Open the site and ask away. Optional: add an Anthropic API key (from console.anthropic.com) under the cog to make ATLAS a full AI that talks about anything, in your language. It is stored only in your browser's localStorage and sent only to Anthropic.
 3. Tap the mic button and speak, or type and press Enter. ATLAS replies in text and voice.
 
 ## Controls
