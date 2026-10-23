@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v119'; // v4.5 NMS archive (free, no key)
+const CACHE = 'atlas-v120'; // v4.5 NMS archive (free, no key)
 
 const ASSETS = [
   './',
