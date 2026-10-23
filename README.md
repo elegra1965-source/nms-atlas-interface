@@ -36,6 +36,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 The whole site lives in [`atlas-nms-assistant/`](atlas-nms-assistant/). That folder's [README](atlas-nms-assistant/README.md) covers setup, controls, voices, the API key and every file. Netlify publishes that folder on every push to `main`.
 
+## Using this code?
+
+It's free to use under the MIT licence. If you use any of it in your own project, site, video or post, please credit **elegra1965 / No Man's Sky Hub** with a link to [nomansskyhub.app](https://nomansskyhub.app). The MIT licence also asks you to keep the copyright notice in `LICENSE` with any copied code.
+
 ## Licence
 
 The code is MIT licensed (see `atlas-nms-assistant/LICENSE`). Game names and imagery belong to Hello Games and are not covered by that licence.

@@ -1,0 +1,5 @@
+[build]
+  # README/notes (*.md) and README screenshots never change the live site, so a
+  # commit that only touches those skips the deploy and costs no credits.
+  # Same rule as the galactic map. Any real code change still deploys as normal.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ':(top)' ':(top,exclude,glob)**/*.md' ':(top,exclude,glob)**/screenshots/**'"
