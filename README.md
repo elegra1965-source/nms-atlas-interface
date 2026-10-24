@@ -32,6 +32,12 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 <img src="screenshots/04-languages.jpg" alt="ATLAS on a phone: the language picker (left) and the interface in Deutsch (right)" width="560">
 
+## New here? Take the tour
+
+First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (shown once, never again). The tour dims the page and spotlights the orb, tap to speak, typing, quick questions, settings and the transmission log, one step at a time with Back / Next / Skip. Replay it any time from the **▷** button next to the cog button. The phone's Back button closes it, and it's translated into every language the site offers. Shared `nms-tour.js`, the same file on every nomansskyhub.app site.
+
+<img src="screenshots/05-tour.jpg" alt="Left: the New here? Take the tour prompt. Right: tour step 1 of 6, Meet the Atlas, spotlighting the orb" width="560">
+
 ## Where the code is
 
 The whole site lives in [`atlas-nms-assistant/`](atlas-nms-assistant/). That folder's [README](atlas-nms-assistant/README.md) covers setup, controls, voices, the API key and every file. Netlify publishes that folder on every push to `main`.

@@ -174,6 +174,13 @@ html, body {
   width: 28px; height: 28px; border-radius: 4px; font-size: 0.9rem;
 }
 #settings-btn:hover { box-shadow: 0 0 8px var(--nms-teal); }
+/* 2026-10-24: tour button (nms-tour.js), same look as the cog */
+#tour-btn {
+  background: none; border: 1px solid rgba(0, 229, 204, 0.4);
+  color: var(--nms-teal); cursor: pointer;
+  width: 28px; height: 28px; border-radius: 4px; font-size: 0.8rem;
+}
+#tour-btn:hover { box-shadow: 0 0 8px var(--nms-teal); }
 /* 2026-10-20: language picker (lang.js), same look as the cog */
 #lang-btn {
   background: none; border: 1px solid rgba(0, 229, 204, 0.4);

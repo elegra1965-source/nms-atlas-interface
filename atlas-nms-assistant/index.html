@@ -242,6 +242,7 @@
       <button id="lang-btn" type="button" data-lang-btn title="Language" aria-label="Language">🌐<b data-lang-code translate="no">EN</b></button>
       <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds">♪</button>
       <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings">⚙</button>
+      <button id="tour-btn" type="button" title="Take a quick tour of this page" aria-label="Take a quick tour of this page">▷</button>
     </div>
     <!-- v4.3: two full-width tickers — expedition, then galactic alliances (always visible) -->
     <div id="ticker-bar">
@@ -457,5 +458,7 @@
 <script src="js/scrollhints.js"></script>
 <script src="nms-push.js"></script>
 <script>if (window.NMS_PUSH) NMS_PUSH.wire(document.getElementById('expAlertBtn'), 'atlas', { label: '🔔 EXPEDITION ALERTS', onLabel: '🔔 EXPEDITION ALERTS ON', okMsg: 'Expedition alerts on. You’ll hear when one starts and 24 hours before it ends.', fallbackHref: 'https://weather.nomansskyhub.app/?alerts=exp' });</script>
+<script src="/nms-tour.js?v=1"></script>
+<script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device."}]});</script>
 </body>
 </html>
