@@ -9,6 +9,7 @@
 <title>ATLAS — No Man's Sky AI Companion &amp; Expedition Tracker</title>
 <script src="/calm.js?v=1"></script>
 <script src="/lang.js?v=2"></script>
+<script src="/nms-update.js?v=1" defer></script>
 <meta name="description" content="A free, voice-driven No Man's Sky AI companion. Ask how to craft or refine anything, check expedition milestones and live community research, and browse lore.">
 <meta property="og:title" content="ATLAS — A No Man's Sky AI Companion">
 <meta property="og:description" content="Talk to the Atlas: how to craft or refine anything, expedition milestones, live community research and lore. Voice-driven, free, no account needed.">
@@ -460,5 +461,6 @@
 <script>if (window.NMS_PUSH) NMS_PUSH.wire(document.getElementById('expAlertBtn'), 'atlas', { label: '🔔 EXPEDITION ALERTS', onLabel: '🔔 EXPEDITION ALERTS ON', okMsg: 'Expedition alerts on. You’ll hear when one starts and 24 hours before it ends.', fallbackHref: 'https://weather.nomansskyhub.app/?alerts=exp' });</script>
 <script src="/nms-tour.js?v=1"></script>
 <script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device."}]});</script>
+<script>/* 2026-10-24: turn on the app's own update worker (sw.js was only registered when alerts were switched on), so an installed ATLAS can tell when a new version is live (nms-update.js) */if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 </body>
 </html>
