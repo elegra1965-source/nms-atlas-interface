@@ -1,5 +1,5 @@
 /* ============================================================
-   Language choice (2026-10-20) -- the same file on every nomansskyhub.app site.
+   Language choice (2026-10-20; GoatCounter lang/<code> event 2026-10-24) -- the same file on every nomansskyhub.app site.
 
    HOW IT WORKS
    - English is the page itself. A language pack, lang/<code>.json next to this
@@ -77,10 +77,23 @@
     try{ return norm(localStorage.getItem(K)) || ''; }catch(e){ return ''; }
   }
   function save(c){
+    var was = saved();
     var dom = /(^|\.)nomansskyhub\.app$/.test(host) ? ';domain=.nomansskyhub.app' : '';
     document.cookie = K + '=' + c + ';path=/;max-age=31536000;SameSite=Lax' + dom +
       (location.protocol === 'https:' ? ';secure' : '');
     try{ localStorage.setItem(K, c); }catch(e){}
+    if(c !== was) track(c);
+  }
+  /* GoatCounter event lang/<code> each time someone picks a language (or says no to the
+     first-visit offer = lang/en), so the stats show which packs people really use.
+     Only real choices are counted: page loads with a saved choice and ?lang= visits are not. */
+  function track(c){
+    var n = 0;
+    (function send(){
+      var g = window.goatcounter;
+      if(g && g.count){ try{ g.count({ path: 'lang/' + c, title: 'Language picked: ' + c, event: true }); }catch(e){} }
+      else if(++n < 10) setTimeout(send, 1000);
+    })();
   }
   function forced(){ var m = location.search.match(/[?&]lang=([A-Za-z-]+)/); return m ? norm(m[1]) : ''; }
 

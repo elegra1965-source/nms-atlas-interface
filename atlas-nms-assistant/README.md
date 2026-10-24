@@ -6,7 +6,7 @@ A voice-first, No Man's Sky–themed AI assistant. Speak to the Atlas — it spe
 
 ## What's new in v4.6
 
-- **Your language.** The 🌐 button in the header switches ATLAS between English, Español, Deutsch, Nederlands, Polski, Français, Português (Brasil) and Italiano: the HUD, tickers, weather and scan text, greetings and messages. With your own key, Claude replies in that language, and the microphone and voice use it (free voices built into your device; if there's none for your language, ATLAS says so once and speaks English). NMS Archive answers come from the English wiki, so they stay in English and are spoken with an English voice, with a one-time note. The choice is shared by every No Man's Sky Hub site (cookie on `.nomansskyhub.app`). Names, glyphs and hex addresses stay as they are. `lang.js` + `lang/` + `fonts/` (Polish letters).
+- **Your language.** The 🌐 button in the header switches ATLAS between English, Español, Deutsch, Nederlands, Polski, Français, Português (Brasil) and Italiano: the HUD, tickers, weather and scan text, greetings and messages. With your own key, Claude replies in that language, and the microphone and voice use it (free voices built into your device; if there's none for your language, ATLAS says so once and speaks English). NMS Archive answers come from the English wiki, so they stay in English and are spoken with an English voice, with a one-time note. The choice is shared by every No Man's Sky Hub site (cookie on `.nomansskyhub.app`). When you pick a language, an anonymous count of which one goes to the site's cookie-free GoatCounter stats, so we can see which languages people use. Names, glyphs and hex addresses stay as they are. `lang.js` + `lang/` + `fonts/` (Polish letters).
 
 ## What's new in v4.5
 
