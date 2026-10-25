@@ -1,4 +1,7 @@
 [build]
+  # 2026-10-25: set every <lastmod> in the sitemap to the deploy date so Google
+  # sees the change (IndexNow for Bing runs in netlify/functions/deploy-succeeded.mjs).
+  command = '[ -f sitemap.xml ] && sed -i -E "s#<lastmod>[^<]*</lastmod>#<lastmod>$(date -u +%F)</lastmod>#g" sitemap.xml || true'
   # README/notes (*.md) and README screenshots never change the live site, so a
   # commit that only touches those skips the deploy and costs no credits.
   # Same rule as the galactic map. Any real code change still deploys as normal.
