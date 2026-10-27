@@ -2,7 +2,7 @@
    Cache static shell for offline UI. AI + weather calls
    always go to network.
 =========================================================== */
-const CACHE = 'atlas-v125'; // v4.5 NMS archive (free, no key)
+const CACHE = 'atlas-v126'; // v4.5 NMS archive (free, no key)
 
 const ASSETS = [
   './',
@@ -55,6 +55,7 @@ self.addEventListener('fetch', e => {
       url.hostname.includes('nomanssky.com') || url.hostname.includes('allorigins.win') ||
       url.hostname.includes('corsproxy.io') || url.hostname.includes('azureedge.net') ||
       url.hostname.includes('elevenlabs.io') || url.hostname.includes('fandom.com') ||
+      url.hostname.includes('nmsalmanac.com') || url.hostname === 'map.nomansskyhub.app' ||
       url.pathname.startsWith('/nms-api/') || url.pathname.startsWith('/haven-api/')) {
     return; // straight to network
   }

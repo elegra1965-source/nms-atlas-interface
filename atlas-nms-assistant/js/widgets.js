@@ -342,9 +342,143 @@ const Widgets = (() => {
     window.ATLAS_SCAN = w; // current real world, available to the rest of the interface
   }
 
+  /* ---------- 2026-10-27: NMS ALMANAC FIRST, VOYAGER'S HAVEN AS BACKUP ----------
+     Haven still picks the (random) charted system; the Almanac then supplies what the
+     game itself says about it — real names, biome, weather, sentinels, flora, fauna,
+     economy — plus its planet picture. Read through the Galactic Map's almanac function
+     (key stays server-side, answers cached there). Haven's own data is the fallback if
+     the Almanac doesn't know the system or can't be reached. A traveller photo on Haven
+     (rare) is shown too. Credit: Data: NMS Almanac + Charted by … via Voyager's Haven. */
+  const ALM_URL = 'https://map.nomansskyhub.app/.netlify/functions/almanac';
+  const ALM_STORE = 'atlas_alm_v1', ALM_DAYS = 7;
+  const A_BIOME = { lush: 'LUSH', frozen: 'FROZEN', toxic: 'TOXIC', scorched: 'SCORCHED', irradiated: 'IRRADIATED',
+                    radioactive: 'IRRADIATED', lava: 'VOLCANIC', volcanic: 'VOLCANIC', barren: 'BARREN', dead: 'BARREN' };
+  let scanGen = 0;
+  function almCacheGet(k) {
+    try { const c = JSON.parse(localStorage.getItem(ALM_STORE) || '{}')[k]; if (c && c.t > Date.now() - ALM_DAYS * 864e5) return c.b; } catch (e) {}
+    return null;
+  }
+  function almCachePut(k, b) {
+    try {
+      const all = JSON.parse(localStorage.getItem(ALM_STORE) || '{}');
+      all[k] = { t: Date.now(), b };
+      const keys = Object.keys(all).sort((x, y) => all[x].t - all[y].t);
+      while (keys.length > 40) delete all[keys.shift()];
+      localStorage.setItem(ALM_STORE, JSON.stringify(all));
+    } catch (e) {}
+  }
+  async function getJSON(url, ms) {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+    try { const r = await fetch(url, { signal: ctl.signal }); return r.ok ? await r.json() : null; }
+    catch (e) { return null; } finally { clearTimeout(t); }
+  }
+  async function almSystem(w) {
+    const k = w.gIndex + ':' + w.glyph.slice(1);
+    const c = almCacheGet(k);
+    if (c) return c;
+    const b = await getJSON(ALM_URL + '?addr=' + encodeURIComponent(w.glyph) + '&galaxy=' + w.gIndex, 5000);
+    if (b && b.ok && b.found && b.bodies && b.bodies.length) { almCachePut(k, b); return b; }
+    return null;
+  }
+  // traveller photo from Voyager's Haven, if one was uploaded (most have none)
+  async function havenPhoto(w, planetNames) {
+    const k = 'hp:' + w.gIndex + ':' + w.glyph;
+    const c = almCacheGet(k);
+    if (c) return c.u || null;
+    const sr = await getJSON('/haven-api/search?q=' + encodeURIComponent(w.glyph) + '&limit=5', 5000);
+    const hit = sr && (sr.systems || []).find(x => String(x.glyph_code || '').toUpperCase() === w.glyph.toUpperCase());
+    let u = null;
+    if (hit && hit.id) {
+      const full = await getJSON('/haven-api/systems/' + encodeURIComponent(hit.id), 5000);
+      if (full) {
+        const names = planetNames.map(n => String(n || '').toLowerCase());
+        const pl = (full.planets || []).find(p => p.photo && names.includes(String(p.name || '').toLowerCase()));
+        u = (pl && pl.photo) || full.photo || null;
+        if (u && !/^https?:/i.test(u)) u = 'https://havenmap.online/' + String(u).replace(/^\/+/, '');
+        if (u && !/^https:\/\//i.test(u)) u = null;
+      }
+    }
+    if (sr) almCachePut(k, { u });
+    return u;
+  }
+  const slug = s => String(s || '').toLowerCase().replace(/[\s']+/g, '-');
+  const up = s => String(s == null ? '' : s).toUpperCase();
+  function scanAlmanac(w, a, first) {
+    const S = a.system || {}, bodies = a.bodies;
+    const want = String(w.name || '').toLowerCase();
+    const match = bodies.find(b => String(b.name || '').toLowerCase() === want || String(b.gameName || '').toLowerCase() === want);
+    const B = (first && match) || pick(bodies);
+    const starKey = Object.keys(H_STAR).find(k => String(S.star || '').toLowerCase().includes(k.toLowerCase()));
+    const colour = H_STAR[starKey] || H_STAR[w.star] || '#f0c040';
+    const portal = B.portal || w.glyph;
+    const mapUrl = 'https://map.nomansskyhub.app/?arrival=1&addr=' + encodeURIComponent(portal) + '&galaxy=' + w.gIndex;
+    const almUrl = 'https://nmsalmanac.com/planet/' + encodeURIComponent(slug(w.galaxy)) + '/' + encodeURIComponent(portal);
+    const fallback = planetSVG(A_BIOME[String(B.biome || '').toLowerCase()] || H_BIOME[w.biome] || 'BARREN');
+    const pic = B.discSmall || B.disc;
+    document.getElementById('system-scan').innerHTML =
+      '<span class="s-name"><span class="star-dot" style="background:' + colour + ';color:' + colour + '"></span>' +
+      '<span class="s-name-text">' + esc(up(S.name || w.sys)) + ' SYSTEM</span></span>' +
+      '<div class="stat-row"><span class="s-key">GALAXY:</span><span class="stat-val">' + esc(up(w.galaxy)) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">STAR:</span><span class="stat-val" style="color:' + colour + '">' + esc(up(S.star || w.star)) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">RACE:</span><span class="stat-val">' + esc(up(S.race || w.race)) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">ECONOMY:</span><span class="stat-val">' + esc(up(S.economyType || S.economy || w.econ)) + '</span></div>' +
+      '<div class="stat-row"><span class="s-key">CONFLICT:</span><span class="stat-val">' + esc(up(S.conflict || H_CONF[w.conflict] || w.conflict)) + '</span></div>';
+    const P = document.getElementById('planet-scan');
+    P.innerHTML =
+      '<div class="planet-head">' +
+      '<div class="planet-vis">' + (pic ? '<img class="alm-disc" src="' + esc(pic) + '" alt="" width="56" height="56">' : fallback) + '</div>' +
+      '<span class="p-name">' + esc(up(B.name || w.name)) + '</span>' +
+      '</div>' +
+      '<div class="planet-rows">' +
+      '<div class="stat-row"><span class="p-key">BIOME:</span><span class="stat-val">' + esc(up(B.desc || B.biome || w.biome)) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">WEATHER:</span><span class="stat-val' + (B.extreme ? '" style="color:var(--nms-orange)' : '') + '">' + (B.extreme ? '⚠ ' : '') + esc(up(B.weather || w.weather)) + '</span></div>' +
+      (B.sentinels ? '<div class="stat-row"><span class="p-key">SENTINELS:</span><span class="stat-val">' + esc(up(B.sentinels)) + '</span></div>' : '') +
+      '<div class="stat-row"><span class="p-key">FLORA:</span><span class="stat-val">' + esc(up(B.floraW || w.flora)) + '</span></div>' +
+      '<div class="stat-row"><span class="p-key">FAUNA:</span><span class="stat-val">' + esc(up(B.faunaW || w.fauna)) + '</span></div>' +
+      '</div>' +
+      '<div class="haven-portal" title="Portal address">' +
+        '<div class="haven-portal-k">PORTAL ADDRESS</div>' +
+        '<div class="haven-glyphs">' + portal.split('').map(ch => '<img src="assets/glyphs/g-' + esc(ch) + '.webp" alt="' + esc(ch) + '" title="' + esc(ch) + '">').join('') + '</div>' +
+        '<div class="haven-glyph">' + esc(portal) + '</div>' +
+      '</div>' +
+      '<a class="haven-map" href="' + mapUrl + '" target="_blank" rel="noopener">◈ SHOW ON GALACTIC MAP</a>' +
+      '<div class="haven-credit"><span>DATA:</span> <a href="' + almUrl + '" target="_blank" rel="noopener">NMS ALMANAC</a><br>' +
+      'CHARTED BY ' + esc(up(w.by)) + ' · VIA <a href="https://havenmap.online" target="_blank" rel="noopener">VOYAGER\'S HAVEN</a></div>';
+    const img = P.querySelector('img.alm-disc');
+    if (img) img.addEventListener('error', () => { img.parentNode.innerHTML = fallback; });
+    P.querySelectorAll('a').forEach(x => x.addEventListener('click', e => e.stopPropagation()));
+    window.ATLAS_SCAN = Object.assign({}, w, { sys: S.name || w.sys, name: B.name || w.name, biome: B.desc || w.biome,
+      weather: B.weather || w.weather, sentinels: B.sentinels || null, flora: B.floraW || w.flora, fauna: B.faunaW || w.fauna,
+      race: S.race || w.race, econ: S.economyType || w.econ, conflict: S.conflict || w.conflict, glyph: portal, source: 'NMS Almanac' });
+    return B;
+  }
+  function addHavenPhoto(u, by) {
+    const P = document.getElementById('planet-scan');
+    if (!u || !P || P.querySelector('.haven-photo')) return;
+    const f = document.createElement('img');
+    f.className = 'haven-photo'; f.alt = ''; f.loading = 'lazy'; f.src = u;
+    f.title = 'Photo: ' + by + " · Voyager's Haven";
+    f.addEventListener('error', () => f.remove());
+    P.insertBefore(f, P.firstChild);
+  }
+
   function scanPlanet() {
     const real = HAVEN && havenWorld();
-    if (real) { scanHaven(real); return; }
+    if (real) {
+      const my = ++scanGen, first = scanGen === 1;
+      const els = ['system-scan', 'planet-scan'].map(id => document.getElementById(id));
+      const busy = setTimeout(() => els.forEach(e => e && e.classList.add('scan-busy')), 250);
+      almSystem(real).then(a => {
+        clearTimeout(busy);
+        els.forEach(e => e && e.classList.remove('scan-busy'));
+        if (my !== scanGen) return;
+        let names = [real.name];
+        if (a) { const B = scanAlmanac(real, a, first); names = [B.name, B.gameName, real.name]; }
+        else scanHaven(real);
+        havenPhoto(real, names).then(u => { if (my === scanGen) addHavenPhoto(u, real.by); });
+      });
+      return;
+    }
     // star system
     const sysName = (pick(P_SYL) + pick(P_SYL).toLowerCase() + '-' + (100 + Math.floor(Math.random() * 899))).toUpperCase();
     const [cls, colour] = pick(S_CLASS);

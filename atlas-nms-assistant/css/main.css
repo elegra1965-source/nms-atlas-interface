@@ -278,6 +278,7 @@ html, body {
 }
 .sd-line { min-height: 1.5em; flex: 0 1 auto; }
 .sd-glyphs { min-height: 2.2em; }
+.sd-line::-webkit-scrollbar { display: none; }
 .sd-glyphs {
   font-family: 'NMSGlyphs', monospace;
   font-size: 1rem;
@@ -287,10 +288,14 @@ html, body {
   text-align: center;
   padding: 2px 4px 8px;
   word-break: break-all;
-  max-height: 6.2em;       /* ~3 glyph lines, scrolls within its own window */
+  /* 2026-10-27: exactly 3 whole lines + padding, so the scrolled window never shows half a line */
+  max-height: calc(3 * 1.95em + 10px);
+  flex-shrink: 0;
+  scrollbar-width: none;
   overflow-y: auto;
 }
 #sd-english {
+  flex-shrink: 0;          /* 2026-10-27: English never gets squeezed — the glyph line gives way first */
   font-size: 0.95rem;
   color: var(--nms-white);
   line-height: 1.55;
@@ -298,7 +303,8 @@ html, body {
   margin-top: 8px;
   padding: 10px 4px 2px;
   border-top: 1px dashed rgba(0, 229, 204, 0.3);
-  max-height: 4.7em;       /* ~3 lines, scrolls within its own window */
+  max-height: calc(3 * 1.55em + 12px); /* 2026-10-27: exactly 3 whole lines + padding (no half lines) */
+  scrollbar-width: none;
   overflow-y: auto;
 }
 
@@ -638,6 +644,8 @@ html, body {
 
 /* ====== v4.0: chips step aside while ATLAS speaks (they can't be used then anyway) ====== */
 body[data-atlas="speaking"] #chips { display: none; }
+/* 2026-10-27: chips stay away until the captions close (1 s after the last word), so the box is never squeezed */
+body:has(#speech-decode:not(.hidden)) #chips { display: none; }
 
 /* ====== v4.0: short screens — the speech decode always wins the space ======
    If the log is expanded on a laptop-height screen, it folds itself away while
@@ -659,8 +667,8 @@ body[data-atlas="speaking"] #chips { display: none; }
   body[data-atlas="speaking"] #orb-arch #status-line { font-size: 0.5rem; letter-spacing: 0.12em; padding: 2px 6px; }
   #silence-btn { margin-top: 4px; }
   #speech-decode { padding: 8px 12px; margin-top: 4px; }
-  .sd-glyphs { max-height: 4em; line-height: 1.7; }
-  #sd-english { max-height: 3.2em; margin-top: 4px; padding-top: 6px; }
+  .sd-glyphs { max-height: calc(2 * 1.7em + 10px); line-height: 1.7; }
+  #sd-english { max-height: calc(2 * 1.55em + 8px); margin-top: 4px; padding-top: 6px; }
   #transcript { margin: 6px auto; }
   #chips { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; margin-bottom: 4px; }
   .chip { flex: 0 0 auto; }

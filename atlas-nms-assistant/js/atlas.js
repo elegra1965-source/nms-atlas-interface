@@ -162,6 +162,7 @@
       sdLater(() => g.classList.remove('sd-now'), 450);
       gl.scrollTop = gl.scrollHeight;
     }
+    sdFit();
     const e = document.createElement('span');
     e.className = 'sd-e sd-pending';
     if (en.childNodes.length) en.append(' ');
@@ -197,10 +198,42 @@
   }
 
 
+  // 2026-10-27 (Tony): the box closes 1 second after the last word is spoken,
+  // instead of lingering 5.5 s (when the chips came back it got squeezed and cut off)
+  const SD_CLOSE_AFTER = 1000;
   function sdScheduleFade() {
     clearTimeout(sdFadeTimer);
-    sdFadeTimer = setTimeout(() => $('speech-decode').classList.add('hidden'), SD_DECODE_TIME + 5000);
+    sdFadeTimer = setTimeout(sdHide, SD_CLOSE_AFTER);
   }
+  function sdHide() {
+    $('speech-decode').classList.add('hidden');
+    sdFit();
+  }
+
+  /* 2026-10-27: the captions must never be cut off. If the centre column is too short
+     for the glyph + English lines, the orb shrinks by exactly the missing height while
+     the box is open, and goes back to its normal size when the box closes. */
+  let sdFitRaf = 0;
+  function sdFit() {
+    if (sdFitRaf) return;
+    sdFitRaf = requestAnimationFrame(() => {
+      sdFitRaf = 0;
+      const orb = document.getElementById('orb-arch'), box = $('speech-decode');
+      if (!orb) return;
+      if (box.classList.contains('hidden')) { orb.style.width = ''; return; }
+      const short = el => {
+        const mh = parseFloat(getComputedStyle(el).maxHeight);
+        return Math.max(0, Math.min(el.scrollHeight, isFinite(mh) ? mh : Infinity) - el.clientHeight);
+      };
+      const missing = short($('sd-english')) + short($('sd-glyphs'));
+      if (missing > 1) {
+        const w = orb.getBoundingClientRect().width;
+        const nw = Math.max(90, Math.floor(w - missing - 2));
+        if (nw < w) orb.style.width = nw + 'px';
+      }
+    });
+  }
+  window.addEventListener('resize', () => { const o = document.getElementById('orb-arch'); if (o) o.style.width = ''; sdFit(); });
 
   // open the decode box. text: first segment (may be ''); opts.paced: no voice — reveal at reading pace
   function startDecode(text, opts) {
@@ -209,6 +242,7 @@
     $('sd-english').textContent = ''; $('sd-glyphs').textContent = '';
     $('speech-decode').classList.remove('hidden');
     if (text) sdAddSegment(text);
+    sdFit();
     if (opts && opts.paced) {
       const tick = () => {
         if (sdTarget >= sdWords.length) { sdPaced = null; return; }
@@ -241,7 +275,7 @@
     sdTimers.clear();
     clearTimeout(sdFadeTimer);
     sdEnding = false;
-    if (!keepOpen) $('speech-decode').classList.add('hidden');
+    if (!keepOpen) sdHide();
   }
 
   function logPlaceholder() {

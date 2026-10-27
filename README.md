@@ -19,7 +19,8 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Live expedition ticker and countdown** from the official Galactic Atlas feed. It finds new expeditions by itself
 - **Galactic Alliances tile** with the live top 5 in the left panel (on phones it sits where the Visual Archive was; both archives now share one tile)
 - **Live alliance leaderboard ticker** under the expedition ticker: the top 10 Galactic Alliances with members, stations and 24-hour changes, plus where your own alliances rank. Leaderboard courtesy of [Voyager's Haven](https://havenmap.online), built by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/)
-- **Real worlds in the System Scan.** Planets charted by players on [Voyager's Haven](https://havenmap.online), with portal address, discoverer and a link to the [Galactic Map](https://map.nomansskyhub.app)
+- **Real worlds in the System Scan, straight from the game.** Voyager's Haven picks a random player-charted system; [NMS Almanac](https://nmsalmanac.com) (by Borjomi) then fills in what the game itself says about it: system and planet names, star, race, economy, conflict, biome, weather, sentinels, flora, fauna, and the Almanac's picture of the planet. Each ⟳ picks another system and a random planet in it. The portal address (glyphs + hex) points at that exact planet, and **◈ SHOW ON GALACTIC MAP** takes you there. If the Almanac doesn't know a system, the scan falls back to Haven's own data; if a traveller uploaded a photo to Haven, it shows too. Credited under the scan: *Data: NMS Almanac* (links to the planet's Almanac page) and *Charted by … via Voyager's Haven*. Almanac answers come through the Galactic Map's cached Almanac lookup, so the Almanac key never reaches the browser.
+- **Captions that fit.** The glyph + English captions while ATLAS speaks always show whole lines (never half a line), the orb shrinks a little on short screens to make room, and the box closes 1 second after the last word is spoken.
 - **Galactic Alliances.** Between expeditions the countdown panel becomes an alliances briefing. Log up to three of your own alliances and ATLAS knows who you fly with
 - **Phone-friendly**, with arrows that show when a tile strip scrolls sideways
 - **Calm mode.** A small **Calm** switch in the bottom-left corner swaps the patterned and image backgrounds for a plain dark one, for anyone who finds the page busy. It's shared across the whole No Man's Sky Hub family (one switch turns it on for every site) and lives in `atlas-nms-assistant/calm.js`.
@@ -30,7 +31,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 
 <p>
-  <img src="screenshots/02-system-scan.jpg" alt="System Scan showing a real Voyager's Haven world with portal glyphs and hex address" width="320">
+  <img src="screenshots/07-almanac-scan.jpg" alt="System Scan with NMS Almanac data: Atticun-Gaen system, planet Japar VIII with its Almanac picture, sentinels, portal glyphs and hex, credits to NMS Almanac and Voyager's Haven" width="244">
   <img src="screenshots/03-alliances.jpg" alt="Galactic Alliances panel with the Traveller's own alliances" width="290">
 </p>
 
@@ -60,6 +61,7 @@ The code is MIT licensed (see `atlas-nms-assistant/LICENSE`). Game names and ima
 
 - Live expedition data: the official Galactic Atlas API by Hello Games
 - Recipes, sources and expedition milestones: the [No Man's Sky Wiki](https://nomanssky.fandom.com) community (CC BY-SA)
+- Real planet and system data + planet pictures in the System Scan: [NMS Almanac](https://nmsalmanac.com) by Borjomi. Thanks for the API.
 - Real worlds and the alliance leaderboard: [Voyager's Haven](https://havenmap.online), built and run by [u/IAmThe-Ekimo-1920](https://www.reddit.com/user/IAmThe-Ekimo-1920/). Thanks for opening up the Haven API. Haven's data belongs to Haven and its contributors.
 
 Built by elegra1965.
