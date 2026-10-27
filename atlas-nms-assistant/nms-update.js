@@ -6,7 +6,8 @@
    a small bar shows at the bottom: "New version ready · tap to update". One tap
    reloads in place; x hides it until the next new version.
    Never reloads by itself (that could lose a half-typed edit or a 3D view).
-   Text comes from the site's language pack via NMS_T when lang.js is loaded. */
+   Text comes from the site's language pack via NMS_T when lang.js is loaded.
+   2026-10-27: + the ⟳ Refresh button for installed apps (see mountRefresh below). */
 (function () {
   if (!('serviceWorker' in navigator) || window.NMS_UPDATE) return;
   var bar = null, lastCheck = 0, loadedAt = Date.now();
@@ -71,5 +72,82 @@
   window.addEventListener('pageshow', function (e) { if (e.persisted) check(); });
   setInterval(function () { if (document.visibilityState === 'visible') check(); }, 30 * 60000);
 
-  window.NMS_UPDATE = { check: check, show: show };
+  /* ⟳ Refresh (2026-10-27, Tony): an installed app has no browser reload and pull-to-refresh
+     doesn't work on every page (the Map's drag moves the map). So installed apps get a small ⟳
+     button next to the language button (or in a [data-nms-refresh-slot] the page provides).
+     Tap: fetch the newest sw.js, let a new version take over if there is one, then reload in
+     place (same address, so the same view). Shown only in the installed app. */
+  var note = null;
+  function say(msg) {
+    if (!note) {
+      note = document.createElement('div'); note.id = 'nmsRefNote'; note.setAttribute('role', 'status');
+      note.style.cssText = 'position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483001;' +
+        'background:rgba(8,14,22,.96);border:1px solid #2ee6d6;border-radius:6px;color:#e8fbff;font:600 14px/1.3 system-ui,sans-serif;' +
+        'padding:10px 16px;box-shadow:0 0 18px rgba(46,230,214,.35);width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;text-align:center;pointer-events:none';
+      (document.body || document.documentElement).appendChild(note);
+    }
+    note.textContent = msg; note.style.display = '';
+  }
+  function refresh() {
+    say(T('Updating…'));
+    var go = function () { location.reload(); };
+    navigator.serviceWorker.getRegistration().then(function (r) {
+      if (!r) return go();
+      var before = r.active;
+      return r.update().then(function () {
+        var w = r.installing || r.waiting;
+        if (!w && r.active === before) { say(T('✓ Up to date')); setTimeout(go, 700); return; }
+        var done = false, fin = function () { if (!done) { done = true; go(); } };
+        navigator.serviceWorker.addEventListener('controllerchange', fin);
+        if (w) w.addEventListener('statechange', function () { if (w.state === 'activated') fin(); });
+        setTimeout(fin, 4000);
+      });
+    }).catch(go);
+  }
+  function installed() {
+    try {
+      return navigator.standalone === true || matchMedia('(display-mode: standalone)').matches ||
+        matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: minimal-ui)').matches;
+    } catch (e) { return false; }
+  }
+  function mountRefresh() {
+    if (!installed() || document.getElementById('nmsRefresh')) return;
+    var slot = document.querySelector('[data-nms-refresh-slot]');
+    var ref = slot || document.querySelector('[data-lang-btn]') || document.getElementById('langSel');
+    if (!ref) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.id = 'nmsRefresh';
+    b.className = slot ? (slot.getAttribute('data-nms-refresh-slot') || '') : (ref.tagName === 'BUTTON' ? ref.className : '');
+    b.textContent = '⟳';
+    b.title = T('Refresh'); b.setAttribute('aria-label', T('Refresh'));
+    b.addEventListener('click', refresh);
+    var st = document.createElement('style');
+    st.textContent = '#nmsRefresh{font-size:1.15em;line-height:1;min-width:36px;cursor:pointer}' +
+      (b.className ? '' : '#nmsRefresh{background:rgba(8,14,22,.85);color:#2ee6d6;border:1px solid rgba(46,230,214,.55);border-radius:6px;padding:6px 10px;min-height:32px}');
+    document.head.appendChild(st);
+    if (slot) slot.appendChild(b); else ref.parentNode.insertBefore(b, ref.nextSibling);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountRefresh); else mountRefresh();
+
+  /* After a big batch of updates (2026-10-27, Tony: people may be tired of update bars), the
+     first open of the new version on that day says it was the last one today. Only for people who
+     had the app/site before (a service worker already controls the page), only once per site,
+     and only on the release day. Change REL + REL_DAY to use it again for another big batch. */
+  var REL = '2026-10-27b', REL_DAY = '2026-10-27';
+  function relNote() {
+    try {
+      var d = new Date(), day = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+      var seen = localStorage.getItem('nmsRel');
+      if (seen === REL) return;
+      localStorage.setItem('nmsRel', REL);
+      if (!navigator.serviceWorker.controller || day !== REL_DAY) return;
+      setTimeout(function () {
+        say(T('✓ Updated · that\'s the last update today'));
+        setTimeout(function () { if (note) note.style.display = 'none'; }, 6000);
+      }, 1200);
+    } catch (e) {}
+  }
+  if (document.readyState === 'complete') relNote(); else window.addEventListener('load', relNote);
+
+  window.NMS_UPDATE = { check: check, show: show, refresh: refresh, mountRefresh: mountRefresh };
 })();

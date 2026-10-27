@@ -1,3 +1,7 @@
+# Old Netlify address -> the family domain (2026-10-27). A real 301 so search engines move the old address's ranking here.
+# Must stay first so it wins over the rules below.
+https://nms-atlas-interface-ai.netlify.app/*  https://atlas.nomansskyhub.app/:splat  301!
+
 /nms-api/*  https://galacticatlas-api.nomanssky.com/api/:splat  200
 /haven-api/alliances  https://havenmap.online/api/public/alliances?sort=score&limit=50  200
 /haven-api/search  https://havenmap.online/api/search  200

@@ -867,7 +867,7 @@ const Widgets = (() => {
     nameEl.textContent = `UNTIL ${EXPEDITION.name} ENDS`;
   }
 
-  /* ---------- SHARE BUTTONS (X / Reddit / Copy link) ---------- */
+  /* ---------- SHARE BUTTONS (X / Reddit / Discord) ---------- */
   function initShareButtons() {
     const shareUrl = 'https://atlas.nomansskyhub.app';
     const shareText = 'Speak to the Atlas — a free, voice-driven No Man’s Sky companion with a LIVE expedition tracker.';
@@ -886,28 +886,27 @@ const Widgets = (() => {
         encodeURIComponent('I built ATLAS — a free, voice-driven Atlas interface with a LIVE expedition tracker');
     }
 
-    const copyBtn = document.getElementById('share-copy');
-    const copyText = document.getElementById('share-copy-text');
-    if (copyBtn && copyText) {
-      copyBtn.addEventListener('click', async () => {
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(shareUrl);
-          } else {
-            const ta = document.createElement('textarea');
-            ta.value = shareUrl;
-            ta.style.position = 'fixed'; ta.style.opacity = '0';
-            document.body.appendChild(ta); ta.select();
-            document.execCommand('copy'); document.body.removeChild(ta);
+    /* 2026-10-27 (Tony): COPY LINK -> DISCORD. Discord has no share link, so copy the message + link
+       and open Discord so they pick the server / DM (same as the Hub). Opened straight away so pop-up
+       blockers don't stop it. */
+    const dBtn = document.getElementById('share-discord');
+    if (dBtn) {
+      dBtn.addEventListener('click', () => {
+        const msg = (window.NMS_TR || String)('\u2713 COPIED \u2014 PASTE IT IN ANY SERVER OR DM');
+        const note = () => {
+          let t = document.getElementById('share-toast');
+          if (!t) {
+            t = document.createElement('div'); t.id = 'share-toast'; t.setAttribute('role', 'status');
+            t.style.cssText = 'position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;' +
+              'background:rgba(6,12,18,.95);border:1px solid rgba(0,229,255,.6);color:#bff6ff;border-radius:6px;padding:10px 16px;' +
+              "font:600 12px/1.4 'Share Tech Mono',monospace;letter-spacing:.06em;max-width:calc(100vw - 32px);width:max-content;text-align:center;pointer-events:none";
+            document.body.appendChild(t);
           }
-          const prev = copyText.textContent;
-          copyText.textContent = 'COPIED ✓';
-          copyBtn.classList.add('copied');
-          setTimeout(() => { copyText.textContent = prev; copyBtn.classList.remove('copied'); }, 1600);
-        } catch (e) {
-          copyText.textContent = 'COPY FAILED';
-          setTimeout(() => { copyText.textContent = 'COPY LINK'; }, 1600);
-        }
+          t.textContent = msg; t.style.display = '';
+          clearTimeout(t._h); t._h = setTimeout(() => { t.style.display = 'none'; }, 4500);
+        };
+        try { navigator.clipboard.writeText(shareText + ' ' + shareUrl).then(note, note); } catch (e) { note(); }
+        window.open('https://discord.com/app', '_blank');
       });
     }
   }

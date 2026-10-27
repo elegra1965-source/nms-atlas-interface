@@ -167,6 +167,13 @@ html, body {
 }
 #mute-btn:hover { box-shadow: 0 0 8px var(--nms-teal); }
 #mute-btn.muted { color: #555; border-color: #444; }
+/* 2026-10-27: ⟳ refresh (installed app only, added by nms-update.js) looks like its neighbours */
+#nmsRefresh {
+  background: none !important; border: 1px solid rgba(0, 229, 204, 0.4) !important;
+  color: var(--nms-teal) !important; cursor: pointer; padding: 0 !important;
+  width: 28px; height: 28px; min-width: 28px !important; min-height: 28px !important; border-radius: 4px !important; font-size: 0.95rem !important;
+}
+#nmsRefresh:hover { box-shadow: 0 0 8px var(--nms-teal); }
 
 #settings-btn {
   background: none; border: 1px solid rgba(0, 229, 204, 0.4);
