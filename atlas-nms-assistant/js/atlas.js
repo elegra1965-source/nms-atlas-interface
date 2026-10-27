@@ -247,7 +247,14 @@
       const orb = document.getElementById('orb-arch'), box = $('speech-decode'), gl = $('sd-glyphs');
       const col = document.getElementById('panel-centre');
       if (!orb) return;
-      if (box.classList.contains('hidden')) { orb.style.width = ''; gl.style.maxHeight = ''; return; }
+      if (box.classList.contains('hidden')) {
+        // 2026-10-27: no captions -- normal size, unless the question bar would end up below the
+        // centre column (very small windows / long chip labels): then the orb shrinks just enough
+        orb.style.width = ''; gl.style.maxHeight = '';
+        const over = col ? col.scrollHeight - col.clientHeight : 0;
+        if (over > 1) { const w0 = orb.getBoundingClientRect().width; orb.style.width = Math.max(90, Math.floor(w0 - over - 2)) + 'px'; }
+        return;
+      }
       // how much is cut off: inside the box (it shrinks to fit) or below the centre column
       const missing = Math.max(0, box.scrollHeight - box.clientHeight, col ? col.scrollHeight - col.clientHeight : 0);
       if (missing <= 1) return;
@@ -267,6 +274,9 @@
     }
   }
   window.addEventListener('resize', () => { const o = document.getElementById('orb-arch'); if (o) o.style.width = ''; $('sd-glyphs').style.maxHeight = ''; sdFit(); });
+  // chip labels change length with the language, and web fonts change text widths once loaded
+  document.addEventListener('nms-lang', () => setTimeout(sdFit, 50));
+  window.addEventListener('load', () => { sdFit(); if (document.fonts) document.fonts.ready.then(() => sdFit()); });
 
   // open the decode box. text: first segment (may be ''); opts.paced: no voice — reveal at reading pace
   function startDecode(text, opts) {
