@@ -645,7 +645,13 @@ html, body {
 /* ====== v4.0: chips step aside while ATLAS speaks (they can't be used then anyway) ====== */
 body[data-atlas="speaking"] #chips { display: none; }
 /* 2026-10-27: chips stay away until the captions close (1 s after the last word), so the box is never squeezed */
-body:has(#speech-decode:not(.hidden)) #chips { display: none; }
+/* 2026-10-27 (Tony): while the captions show, the input row goes too, so all 3 English lines always fit.
+   Both come back 1 s after the last word (or straight away on End Transmission / orb tap), fading in over 0.3 s. */
+body:has(#speech-decode:not(.hidden)) #chips,
+body:has(#speech-decode:not(.hidden)) #input-bar { display: none; }
+#chips, #input-bar { animation: row-in 0.3s ease-out; }
+@keyframes row-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #chips, #input-bar { animation: none; } }
 
 /* ====== v4.0: short screens — the speech decode always wins the space ======
    If the log is expanded on a laptop-height screen, it folds itself away while
@@ -676,6 +682,17 @@ body:has(#speech-decode:not(.hidden)) #chips { display: none; }
 
 /* v4.0: centre box is only the current question / notices — invisible when empty */
 #transcript:empty { background: transparent; border-color: transparent; }
+/* 2026-10-27: 'full transmission saved here' pointer in the Transmission Log bar, shown when the captions close */
+.log-note {
+  font-family: var(--font-body); font-size: 0.85em; letter-spacing: 0.08em; color: var(--nms-orange);
+  white-space: nowrap; animation: row-in 0.3s ease-out; transition: opacity 0.6s;
+}
+.log-note.fade { opacity: 0; }
+.log-toggle { flex-wrap: wrap; row-gap: 2px; min-width: 0; text-align: left; } /* the note drops under the title when the bar is narrow */
+.log-note { white-space: normal; }
+.log-toggle.log-glow { color: var(--nms-teal); text-shadow: 0 0 8px rgba(0, 229, 204, 0.6); animation: log-glow 1.6s ease-in-out 3; }
+@keyframes log-glow { 50% { text-shadow: 0 0 14px rgba(0, 229, 204, 0.9); } }
+@media (prefers-reduced-motion: reduce) { .log-toggle.log-glow { animation: none; } }
 .log-count.bump { animation: log-bump 0.9s ease-out; }
 @keyframes log-bump { 30% { background: var(--nms-teal); color: #000; box-shadow: 0 0 10px var(--nms-teal); } }
 

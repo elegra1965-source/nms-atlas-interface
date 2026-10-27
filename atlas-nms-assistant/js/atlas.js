@@ -180,7 +180,7 @@
     const draw = () => {
       const now = performance.now();
       const p = (now - t0) / SD_DECODE_TIME;
-      if (p >= 1 || !el.isConnected) { el.textContent = word; return; }
+      if (p >= 1 || !el.isConnected) { el.textContent = word; sdFit(); return; }
       // the random glyphs only change every SD_FLICKER_MS — a calm shimmer, not a strobe
       if (now - lastShuffle >= SD_FLICKER_MS) {
         rnd = chars.map(c => isLetter(c) ? SD_GLYPH_POOL[Math.random() * 26 | 0] : c);
@@ -191,6 +191,7 @@
       g.className = 'sd-scr';
       g.textContent = rnd.slice(keep).join('');
       el.replaceChildren(chars.slice(0, keep).join(''), g);
+      sdFit(); // the scrambled glyphs and the settling word can wrap differently: re-check every frame
       $('sd-english').scrollTop = $('sd-english').scrollHeight;
       sdLater(draw, 40);
     };
@@ -206,34 +207,66 @@
     sdFadeTimer = setTimeout(sdHide, SD_CLOSE_AFTER);
   }
   function sdHide() {
+    const wasOpen = !$('speech-decode').classList.contains('hidden');
     $('speech-decode').classList.add('hidden');
     sdFit();
+    if (wasOpen && turnLogged) showLogNote();
+  }
+
+  /* 2026-10-27 (Tony): once the captions close, say where the full answer went.
+     The Transmission Log bar glows and shows "◂ FULL TRANSMISSION SAVED HERE" next to its
+     count for 8 s (tap the bar to open the log). Cleared by the next question. Only for
+     answers that were logged (the welcome-back greeting isn't). */
+  let turnLogged = false, logNoteTimer = null;
+  function clearLogNote() {
+    clearTimeout(logNoteTimer);
+    const n = document.getElementById('log-note');
+    if (n) n.remove();
+    const t = $('log-toggle'); if (t) t.classList.remove('log-glow');
+  }
+  function showLogNote() {
+    const t = $('log-toggle');
+    if (!t || !$('history').classList.contains('collapsed')) { bumpLogCount(); return; } // log already open: the answer is in view
+    clearLogNote();
+    const n = document.createElement('span');
+    n.id = 'log-note';
+    n.className = 'log-note';
+    n.textContent = T('◂ FULL TRANSMISSION SAVED HERE');
+    t.appendChild(n);
+    t.classList.add('log-glow');
+    bumpLogCount();
+    logNoteTimer = setTimeout(() => { n.classList.add('fade'); t.classList.remove('log-glow'); setTimeout(() => n.remove(), 600); }, 8000);
   }
 
   /* 2026-10-27: the captions must never be cut off. If the centre column is too short
      for the glyph + English lines, the orb shrinks by exactly the missing height while
      the box is open, and goes back to its normal size when the box closes. */
-  let sdFitRaf = 0;
+  // runs straight away (before the browser paints) so a new line never shows cut off, even for a frame
   function sdFit() {
-    if (sdFitRaf) return;
-    sdFitRaf = requestAnimationFrame(() => {
-      sdFitRaf = 0;
-      const orb = document.getElementById('orb-arch'), box = $('speech-decode');
+    {
+      const orb = document.getElementById('orb-arch'), box = $('speech-decode'), gl = $('sd-glyphs');
+      const col = document.getElementById('panel-centre');
       if (!orb) return;
-      if (box.classList.contains('hidden')) { orb.style.width = ''; return; }
-      const short = el => {
-        const mh = parseFloat(getComputedStyle(el).maxHeight);
-        return Math.max(0, Math.min(el.scrollHeight, isFinite(mh) ? mh : Infinity) - el.clientHeight);
-      };
-      const missing = short($('sd-english')) + short($('sd-glyphs'));
-      if (missing > 1) {
-        const w = orb.getBoundingClientRect().width;
-        const nw = Math.max(90, Math.floor(w - missing - 2));
-        if (nw < w) orb.style.width = nw + 'px';
+      if (box.classList.contains('hidden')) { orb.style.width = ''; gl.style.maxHeight = ''; return; }
+      // how much is cut off: inside the box (it shrinks to fit) or below the centre column
+      const missing = Math.max(0, box.scrollHeight - box.clientHeight, col ? col.scrollHeight - col.clientHeight : 0);
+      if (missing <= 1) return;
+      const w = orb.getBoundingClientRect().width;
+      const give = Math.min(missing + 2, Math.max(0, w - 90));      // 1) the orb shrinks (not below 90px)
+      if (give > 0) orb.style.width = Math.floor(w - give) + 'px';
+      const left = missing + 2 - give;
+      if (left > 0) {                                                 // 2) then the glyph line drops to 2 lines, then 1
+        const cs = getComputedStyle(gl), lh = parseFloat(cs.lineHeight) || 30;
+        const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+        const now = Math.max(1, Math.round((gl.clientHeight - pad) / lh));
+        const keep = Math.max(1, now - Math.ceil(left / lh));
+        gl.style.maxHeight = (keep * lh + pad) + 'px';
+        gl.scrollTop = gl.scrollHeight;
       }
-    });
+      $('sd-english').scrollTop = $('sd-english').scrollHeight;
+    }
   }
-  window.addEventListener('resize', () => { const o = document.getElementById('orb-arch'); if (o) o.style.width = ''; sdFit(); });
+  window.addEventListener('resize', () => { const o = document.getElementById('orb-arch'); if (o) o.style.width = ''; $('sd-glyphs').style.maxHeight = ''; sdFit(); });
 
   // open the decode box. text: first segment (may be ''); opts.paced: no voice — reveal at reading pace
   function startDecode(text, opts) {
@@ -298,6 +331,7 @@
     $('history-list').appendChild(div);
     $('history-list').scrollTop = $('history-list').scrollHeight;
     updateLogCount();
+    if (who === 'atlas') turnLogged = true;
     return div;
   }
 
@@ -309,6 +343,7 @@
     if (el) el.textContent = String($('history-list').querySelectorAll('.h-msg').length);
   }
   function setLogOpen(open) {
+    if (open) clearLogNote();
     $('history').classList.toggle('collapsed', !open);
     $('log-toggle').setAttribute('aria-expanded', open ? 'true' : 'false');
     localStorage.setItem('atlas_log_open', open ? '1' : '0');
@@ -321,6 +356,8 @@
      An answer is only written there as a fallback when it could not be spoken (no voice). */
   function newTurnTranscript() {
     $('transcript').innerHTML = '';
+    turnLogged = false;
+    clearLogNote();
   }
   function bumpLogCount() {
     const el = $('log-count');
@@ -965,6 +1002,8 @@
     // the orb itself is the biggest mic button of all
     $('orb-arch').addEventListener('click', () => {
       if (Voice.isSpeaking() || HUD.getState() === 'speaking') { interrupt(); return; }
+      // 2026-10-27: captions still up in their last second — close them so the input row comes back
+      if (!$('speech-decode').classList.contains('hidden')) cancelDecode();
       if (Voice.isListening()) Voice.stopListening(); else startMic();
     });
     $('orb-arch').style.cursor = 'pointer';
