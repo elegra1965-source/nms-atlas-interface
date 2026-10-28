@@ -13,8 +13,11 @@
        button: {after:'#installBtn', className:'tool-btn', style:'', label:'▷ TOUR'},  // optional, injected next to an existing button (waits for it to exist)
        launchers: ['#tour-btn'],           // optional, existing buttons that start the tour
        waitFor: function(){ return true; }, // optional, first-visit prompt waits until this is true (e.g. a welcome box closed)
-       start: function(){ ... }            // optional, replaces the spotlight tour (Hub uses its video pop-up)
+       start: function(){ ... },           // optional, replaces the spotlight tour
+       end: {label:'▶ WATCH ...', run: function(){ ... }}  // optional (2026-10-27): extra button on the last step (Hub: opens its video pop-up after the tour closes)
      });
+   A step can have top:true (its target sits in a fixed header: the page scrolls to the top first).
+   A step's sel can also be a list ['#a','.b']: the first one showing in this layout is used.
    Steps whose element is missing or hidden are skipped. The phone's Back
    button and Esc close the tour. English text is translated by lang.js as
    it appears (add the strings to each site's lang/*.json).
@@ -37,6 +40,8 @@
   '#nmsTourPill.show{opacity:1;transform:translate(-50%,0)}'+
   '#nmsTourPill .nt-q{flex:0 0 100%;text-align:center;font:600 11px/1.3 monospace;letter-spacing:2px;color:#f0a500}'+
   '#nmsTourPill button{flex:1 1 0;padding:6px 8px;line-height:1.3}'+
+  '#nmsTourEnd{display:none;width:100%;margin-top:12px;min-height:40px;border:1px solid #f0a500;border-radius:6px;background:rgba(240,165,0,.08);color:#f0c14e;font:600 11px/1.3 monospace;letter-spacing:2px;cursor:pointer;padding:6px 10px}'+
+  '#nmsTourEnd:focus-visible{outline:2px solid #00e5ff;outline-offset:2px}'+
   '@media (prefers-reduced-motion:reduce){#nmsTourHole,#nmsTourCard,#nmsTourPill{transition:none}}';
 
   var cfg=null, list=[], idx=0, active=false, pushed=false, ov, hole, card, followUntil=0, dir=1;
@@ -49,24 +54,35 @@
     var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
     ov=document.createElement('div'); ov.id='nmsTourOv';
     ov.innerHTML='<div id="nmsTourHole"></div><div id="nmsTourCard" role="dialog" aria-modal="false" aria-live="polite">'+
-      '<div class="nt-k" id="nmsTourStep"></div><div class="nt-t" id="nmsTourTitle"></div><div class="nt-b" id="nmsTourBody"></div>'+
+      '<div class="nt-k" id="nmsTourStep"></div><div class="nt-t" id="nmsTourTitle"></div><div class="nt-b" id="nmsTourBody"></div><button type="button" id="nmsTourEnd"></button>'+
       '<div class="nt-row"><button type="button" id="nmsTourSkip">SKIP</button><button type="button" id="nmsTourBack">BACK</button><button type="button" class="nt-go" id="nmsTourNext">NEXT</button></div></div>';
     document.body.appendChild(ov);
     hole=ov.querySelector('#nmsTourHole'); card=ov.querySelector('#nmsTourCard');
     ov.querySelector('#nmsTourSkip').addEventListener('click',function(){ close(false); });
     ov.querySelector('#nmsTourBack').addEventListener('click',function(){ if(idx>0){ dir=-1; go(idx-1); } });
     ov.querySelector('#nmsTourNext').addEventListener('click',function(){ dir=1; if(idx>=list.length-1) close(false); else go(idx+1); });
+    ov.querySelector('#nmsTourEnd').addEventListener('click',function(){
+      var run=cfg&&cfg.end&&cfg.end.run, wasPushed=pushed;
+      close(false);
+      if(!run) return;
+      if(!wasPushed){ run(); return; }
+      /* wait for the history.back() from close() to land, so it can't close what run() opens */
+      var done=false; function go2(){ if(done) return; done=true; window.removeEventListener('popstate',onPop); setTimeout(run,0); }
+      function onPop(){ go2(); }
+      window.addEventListener('popstate',onPop); setTimeout(go2,600);
+    });
     window.addEventListener('scroll',function(){ if(active) place(); },{passive:true});
     window.addEventListener('resize',function(){ if(active) place(); });
     document.addEventListener('keydown',function(e){ if(active&&e.key==='Escape') close(false); });
     window.addEventListener('popstate',function(){ if(active){ pushed=false; close(true); } });
   }
-  function shown(st){ var el=$(st.sel); if(!el) return false; var r=el.getBoundingClientRect(); return !!(r.width||r.height); }
-  function target(i){
-    var el=list[i]&&$(list[i].sel); if(!el) return null;
-    var r=el.getBoundingClientRect();
-    return (r.width||r.height)?el:null;
+  function pickEl(sel){                       /* first of the step's selectors that is on screen in this layout */
+    var a=[].concat(sel);
+    for(var k=0;k<a.length;k++){ var el=$(a[k]); if(el){ var r=el.getBoundingClientRect(); if(r.width||r.height) return el; } }
+    return null;
   }
+  function shown(st){ return !!pickEl(st.sel); }
+  function target(i){ return list[i]?pickEl(list[i].sel):null; }
   function go(i){
     var n=list.length;
     while(i>=0&&i<n&&!target(i)) i+=dir;     /* skip anything not on screen in this layout */
@@ -79,15 +95,18 @@
     ov.querySelector('#nmsTourBody').textContent=s.body;
     ov.querySelector('#nmsTourBack').style.visibility=i===0?'hidden':'visible';
     ov.querySelector('#nmsTourNext').textContent=i===n-1?'DONE':'NEXT';
+    var eb=ov.querySelector('#nmsTourEnd');
+    if(cfg.end&&i===n-1){ eb.textContent=cfg.end.label; eb.style.display='block'; } else eb.style.display='none';
     var r=el.getBoundingClientRect(), vh=window.innerHeight;
-    if(r.top<70||r.bottom>vh-190){
+    if(s.top){ var sm=!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({top:0,behavior:sm?'smooth':'auto'}); }   /* step in a fixed header: show the page top so the header is fully in view */
+    else if(r.top<70||r.bottom>vh-190){
       var smooth=!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches;
       el.scrollIntoView({block:'center',behavior:smooth?'smooth':'auto'});
     }
     follow();
   }
   function follow(){                          /* keep re-measuring while the page scrolls/animates */
-    followUntil=Date.now()+900;
+    followUntil=Date.now()+1500;
     (function tick(){ if(!active) return; place(); if(Date.now()<followUntil) requestAnimationFrame(tick); })();
   }
   function place(){
