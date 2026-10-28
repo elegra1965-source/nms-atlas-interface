@@ -8,7 +8,21 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 ![ATLAS interface: the orb, live HUD panels and transmission log](screenshots/01-interface.jpg)
 
+**Contents** — long sections are folded; tap to open.
+
+- [Highlights (v4.5)](#highlights-v45)
+- [New here? Take the tour](#new-here-take-the-tour)
+- [Where the code is](#where-the-code-is)
+- [Using this code?](#using-this-code)
+- [Licence](#licence)
+- [Credits](#credits)
+
+<!-- folded -->
+
 ## Highlights (v4.5)
+
+<details>
+<summary>▸ Tap to open</summary>
 
 - **Expedition alerts and Traveller ID.** 🔔 EXPEDITION ALERTS under the countdown turns on new-expedition / ends-in-24h notifications from ATLAS itself, in your language (`nms-push.js`; sent by the Weather station's alert server), and ATLAS greets you by the Traveller ID name saved on the Hub.
 - **Atlas Codex:** ask how to craft or refine anything, where to find it, or what an item is used for — real recipes and sources read live from the [No Man's Sky Wiki](https://nomanssky.fandom.com), no API key needed
@@ -38,6 +52,8 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 </p>
 
 <img src="screenshots/04-languages.jpg" alt="ATLAS on a phone: the language picker (left) and the interface in Deutsch (right)" width="560">
+
+</details>
 
 ## New here? Take the tour
 
