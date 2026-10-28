@@ -27,13 +27,23 @@
     b.innerHTML = '&#8679;';
     b.addEventListener('click', function(){
       var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      window.scrollTo({top:0, behavior: calm ? 'auto' : 'smooth'});
+      (box || window).scrollTo({top:0, behavior: calm ? 'auto' : 'smooth'});
       b.blur();
     });
     document.body.appendChild(b);
-    var on = false;
-    function check(){ var v = (window.scrollY || document.documentElement.scrollTop) > 320; if (v !== on){ on = v; b.classList.toggle('nms-visible', v); } }
-    window.addEventListener('scroll', check, {passive:true}); check();
+    /* Most pages scroll the window; a few (ATLAS on phones) scroll <body> or one full-height box
+       instead, so listen to every scroll and follow the big scroller (at least 60% of the screen
+       tall). Small scrolling lists inside a page are ignored. */
+    var on = false, box = null;
+    function check(e){
+      var t = e && e.target, y;
+      if (t && t !== document && t.nodeType === 1 && t !== document.documentElement){
+        if (t.clientHeight < innerHeight * 0.6) return;
+        box = t; y = t.scrollTop;
+      } else { box = null; y = window.scrollY || document.documentElement.scrollTop; }
+      var v = y > 320; if (v !== on){ on = v; b.classList.toggle('nms-visible', v); }
+    }
+    document.addEventListener('scroll', check, {passive:true, capture:true}); check();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
