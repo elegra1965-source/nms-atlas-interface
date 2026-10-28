@@ -59,6 +59,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (shown once, never again). The tour dims the page and spotlights the orb, tap to speak, typing, quick questions, settings and the transmission log, one step at a time with Back / Next / Skip. Replay it any time from the **▷** button next to the cog button. The phone's Back button closes it, and it's translated into every language the site offers. Shared `nms-tour.js`, the same file on every nomansskyhub.app site.
 
+The last step is **Your language**: it points at the 🌐 button, because one choice there changes every site in the family.
+
+**Back to top.** Once you scroll down, a teal ⇧ arrow appears in the bottom-right corner. Tap it to glide back to the top (instant with reduced motion). It's the same arrow on every No Man's Sky Hub site.
+
 <img src="screenshots/05-tour.jpg" alt="Left: the New here? Take the tour prompt. Right: tour step 1 of 6, Meet the Atlas, spotlighting the orb" width="560">
 
 ## Where the code is

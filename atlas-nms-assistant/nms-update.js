@@ -133,7 +133,7 @@
      first open of the new version on that day says it was the last one today. Only for people who
      had the app/site before (a service worker already controls the page), only once per site,
      and only on the release day. Change REL + REL_DAY to use it again for another big batch. */
-  var REL = '2026-10-27b', REL_DAY = '2026-10-27';
+  var REL = '2026-10-30', REL_DAY = '2026-10-30';
   function relNote() {
     try {
       var d = new Date(), day = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
