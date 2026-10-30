@@ -338,6 +338,7 @@
     const icon = who === 'user' ? '◈' : '◆';
     div.innerHTML = `<span class="h-who">${icon} ${tag}</span>`;
     div.appendChild(document.createTextNode(text));
+    div.atlasText = text; // plain text for the log window's copy buttons
     $('history-list').appendChild(div);
     $('history-list').scrollTop = $('history-list').scrollHeight;
     updateLogCount();
@@ -1089,8 +1090,11 @@
     });
     updateLogCount();
 
+    // 2026-10-30: big log window (⤢)
+    wireLogModal();
+
     // keyboard access for the span-buttons in the log header
-    ['memory-btn', 'purge-log'].forEach(id => $(id).addEventListener('keydown', e => {
+    ['log-expand', 'memory-btn', 'purge-log'].forEach(id => $(id).addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $(id).click(); }
     }));
 
@@ -1363,6 +1367,107 @@
       ul.appendChild(li);
     });
     if (document.activeElement !== $('memory-name')) $('memory-name').value = Memory.name();
+  }
+
+  /* ---------- 2026-10-30 (Tony): the log is too small to read on phones, and press-and-hold
+     couldn't select a reply (Select all took the whole page). ⤢ opens a big window:
+     readable text, ⧉ copy per message + COPY ALL. ✕ / CLOSE / back button / Esc / tapping
+     outside only close the window -- nothing is deleted (that's ⌫ PURGE). While it's open the
+     page behind can't be selected, so Select all only takes the log. ---------- */
+  function wireLogModal() {
+    const modal = $('log-modal'), list = $('log-modal-list');
+    let pushed = false;
+    const msgText = el => el.atlasText != null ? el.atlasText
+      : Array.from(el.childNodes).filter(n => !(n.classList && n.classList.contains('h-who'))).map(n => n.textContent).join('').trim();
+    function copy(text, btn) {
+      const done = ok => {
+        if (!btn) return;
+        const old = btn.dataset.label || btn.textContent;
+        btn.dataset.label = old;
+        btn.textContent = ok ? T('✓ COPIED') : T('COPY FAILED');
+        btn.classList.add('copied');
+        clearTimeout(btn._t);
+        btn._t = setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 1800);
+      };
+      const fallback = () => {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+        modal.appendChild(ta); ta.select();
+        let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+        ta.remove(); done(ok);
+      };
+      try { navigator.clipboard.writeText(text).then(() => done(true), fallback); } catch (e) { fallback(); }
+      bleep(880, 0.06);
+    }
+    function render() {
+      list.innerHTML = '';
+      const msgs = $('history-list').querySelectorAll('.h-msg');
+      if (!msgs.length) {
+        const e = document.createElement('div');
+        e.className = 'lm-empty';
+        e.textContent = T('NO TRANSMISSIONS THIS SESSION — SPEAK, TRAVELLER');
+        list.appendChild(e);
+      }
+      msgs.forEach(m => {
+        const who = m.classList.contains('user') ? 'user' : 'atlas';
+        const text = msgText(m);
+        const row = document.createElement('div');
+        row.className = 'lm-msg ' + who;
+        const head = document.createElement('div');
+        head.className = 'lm-head';
+        const tag = document.createElement('span');
+        tag.className = 'lm-who';
+        tag.textContent = who === 'user' ? '◈ ' + T('TRAVELLER') : '◆ ATLAS';
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'lm-copy';
+        b.textContent = '⧉'; b.title = T('Copy this message'); b.setAttribute('aria-label', T('Copy this message'));
+        b.addEventListener('click', () => copy(text, b));
+        head.append(tag, b);
+        const body = document.createElement('div');
+        body.className = 'lm-text';
+        body.textContent = text;
+        row.append(head, body);
+        list.appendChild(row);
+      });
+      $('log-copy-all').disabled = !msgs.length;
+    }
+    function open() {
+      clearLogNote();
+      render();
+      modal.classList.remove('hidden');
+      document.documentElement.classList.add('log-reading');
+      list.scrollTop = list.scrollHeight; // newest at the bottom, like the log
+      try { history.pushState({ atlasLog: 1 }, ''); pushed = true; } catch (e) {}
+      bleep(740);
+    }
+    function close(fromBack) {
+      if (modal.classList.contains('hidden')) return;
+      modal.classList.add('hidden');
+      document.documentElement.classList.remove('log-reading');
+      const sel = window.getSelection && window.getSelection(); if (sel) sel.removeAllRanges();
+      if (pushed && !fromBack) { pushed = false; try { history.back(); } catch (e) {} }
+      pushed = false;
+      $('log-expand').focus({ preventScroll: true });
+    }
+    $('log-expand').addEventListener('click', open);
+    // touch screens: a tap on the small log opens the big window (press-and-hold still selects; no tap after a selection)
+    $('history-list').addEventListener('click', e => {
+      if (!matchMedia('(pointer: coarse)').matches || e.target.closest('button, a')) return;
+      const sel = window.getSelection && String(window.getSelection());
+      if (sel) return;
+      if ($('history-list').querySelector('.h-msg')) open();
+    });
+    $('log-modal-close').addEventListener('click', () => close());
+    $('log-modal-done').addEventListener('click', () => close());
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) close(); });
+    window.addEventListener('popstate', () => { if (!modal.classList.contains('hidden')) close(true); });
+    $('log-copy-all').addEventListener('click', () => {
+      const all = Array.from($('history-list').querySelectorAll('.h-msg')).map(m =>
+        (m.classList.contains('user') ? T('TRAVELLER') : 'ATLAS') + ': ' + msgText(m)).join('\n\n');
+      copy(all, $('log-copy-all'));
+    });
   }
 
   function wireMemoryModal() {

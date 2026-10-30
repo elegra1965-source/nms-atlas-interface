@@ -775,3 +775,46 @@ body:has(#speech-decode:not(.hidden)) #input-bar { display: none; }
 .memory-list li.memory-linked{color:#f0a500}
 .memory-list li.memory-linked::before{content:"◈";color:#f0a500}
 .memory-list li.memory-linked a{color:#00e5ff;font-size:.8em;letter-spacing:2px;text-decoration:none;border:1px solid rgba(0,229,255,.4);padding:2px 8px;border-radius:4px;align-self:center}
+
+/* ====== 2026-10-30 (Tony): big Transmission Log window (⤢) ====== */
+.history-actions .log-expand { font-size: 1.05rem; line-height: 1; padding: 0 2px; }
+.h-msg, .lm-text { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+.log-box { position: relative; width: min(720px, 94vw); padding: 22px 20px 18px; text-align: left; }
+.log-box h2 { text-align: center; font-size: 1.05rem; padding: 0 36px; }
+.log-modal-list {
+  max-height: calc(100dvh - 250px); min-height: 160px; overflow-y: auto; overscroll-behavior: contain;
+  margin: 0 0 12px; padding: 4px 8px 4px 2px;
+  border-top: 1px solid rgba(255, 140, 0, 0.3); border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+}
+.lm-msg { padding: 10px 0; border-bottom: 1px dashed rgba(0, 229, 204, 0.2); }
+.lm-msg:last-child { border-bottom: none; }
+.lm-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.lm-who { font-size: 0.72rem; letter-spacing: 0.12em; -webkit-user-select: none; user-select: none; }
+.lm-msg.user .lm-who { color: var(--nms-teal); }
+.lm-msg.atlas .lm-who { color: var(--nms-red-bright); }
+.lm-text { font-size: 1rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.lm-msg.user .lm-text { color: var(--nms-cyan); }
+.lm-msg.atlas .lm-text { color: var(--nms-white); }
+.lm-copy {
+  flex: 0 0 auto; min-width: 40px; height: 32px; padding: 0 8px; border-radius: 4px; cursor: pointer;
+  background: none; border: 1px solid rgba(0, 229, 204, 0.4); color: var(--nms-teal);
+  font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.06em; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.lm-copy:hover, .lm-copy:focus-visible { box-shadow: 0 0 10px rgba(0, 229, 204, 0.5); outline: none; }
+.lm-copy.copied, #log-copy-all.copied { color: var(--nms-orange); border-color: rgba(255, 140, 0, 0.6); }
+.lm-empty { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--nms-teal); opacity: 0.5; text-align: center; padding: 30px 0; }
+#log-copy-all:disabled { opacity: 0.4; cursor: default; }
+.log-box .key-note { margin-top: 10px !important; text-align: center; }
+/* while the window is open: page behind can't scroll or be selected (so Select all = the log only) */
+html.log-reading, html.log-reading body { overflow: hidden !important; }
+html.log-reading body > :not(#log-modal) { -webkit-user-select: none; user-select: none; }
+html.log-reading #log-modal { z-index: 80; }
+@media (max-width: 480px) {
+  #log-modal { padding: 10px 0; }
+  .log-box { padding: 16px 14px 14px; }
+  .log-modal-list { max-height: calc(100dvh - 215px); }
+  .lm-text { font-size: 0.98rem; }
+}
+html.log-reading #nmsCalmBtn, html.log-reading #nms-top-btn { display: none !important; }
+@media (pointer: coarse) { #history-list { cursor: pointer; } }

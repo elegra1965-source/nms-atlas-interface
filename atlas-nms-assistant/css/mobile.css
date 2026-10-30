@@ -190,3 +190,6 @@
   @keyframes sh-nudge   { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
   @keyframes sh-nudge-l { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-3px); } }
 }
+
+/* phones: room under the log so the floating CALM / back-to-top buttons don't cover its text */
+@media (max-width: 768px) and (orientation: portrait) { #app { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); } }

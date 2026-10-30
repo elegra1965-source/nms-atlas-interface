@@ -58,10 +58,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=20261027d">
+<link rel="stylesheet" href="css/main.css?v=20261030">
 <link rel="stylesheet" href="css/orb.css?v=20261027">
 <link rel="stylesheet" href="css/panels.css?v=20261027">
-<link rel="stylesheet" href="css/mobile.css">
+<link rel="stylesheet" href="css/mobile.css?v=20261030">
 </head>
 <body>
 <h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">ATLAS — No Man's Sky AI Companion &amp; Expedition Tracker</h1>
@@ -174,6 +174,23 @@
        per-account — if a friend uses ATLAS with their own key, they'll need to enable it too.</p>
     <p class="key-note">Web search is billed by Anthropic at roughly $10 per 1,000 searches, on top of normal chat usage — charged to whoever's key is entered.</p>
     <button id="websearch-ack" class="btn-primary">GOT IT</button>
+  </div>
+</div>
+
+<!-- ====== TRANSMISSION LOG WINDOW (2026-10-30, Tony: log too small to read on phones) ======
+     Big readable copy of the log. ✕ only closes the window (nothing is deleted); text is selectable
+     and each line has a copy button. While open, the rest of the page can't be selected, so
+     "Select all" only takes the log. -->
+<div id="log-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="log-modal-title">
+  <div class="modal-box log-box">
+    <button id="log-modal-close" class="modal-x" type="button" aria-label="Close the log window">✕</button>
+    <h2 id="log-modal-title">TRANSMISSION LOG</h2>
+    <div id="log-modal-list" class="log-modal-list"></div>
+    <div class="memory-btns">
+      <button id="log-copy-all" class="btn-demo" type="button">⧉ COPY ALL</button>
+      <button id="log-modal-done" class="btn-demo" type="button">CLOSE</button>
+    </div>
+    <p class="key-note">Press and hold to select text, or tap ⧉ to copy one message. ✕ only closes this window: your log stays (⌫ PURGE erases it).</p>
   </div>
 </div>
 
@@ -440,6 +457,7 @@
         <span id="log-arrow" class="log-arrow">▲</span> TRANSMISSION LOG <span id="log-count" class="log-count">0</span>
       </button>
       <span class="history-actions">
+        <span id="log-expand" class="widget-action log-expand" role="button" tabindex="0" title="Open the log in a big window" aria-label="Open the log in a big window">⤢</span>
         <span id="memory-btn" class="widget-action" role="button" tabindex="0" title="What the Atlas remembers about you">◈ MEMORY</span>
         <span id="purge-log" class="widget-action" role="button" tabindex="0" title="Erase conversation memory">⌫ PURGE</span>
       </span>
@@ -455,7 +473,7 @@
 <script src="js/api.js"></script>
 <script src="js/voice.js"></script>
 <script src="js/codex.js"></script>
-<script src="js/atlas.js?v=20261027c"></script>
+<script src="js/atlas.js?v=20261030"></script>
 <script src="js/orbwrap.js"></script>
 <script src="js/pulse.js"></script>
 <script src="js/heartbeat.js"></script>
@@ -463,7 +481,7 @@
 <script src="nms-push.js"></script>
 <script>if (window.NMS_PUSH) NMS_PUSH.wire(document.getElementById('expAlertBtn'), 'atlas', { label: '🔔 EXPEDITION ALERTS', onLabel: '🔔 EXPEDITION ALERTS ON', okMsg: 'Expedition alerts on. You’ll hear when one starts and 24 hours before it ends.', fallbackHref: 'https://weather.nomansskyhub.app/?alerts=exp' });</script>
 <script src="/nms-tour.js?v=2"></script>
-<script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
+<script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device. ⤢ opens it in a big window where you can copy any reply."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
 <script>/* 2026-10-24: turn on the app's own update worker (sw.js was only registered when alerts were switched on), so an installed ATLAS can tell when a new version is live (nms-update.js) */if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 <script src="/nms-totop.js?v=2" defer></script>
 </body>
