@@ -1101,10 +1101,17 @@
         return Math.abs((er.top + er.bottom) / 2 - (cr.top + cr.bottom) / 2) < 4 && er.right <= hr.right - 8;
       };
       e.classList.remove('mid', 'compact');
-      if (fits()) return;
-      e.classList.add('mid');
-      if (fits()) return;
-      e.classList.remove('mid'); e.classList.add('compact');
+      if (!fits()) { e.classList.add('mid'); if (!fits()) { e.classList.remove('mid'); e.classList.add('compact'); } }
+      // MEMORY/PURGE on their own row? then MEMORY sits under the title and PURGE under EXPAND LOG
+      const lab = e.closest('.history-label'), m = $('memory-btn');
+      lab.classList.remove('wrapped');
+      if (m.getBoundingClientRect().top > c.getBoundingClientRect().bottom) lab.classList.add('wrapped');
+      const pg = $('purge-log'); pg.style.marginLeft = '';
+      if (lab.classList.contains('wrapped')) {
+        const d = e.getBoundingClientRect().left - pg.getBoundingClientRect().left;
+        const room = lab.getBoundingClientRect().right - pg.getBoundingClientRect().right; // never past the edge
+        if (Math.min(d, room) > 0) pg.style.marginLeft = Math.min(d, room) + 'px';
+      }
     };
     fitLogExpand();
     window.addEventListener('resize', fitLogExpand);
