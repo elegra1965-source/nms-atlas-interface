@@ -1,0 +1,35 @@
+{
+ "version": "v131",
+ "date": "2026-11-06",
+ "site": "ATLAS",
+ "lastToday": false,
+ "items": [
+  {
+   "tag": "new",
+   "text": {
+    "en": "Medals on the Galactic Map: chart new systems for daily, weekly and monthly streak medals",
+    "es": "Medallas en el Mapa Galáctico: cartografía sistemas nuevos y gana medallas de racha diarias, semanales y mensuales",
+    "de": "Medaillen auf der Galaktischen Karte: Kartiere neue Systeme für tägliche, wöchentliche und monatliche Serienmedaillen",
+    "nl": "Medailles op de Galactische Kaart: breng nieuwe systemen in kaart voor dag-, week- en maandreeksmedailles",
+    "pl": "Medale na Mapie Galaktycznej: oznaczaj nowe układy i zdobywaj medale za serie dzienne, tygodniowe i miesięczne",
+    "fr": "Des médailles sur la Carte galactique : cartographie de nouveaux systèmes pour des médailles de série quotidiennes, hebdomadaires et mensuelles",
+    "pt-BR": "Medalhas no Mapa Galáctico: mapeie sistemas novos e ganhe medalhas de sequência diárias, semanais e mensais",
+    "it": "Medaglie sulla Mappa galattica: mappa nuovi sistemi per medaglie di serie giornaliere, settimanali e mensili"
+   },
+   "url": "https://map.nomansskyhub.app/"
+  },
+  {
+   "tag": "new",
+   "text": {
+    "en": "Patch notes like these after each big update",
+    "es": "Notas como estas después de cada gran actualización",
+    "de": "Patch-Notes wie diese nach jedem großen Update",
+    "nl": "Patchnotes zoals deze na elke grote update",
+    "pl": "Takie informacje o zmianach po każdej dużej aktualizacji",
+    "fr": "Des notes comme celles-ci après chaque grosse mise à jour",
+    "pt-BR": "Notas como estas depois de cada grande atualização",
+    "it": "Note come queste dopo ogni grande aggiornamento"
+   }
+  }
+ ]
+}
