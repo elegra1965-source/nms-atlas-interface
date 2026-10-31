@@ -777,7 +777,8 @@ body:has(#speech-decode:not(.hidden)) #input-bar { display: none; }
 .memory-list li.memory-linked a{color:#00e5ff;font-size:.8em;letter-spacing:2px;text-decoration:none;border:1px solid rgba(0,229,255,.4);padding:2px 8px;border-radius:4px;align-self:center}
 
 /* ====== 2026-10-30 (Tony): big Transmission Log window (⤢) ====== */
-.history-actions .log-expand { font-size: 1.05rem; line-height: 1; padding: 0 2px; }
+/* 2026-10-31: ⤢ sits beside the count (with a gap), MEMORY/PURGE back on the title line */
+.history-label > .log-expand { float: none; flex: 0 0 auto; margin: 0 auto 0 14px; font-size: 1.05rem; line-height: 1; padding: 2px 4px; }
 .h-msg, .lm-text { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 .log-box { position: relative; width: min(720px, 94vw); padding: 22px 20px 18px; text-align: left; }
 .log-box h2 { text-align: center; font-size: 1.05rem; padding: 0 36px; }
