@@ -1094,24 +1094,25 @@
     wireLogModal();
     // 2026-10-31: keep '⤢ EXPAND LOG' on the title row -- full words, else the short word, else the icon
     const fitLogExpand = () => {
-      const e = $('log-expand'), c = $('log-count'), h = $('history');
-      if (!e || !c || !h || !h.offsetParent) return;
-      const fits = () => {
-        const er = e.getBoundingClientRect(), cr = c.getBoundingClientRect(), hr = h.getBoundingClientRect();
-        return Math.abs((er.top + er.bottom) / 2 - (cr.top + cr.bottom) / 2) < 4 && er.right <= hr.right - 8;
+      const e = $('log-expand'), t = $('log-toggle'), h = $('history'), m = $('memory-btn'), pg = $('purge-log');
+      if (!e || !t || !h || !h.offsetParent) return;
+      const lab = e.closest('.history-label');
+      const mid = el => { const r = el.getBoundingClientRect(); return (r.top + r.bottom) / 2; };
+      const inside = el => el.getBoundingClientRect().right <= lab.getBoundingClientRect().right + 0.5;
+      const sameRow = (...els) => els.every(el => Math.abs(mid(el) - mid(els[0])) < 4);
+      const tryWords = ok => {   // full words, else the short word, else the icon (tighter letters as a last resort)
+        for (const [w, tight] of [['', 0], ['mid', 0], ['compact', 0], ['mid', 1], ['compact', 1]]) {
+          e.classList.remove('mid', 'compact'); if (w) e.classList.add(w);
+          lab.classList.toggle('tight', !!tight);
+          if (ok()) return;
+        }
       };
-      e.classList.remove('mid', 'compact');
-      if (!fits()) { e.classList.add('mid'); if (!fits()) { e.classList.remove('mid'); e.classList.add('compact'); } }
-      // MEMORY/PURGE on their own row? then MEMORY sits under the title and PURGE under EXPAND LOG
-      const lab = e.closest('.history-label'), m = $('memory-btn');
-      lab.classList.remove('wrapped');
-      if (m.getBoundingClientRect().top > c.getBoundingClientRect().bottom) lab.classList.add('wrapped');
-      const pg = $('purge-log'); pg.style.marginLeft = '';
-      if (lab.classList.contains('wrapped')) {
-        const d = e.getBoundingClientRect().left - pg.getBoundingClientRect().left;
-        const room = lab.getBoundingClientRect().right - pg.getBoundingClientRect().right; // never past the edge
-        if (Math.min(d, room) > 0) pg.style.marginLeft = Math.min(d, room) + 'px';
-      }
+      // wide screens: all four on one line
+      lab.classList.remove('stacked', 'tight'); e.classList.remove('mid', 'compact');
+      if (sameRow(t, e, m, pg) && inside(pg)) return;
+      // otherwise: TRANSMISSION LOG full width on top, EXPAND / MEMORY / PURGE spread evenly under it
+      lab.classList.add('stacked');
+      tryWords(() => sameRow(e, m, pg) && inside(pg));
     };
     fitLogExpand();
     window.addEventListener('resize', fitLogExpand);
