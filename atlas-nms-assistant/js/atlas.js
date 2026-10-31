@@ -1092,6 +1092,25 @@
 
     // 2026-10-30: big log window (⤢)
     wireLogModal();
+    // 2026-10-31: keep '⤢ EXPAND LOG' on the title row -- full words, else the short word, else the icon
+    const fitLogExpand = () => {
+      const e = $('log-expand'), c = $('log-count'), h = $('history');
+      if (!e || !c || !h || !h.offsetParent) return;
+      const fits = () => {
+        const er = e.getBoundingClientRect(), cr = c.getBoundingClientRect(), hr = h.getBoundingClientRect();
+        return Math.abs((er.top + er.bottom) / 2 - (cr.top + cr.bottom) / 2) < 4 && er.right <= hr.right - 8;
+      };
+      e.classList.remove('mid', 'compact');
+      if (fits()) return;
+      e.classList.add('mid');
+      if (fits()) return;
+      e.classList.remove('mid'); e.classList.add('compact');
+    };
+    fitLogExpand();
+    window.addEventListener('resize', fitLogExpand);
+    document.addEventListener('nms-lang', () => setTimeout(fitLogExpand, 50));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLogExpand);
+    new MutationObserver(fitLogExpand).observe($('history'), { attributes: true, attributeFilter: ['class'] });
 
     // keyboard access for the span-buttons in the log header
     ['log-expand', 'memory-btn', 'purge-log'].forEach(id => $(id).addEventListener('keydown', e => {
