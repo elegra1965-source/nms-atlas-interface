@@ -288,6 +288,7 @@
         <div><span class="c-key">FRIEND CODE:</span>MGD8-C6PP-XKFGT</div>
       </div>
       <button id="sister-btn" class="sister-popup-btn">⏁ SISTER PROJECTS</button>
+      <button type="button" class="sister-popup-btn nms-fb-btn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp" srcset="/nms-feedback/fb-ico-review@2x.webp 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
       <div class="credit-foot">UNOFFICIAL FAN PROJECT · NO MAN'S SKY © HELLO GAMES</div>
     </div>
     </div>
@@ -484,5 +485,6 @@
 <script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device. ⤢ opens it in a big window where you can copy any reply."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
 <script>/* 2026-10-24: turn on the app's own update worker (sw.js was only registered when alerts were switched on), so an installed ATLAS can tell when a new version is live (nms-update.js) */if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 <script src="/nms-totop.js?v=2" defer></script>
+<script src="/nms-feedback/nms-feedback.js?v=20261031" data-tool="atlas" defer></script>
 </body>
 </html>

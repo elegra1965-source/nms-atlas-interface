@@ -56,6 +56,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 <img src="screenshots/04-languages.jpg" alt="ATLAS on a phone: the language picker (left) and the interface in Deutsch (right)" width="560">
 
+- **★ Reviews & feedback.** The REVIEWS & FEEDBACK button under SISTER PROJECTS in the Signal Origin tile opens the same pop-up as the Hub: leave a review (stars, and an "OK to show" switch), report a bug (your device type and browser are added so it can be fixed faster) or ask for something new. This site is ticked for you. Everything goes to elegra1965 through the Hub, and nothing shows on the site without his OK. In all 8 languages; the question at the top now reads "What's it about, traveller?".
+
+  <img src="screenshots/09-reviews-feedback.jpg" alt="The Reviews and feedback button in the Signal Origin tile and the pop-up it opens, on a phone" width="560">
+
 </details>
 
 ## New here? Take the tour
