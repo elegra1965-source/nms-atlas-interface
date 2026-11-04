@@ -1,5 +1,5 @@
 {
- "version": "v131",
+ "version": "v132",
  "date": "2026-11-06",
  "site": "ATLAS",
  "lastToday": false,
@@ -17,6 +17,19 @@
     "it": "Medaglie sulla Mappa galattica: mappa nuovi sistemi per medaglie di serie giornaliere, settimanali e mensili"
    },
    "url": "https://map.nomansskyhub.app/"
+  },
+  {
+   "tag": "new",
+   "text": {
+    "en": "ATLAS knows the live Galactic Alliances top 10 and can tell you who built this interface",
+    "es": "ATLAS conoce el top 10 en vivo de las Alianzas Galácticas y sabe quién creó esta interfaz",
+    "de": "ATLAS kennt die aktuelle Top 10 der Galaktischen Allianzen und weiß, wer diese Oberfläche gebaut hat",
+    "fr": "ATLAS connaît le top 10 en direct des Alliances galactiques et sait qui a créé cette interface",
+    "it": "ATLAS conosce la top 10 in tempo reale delle Alleanze Galattiche e sa chi ha creato questa interfaccia",
+    "nl": "ATLAS kent de actuele top 10 van de Galactische Allianties en weet wie deze interface heeft gebouwd",
+    "pl": "ATLAS zna aktualną dziesiątkę Galaktycznych Sojuszy i wie, kto stworzył ten interfejs",
+    "pt-BR": "O ATLAS conhece o top 10 ao vivo das Alianças Galácticas e sabe quem criou esta interface"
+   }
   },
   {
    "tag": "new",
