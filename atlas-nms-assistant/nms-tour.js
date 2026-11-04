@@ -98,7 +98,7 @@
     var eb=ov.querySelector('#nmsTourEnd');
     if(cfg.end&&i===n-1){ eb.textContent=cfg.end.label; eb.style.display='block'; } else eb.style.display='none';
     var r=el.getBoundingClientRect(), vh=window.innerHeight;
-    if(s.top){ var sm=!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({top:0,behavior:sm?'smooth':'auto'}); }   /* step in a fixed header: show the page top so the header is fully in view */
+    if(s.top){ var sm=!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches; window.scrollTo({top:0,behavior:sm?'smooth':'auto'}); if(r.top<0||r.bottom>vh){ el.scrollIntoView({block:'center',behavior:'auto'}); } }   /* step in a fixed header: show the page top so the header is fully in view */
     else if(r.top<70||r.bottom>vh-190){
       var smooth=!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches;
       el.scrollIntoView({block:'center',behavior:smooth?'smooth':'auto'});
@@ -112,6 +112,11 @@
   function place(){
     var el=target(idx); if(!el) return;
     var r=el.getBoundingClientRect(), pad=6, vw=window.innerWidth, vh=window.innerHeight;
+    if(r.bottom<0||r.top>vh){                   /* target scrolled out of view (inner scroller): no empty box, centre the card instead */
+      hole.style.width='0px'; hole.style.height='0px';
+      var cw0=card.offsetWidth||300, ch0=card.offsetHeight||160;
+      card.style.top=Math.max(8,(vh-ch0)/2)+'px'; card.style.left=Math.max(12,(vw-cw0)/2)+'px'; return;
+    }
     var top=Math.max(4,r.top-pad), left=Math.max(4,r.left-pad);
     var w=Math.min(vw-8,r.right+pad)-left, h=Math.min(r.height+pad*2, vh-8-top);
     hole.style.top=top+'px'; hole.style.left=left+'px'; hole.style.width=Math.max(w,10)+'px'; hole.style.height=Math.max(h,10)+'px';

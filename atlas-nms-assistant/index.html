@@ -59,7 +59,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css?v=20261030">
-<link rel="stylesheet" href="css/orb.css?v=20261027">
+<link rel="stylesheet" href="css/orb.css?v=20261104">
 <link rel="stylesheet" href="css/panels.css?v=20261027">
 <link rel="stylesheet" href="css/mobile.css?v=20261030">
 </head>
@@ -374,6 +374,7 @@
   <!-- CENTRE -->
   <main id="panel-centre">
     <div id="orb-zone">
+      <div id="orb-hold">
       <div id="orb-arch">
         <div id="orb"></div>
         <div id="orb-mirror"></div>
@@ -383,6 +384,8 @@
           <div class="ring r3"></div>
         </div>
         <div id="status-line"><span id="status-text">ATLAS ONLINE</span><span class="cursor">▌</span></div>
+      </div>
+        <div id="orb-halo" aria-hidden="true"><div class="halo h1"></div><div class="halo h2"></div></div>
       </div>
       <button id="silence-btn" class="hidden" aria-label="Stop ATLAS speaking">■ END TRANSMISSION</button>
     </div>
@@ -470,21 +473,21 @@
 
 </div>
 
-<script src="js/widgets.js?v=20261027d"></script>
+<script src="js/widgets.js?v=20261104"></script>
 <script src="js/hud.js"></script>
 <script src="js/memory.js"></script>
-<script src="js/api.js"></script>
+<script src="js/api.js?v=20261104"></script>
 <script src="js/voice.js"></script>
 <script src="js/codex.js"></script>
-<script src="js/atlas.js?v=20261030"></script>
+<script src="js/atlas.js?v=20261104"></script>
 <script src="js/orbwrap.js"></script>
 <script src="js/pulse.js"></script>
 <script src="js/heartbeat.js"></script>
 <script src="js/scrollhints.js"></script>
 <script src="nms-push.js"></script>
 <script>if (window.NMS_PUSH) NMS_PUSH.wire(document.getElementById('expAlertBtn'), 'atlas', { label: '🔔 EXPEDITION ALERTS', onLabel: '🔔 EXPEDITION ALERTS ON', okMsg: 'Expedition alerts on. You’ll hear when one starts and 24 hours before it ends.', fallbackHref: 'https://weather.nomansskyhub.app/?alerts=exp' });</script>
-<script src="/nms-tour.js?v=2"></script>
-<script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device. ⤢ opens it in a big window where you can copy any reply."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
+<script src="/nms-tour.js?v=3"></script>
+<script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device. EXPAND LOG opens it in a big window where you can copy any reply."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
 <script>/* 2026-10-24: turn on the app's own update worker (sw.js was only registered when alerts were switched on), so an installed ATLAS can tell when a new version is live (nms-update.js) */if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 <script src="/nms-totop.js?v=2" defer></script>
 <script src="/nms-feedback/nms-feedback.js?v=20261031" data-tool="atlas" defer></script>

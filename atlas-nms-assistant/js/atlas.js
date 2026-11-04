@@ -468,6 +468,14 @@
       r: 'The multi-tool is miner, scanner, and weapon in one. The Atlantid class hums with a red resonance no Korvax has fully explained. I could explain it. I choose not to.' },
     { k: ['base', 'build', 'settlement'],
       r: 'Claim a world and build, Traveller. A base is a lighthouse in an infinite dark — and through its teleporter, you are never truly far from home. Settlements, though... settlements bring paperwork.' },
+    { p: 1, k: ['top alliance', 'top 5 alliance', 'top 10 alliance', 'best alliance', 'biggest alliance', 'alliance leaderboard', 'alliances leaderboard', 'alliance ranking', 'leaderboard', 'who is in the top'],
+      r: () => {
+        const b = (typeof Widgets !== 'undefined' && Widgets.allianceBoard) ? Widgets.allianceBoard() : null;
+        if (!b || !b.top || !b.top.length) return null;
+        return 'The Galactic Alliances standings, Traveller: ' + b.top.slice(0, 5).map(x => '#' + (x.latest.activity_rank || '?') + ' ' + x.name + ' [' + x.tag + '], ' + x.latest.member_count + ' members').join('; ') + '. Tracked by Voyager\'s Haven, havenmap.online, built by u/IAmThe-Ekimo-1920. The full top ten is on this page.';
+      } },
+    { p: 1, k: ['who built this', 'who made this app', 'who made this site', 'who built the app', 'who built the site', 'who built the interface', 'who made the interface', 'who designed this', 'who coded', 'who developed this', 'who made this interface', 'who created this app', 'who created this site', 'who created the interface'],
+      r: 'The Travellers whisper of one called elegra1965, who gave me this voice and built this interface around it.' },
     { p: 1, k: ['alliance', 'alliances', 'guild', 'clan', 'leaderboard', 'director', 'my alliance'],
       r: () => {
         const mine = (typeof Widgets !== 'undefined' && Widgets.myAlliances) ? Widgets.myAlliances() : [];
@@ -638,7 +646,7 @@
   function demoReply(q, phase) {
     const t = ' ' + q.toLowerCase() + ' ';
     if (phase === 'rest') {
-      for (const e of DEMO_LIB) if (!e.p && e.k.some(k => t.includes(k))) return typeof e.r === 'function' ? e.r() : e.r;
+      for (const e of DEMO_LIB) if (!e.p && e.k.some(k => t.includes(k))) { const v = typeof e.r === 'function' ? e.r() : e.r; if (v) return v; }
       demoFallbackIdx = (demoFallbackIdx + 1) % DEMO_FALLBACK.length;
       return DEMO_FALLBACK[demoFallbackIdx];
     }
@@ -653,7 +661,7 @@
              (items.length ? 'I also recall: ' + items.slice(-3).join('. ') + '.' : '');
     }
     for (const e of DEMO_LIB) {
-      if ((phase !== 'pri' || e.p) && e.k.some(k => t.includes(k))) return typeof e.r === 'function' ? e.r() : e.r;
+      if ((phase !== 'pri' || e.p) && e.k.some(k => t.includes(k))) { const v = typeof e.r === 'function' ? e.r() : e.r; if (v) return v; }
     }
     if (phase === 'pri') return null;
     demoFallbackIdx = (demoFallbackIdx + 1) % DEMO_FALLBACK.length;

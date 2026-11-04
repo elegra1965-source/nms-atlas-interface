@@ -735,6 +735,7 @@ const Widgets = (() => {
   const AL_FEED_URL = '/haven-api/alliances';
   const fmtN = n => (typeof n === 'number' && isFinite(n)) ? Math.round(n).toLocaleString('en-GB') : '—';
   const trend = n => (typeof n === 'number' && n) ? (n > 0 ? ' ▲' + fmtN(n) : ' ▼' + fmtN(-n)) : '';
+  let lastBoard = null; // S9: kept so the Atlas (AI + free answers) can read the same live top 10
   async function loadAllianceBoard() {
     if (!HAVEN_ALLIANCE_FEED) return null;
     try {
@@ -748,7 +749,7 @@ const Widgets = (() => {
       const list = all.filter(a => newest - (Date.parse((a.latest.observed_at || '').replace(' ', 'T') + 'Z') || 0) < 2 * 86400e3);
       if (!list.length) return null;
       list.sort((a, b) => (a.latest.activity_rank || 1e9) - (b.latest.activity_rank || 1e9));
-      return { top: list.slice(0, 10), all: list, total: j.status && j.status.hg_total_alliances };
+      return (lastBoard = { top: list.slice(0, 10), all: list, total: j.status && j.status.hg_total_alliances });
     } catch (e) { return null; }
   }
   async function updateAllianceTicker() {
@@ -1163,5 +1164,5 @@ const Widgets = (() => {
   // every expedition the wiki lists (oldest first), for questions about past ones
   function expeditionList() { return (WIKI || []).map(r => Object.assign({}, r)); }
 
-  return { init, expedition: () => EXPEDITION.name, expeditionInfo, expeditionList, myAlliances };
+  return { init, expedition: () => EXPEDITION.name, expeditionInfo, expeditionList, myAlliances, allianceBoard: () => lastBoard };
 })();

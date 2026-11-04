@@ -24,7 +24,8 @@ const API = (() => {
     "any Traveller can join one by visiting a space station it owns, and may belong to up to three alliances at once; " +
     "members can teleport quickly to their alliances' systems; " +
     "alliances are ranked on leaderboards by how many members they have and how active and expansive they are, viewed in game via View Galactic Alliances on the Station Core. " +
-    "There is no official public website or feed for alliance rankings. Between expeditions, encourage Travellers to join or found an alliance.";
+    "There is no OFFICIAL Hello Games website or feed for alliance rankings, but Voyager's Haven (havenmap.online, built by u/IAmThe-Ekimo-1920) tracks them, and this page shows its live top 10; when it is given to you below, use it and credit Voyager's Haven. Between expeditions, encourage Travellers to join or found an alliance. " +
+    "If asked who built this interface, app or site (not who made you), answer in character but name the builder: a Traveller called elegra1965 gave you this voice. Never say Tony.";
 
   /* 2026-10-20: reply in the language picked in the 🌐 list (lang.js) */
   const LANG_NAMES = { es: 'Spanish', de: 'German', nl: 'Dutch', pl: 'Polish', fr: 'French', 'pt-BR': 'Brazilian Portuguese', it: 'Italian' };
@@ -65,10 +66,16 @@ const API = (() => {
   }
 
   /* v4.2: the Traveller's own alliances (saved on their device in the Alliances panel) */
+  function boardContext() {
+    const b = (typeof Widgets !== 'undefined' && Widgets.allianceBoard) ? Widgets.allianceBoard() : null;
+    if (!b || !b.top || !b.top.length) return '';
+    return '\n\nLive Galactic Alliances top ' + b.top.length + (b.total ? ' of ' + b.total : '') + ' from Voyager\'s Haven (havenmap.online, by u/IAmThe-Ekimo-1920; credit it when you quote it): ' +
+      b.top.map(x => '#' + (x.latest.activity_rank || '?') + ' [' + x.tag + '] ' + x.name + ', ' + x.latest.member_count + ' members, ' + x.latest.station_count + ' stations').join('; ') + '.';
+  }
   function allianceContext() {
     const a = (typeof Widgets !== 'undefined' && Widgets.myAlliances) ? Widgets.myAlliances() : [];
-    if (!a.length) return '\n\nThe Traveller has not logged any alliances yet; if alliances come up, mention they can add theirs with the ⇄ button on the expedition panel.';
-    return '\n\nThe Traveller belongs to these alliances: ' + a.map(x => `[${x.tag}] ${x.name}`).join(', ') + '. Refer to them naturally when relevant.';
+    if (!a.length) return boardContext() + '\n\nThe Traveller has not logged any alliances yet; if alliances come up, mention they can add theirs with the ⇄ button on the expedition panel.';
+    return boardContext() + '\n\nThe Traveller belongs to these alliances: ' + a.map(x => `[${x.tag}] ${x.name}`).join(', ') + '. Refer to them naturally when relevant.';
   }
 
   /* ---------- key management ---------- */
