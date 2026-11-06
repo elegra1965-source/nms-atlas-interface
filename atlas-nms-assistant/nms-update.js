@@ -304,14 +304,26 @@
       return pnData;
     }).catch(function () { return null; });
   }
+  function sharedSeen(id) { try { var m = document.cookie.match(/(?:^|;\s*)nms_pn=([^;]*)/); return !!m && decodeURIComponent(m[1]) === id; } catch (e) { return false; } }
+  function sharedMark(id) {
+    try {
+      var dom = /(^|\.)nomansskyhub\.app$/.test(location.hostname) ? ';domain=.nomansskyhub.app' : '';
+      document.cookie = 'nms_pn=' + encodeURIComponent(id) + ';path=/;max-age=604800;SameSite=Lax' + dom + (location.protocol === 'https:' ? ';Secure' : '');
+    } catch (e) {}
+  }
   function pnStart() {
     var force = /[?&]patchnotes\b/.test(location.search), go = false;
     try { go = sessionStorage.getItem('nmsPNgo') === '1'; sessionStorage.removeItem('nmsPNgo'); } catch (e) {}
     loadNotes().then(function (d) {
       if (!d) return;
       var seen = null; try { seen = localStorage.getItem('nmsPN'); } catch (e) {}
-      var show = force || go || (seen !== d.version && hadSW);
+      /* 2026-11-06: one release = one pop-up per person. A small cookie shared by every nomansskyhub.app site holds the release date
+         once the notes have been shown on any of them, so Hub -> Map -> Theme doesn't show the same release three times.
+         Only the date, no tracking (same kind of cookie as the language one). ?patchnotes always shows. */
+      var rel = String(d.date || d.version), other = !force && sharedSeen(rel);
+      var show = force || ((go || (seen !== d.version && hadSW)) && !other);
       try { localStorage.setItem('nmsPN', d.version); } catch (e) {}
+      if (show && !force) sharedMark(rel);
       if (show) setTimeout(function () { openNotes(d); }, 1200);
     });
   }
