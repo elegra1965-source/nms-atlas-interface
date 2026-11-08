@@ -222,15 +222,12 @@
 /* S10 (2026-11-04): the "thinking" rings circle just OUTSIDE the orb rim instead of across the Atlas face */
 #orb-hold { position: relative; display: flex; justify-content: center; width: 100%; margin-top: 12px; }
 #orb-halo { position: absolute; top: 0; left: 50%; height: 100%; aspect-ratio: 1 / 1; transform: translateX(-50%); pointer-events: none; z-index: 2; }
-.halo { position: absolute; inset: -3.5%; border: 2px solid transparent; border-radius: 50%; opacity: 0; }
-.halo.h2 { inset: -7%; }
+/* S10 v2 (2026-11-08, Tony): thinking = two slow broken-arc rings just outside the orb: two long amber arcs with a short teal arc in each gap, no glow. The orb itself is untouched. */
+#orb-halo svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0; transition: opacity 0.5s ease; }
+#orb-halo .hg1, #orb-halo .hg2 { transform-origin: 50px 50px; animation: arc-spin 8s linear infinite; animation-play-state: paused; }
+#orb-halo .hg2 { animation-duration: 12s; animation-direction: reverse; }
+@keyframes arc-spin { to { transform: rotate(360deg); } }
 #orb-zone[data-state="thinking"] .r1, #orb-zone[data-state="thinking"] .r2 { opacity: 0; animation: none; box-shadow: none; }
-#orb-zone[data-state="thinking"] .h1 {
-  opacity: 1; border-color: rgba(255, 170, 60, 0.85); border-top-color: transparent;
-  animation: think-spin 1.1s linear infinite; box-shadow: 0 0 18px rgba(255, 140, 0, 0.5);
-}
-#orb-zone[data-state="thinking"] .h2 {
-  opacity: 1; border-color: rgba(255, 100, 30, 0.5); border-bottom-color: transparent;
-  animation: think-spin 1.7s linear infinite reverse;
-}
-@media (prefers-reduced-motion: reduce) { #orb-zone[data-state="thinking"] .halo { animation: none; } }
+#orb-zone[data-state="thinking"] #orb-halo svg { opacity: 1; }
+#orb-zone[data-state="thinking"] #orb-halo .hg1, #orb-zone[data-state="thinking"] #orb-halo .hg2 { animation-play-state: running; }
+@media (prefers-reduced-motion: reduce) { #orb-halo .hg1, #orb-halo .hg2 { animation: none; } }
