@@ -18,6 +18,7 @@
       '#nms-top-btn:hover,#nms-top-btn:focus-visible{background:rgba(0,200,170,.25);box-shadow:0 0 22px rgba(0,200,170,.5);outline:none}' +
       '@keyframes nms-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}' +
       '@media (min-width:761px){#nms-top-btn{right:2rem;bottom:2rem}}' +
+      '@media (max-width:760px){#nms-top-btn{width:42px;height:42px;font-size:19px;right:max(10px,env(safe-area-inset-right));bottom:max(14px,calc(env(safe-area-inset-bottom) + 10px))}}' +
       '@media (prefers-reduced-motion:reduce){#nms-top-btn.nms-visible{animation:none}#nms-top-btn{transition:none}}' +
       '@media print{#nms-top-btn{display:none}}';
     document.head.appendChild(st);

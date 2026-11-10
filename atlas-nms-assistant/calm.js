@@ -69,6 +69,11 @@
     "#nmsCalmBtn .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;box-sizing:border-box}" +
     "html.calm #nmsCalmBtn{color:#f0a500;border-color:rgba(240,165,0,.55)}" +
     "html.calm #nmsCalmBtn .dot{background:currentColor}" +
+    /* Phones (2026-11-10): the floating pill sat over page content, so it shrinks to a small dot (still a 44px tap area) and
+       fades out while the page is scrolling, back after a short pause. Not applied when a site gives it a slot of its own. */
+    "@media (max-width:760px){body>#nmsCalmBtn{width:32px;height:32px;padding:0;gap:0;justify-content:center;left:8px;bottom:10px;opacity:.6}" +
+    "body>#nmsCalmBtn span:last-child{display:none}body>#nmsCalmBtn::after{content:\"\";position:absolute;inset:-6px}" +
+    "body>#nmsCalmBtn.nms-scrolling{opacity:0;pointer-events:none}}" +
     "@media print{#nmsCalmBtn{display:none}}";
 
   var st = document.createElement("style");
@@ -84,6 +89,7 @@
     var b = document.createElement("button");
     b.id = "nmsCalmBtn";
     b.type = "button";
+    b.setAttribute("aria-label", "Calm mode");
     b.innerHTML = '<span class="dot" aria-hidden="true"></span><span>Calm</span>';
     function sync(){
       b.setAttribute("aria-pressed", on ? "true" : "false");
@@ -100,6 +106,14 @@
     // settings panel, since a floating pill would sit on top of the map's own panels).
     var slot = document.getElementById("nmsCalmSlot");
     (slot || document.body).appendChild(b);
+    if(!slot){ // fade out while scrolling (phones), back after a pause
+      var tm = 0;
+      document.addEventListener("scroll", function(){
+        if(!window.matchMedia || !matchMedia("(max-width:760px)").matches) return;
+        b.classList.add("nms-scrolling"); clearTimeout(tm);
+        tm = setTimeout(function(){ b.classList.remove("nms-scrolling"); }, 1200);
+      }, {passive:true, capture:true});
+    }
   }
   if(document.body) mount();
   else document.addEventListener("DOMContentLoaded", mount);

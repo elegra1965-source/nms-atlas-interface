@@ -193,3 +193,27 @@
 
 /* phones: room under the log so the floating CALM / back-to-top buttons don't cover its text */
 @media (max-width: 768px) and (orientation: portrait) { #app { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); } }
+
+
+/* ---------- 2026-11-10 phone readability + tap targets (review) ---------- */
+@media (max-width: 768px) {
+  /* nothing under 11px (was 7-10px) */
+  .tk-label, .widget-label, .sh-dia, .chip, #orb-arch #status-line, #gallery-caption, #gallery-frame::after,
+  .exp-art-subtitle, .exp-countdown-name, .exp-share-label, .exp-share-btn, .credit-foot, .sister-popup-btn,
+  .voice-label, .t-restored, .t-decode-btn, .planet-scan .haven-portal-k, .planet-scan .haven-credit,
+  .alliance-panel .al-note, .alliance-panel .al-empty, .alliance-panel .al-form button,
+  .al-board .alb-stat, .al-board .alb-credit, .al-board .alb-toggle, .memory-btns .btn-demo { font-size: 0.69rem; }
+  #ticker-track, #al-ticker-track { font-size: 0.69rem; }
+  #history .history-label .log-toggle, #history .history-label .widget-action, #history .history-label .log-expand { font-size: 0.69rem; }
+  /* tap targets 40px */
+  #settings-btn, #tour-btn, #mute-btn, #nmsRefresh { width: 40px; height: 40px; min-width: 40px !important; min-height: 40px !important; }
+  #lang-btn { height: 40px; padding: 0 9px; }
+  #history .history-label .log-toggle, #history .history-label .widget-action, #history .history-label .log-expand,
+  .sister-popup-btn, .exp-share-btn { min-height: 40px; }
+  .chip { min-height: 40px; padding-top: 0; padding-bottom: 0; display: inline-flex; align-items: center; }
+  .widget-label .widget-action { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; min-height: 36px; }
+}
+@media (max-width:340px) {
+  #settings-btn, #tour-btn, #mute-btn, #nmsRefresh { width: 34px; height: 34px; min-width: 34px !important; min-height: 34px !important; }
+  #lang-btn { height: 34px; padding: 0 6px; }
+}
