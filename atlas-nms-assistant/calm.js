@@ -72,8 +72,15 @@
     /* Phones (2026-11-10): the floating pill sat over page content, so it shrinks to a small dot (still a 44px tap area) and
        fades out while the page is scrolling, back after a short pause. Not applied when a site gives it a slot of its own. */
     "@media (max-width:760px){body>#nmsCalmBtn{width:32px;height:32px;padding:0;gap:0;justify-content:center;left:8px;bottom:10px;opacity:.6}" +
-    "body>#nmsCalmBtn span:last-child{display:none}body>#nmsCalmBtn::after{content:\"\";position:absolute;inset:-6px}" +
-    "body>#nmsCalmBtn.nms-scrolling{opacity:0;pointer-events:none}}" +
+    "body>#nmsCalmBtn span:nth-child(2){display:none}body>#nmsCalmBtn::after{content:\"\";position:absolute;inset:-6px}" +
+    "body>#nmsCalmBtn.nms-scrolling{opacity:0;pointer-events:none}" +
+    /* First visits on a phone: the dot slides out to say 'Calm mode available', pulls back in, then pulses a few times so it gets noticed. */
+    "body>#nmsCalmBtn.nms-intro{width:auto;padding:0 12px 0 9px;gap:6px;opacity:1;background:rgba(5,9,14,.95)}" +
+    "body>#nmsCalmBtn.nms-intro .hint{display:inline}" +
+    "body>#nmsCalmBtn.nms-pulse{animation:nmsCalmPulse 1.6s ease-out 3}}" +
+    "#nmsCalmBtn .hint{display:none;white-space:nowrap}" +
+    "@keyframes nmsCalmPulse{0%{box-shadow:0 0 0 0 rgba(0,229,255,.65)}80%,100%{box-shadow:0 0 0 14px rgba(0,229,255,0)}}" +
+    "@media (prefers-reduced-motion:reduce){#nmsCalmBtn.nms-pulse{animation:none!important;box-shadow:0 0 0 3px rgba(0,229,255,.4)}}" +
     "@media print{#nmsCalmBtn{display:none}}";
 
   var st = document.createElement("style");
@@ -90,7 +97,7 @@
     b.id = "nmsCalmBtn";
     b.type = "button";
     b.setAttribute("aria-label", "Calm mode");
-    b.innerHTML = '<span class="dot" aria-hidden="true"></span><span>Calm</span>';
+    b.innerHTML = '<span class="dot" aria-hidden="true"></span><span>Calm</span><span class="hint">Calm mode available</span>';
     function sync(){
       b.setAttribute("aria-pressed", on ? "true" : "false");
       b.title = on ? "Calm mode is on: plain background. Click to turn it off."
@@ -106,6 +113,7 @@
     // settings panel, since a floating pill would sit on top of the map's own panels).
     var slot = document.getElementById("nmsCalmSlot");
     (slot || document.body).appendChild(b);
+    if(!slot){ intro(b); }
     if(!slot){ // fade out while scrolling (phones), back after a pause
       var tm = 0;
       document.addEventListener("scroll", function(){
@@ -114,6 +122,24 @@
         tm = setTimeout(function(){ b.classList.remove("nms-scrolling"); }, 1200);
       }, {passive:true, capture:true});
     }
+  }
+  /* Phone hint: first 3 visits, and never once the switch has been used. Count is kept on this device only. */
+  function intro(b){
+    if(!window.matchMedia || !matchMedia("(max-width:760px)").matches) return;
+    var n = 0;
+    try{ n = parseInt(localStorage.getItem("nms_calm_hint") || "0", 10) || 0; }catch(e){ return; }
+    if(n >= 3) return;
+    try{ localStorage.setItem("nms_calm_hint", String(n + 1)); }catch(e){}
+    function stop(){ b.classList.remove("nms-intro", "nms-pulse"); try{ localStorage.setItem("nms_calm_hint", "9"); }catch(e){} }
+    b.addEventListener("click", stop);
+    setTimeout(function(){
+      b.classList.add("nms-intro");
+      setTimeout(function(){
+        b.classList.remove("nms-intro");
+        b.classList.add("nms-pulse");
+        setTimeout(function(){ b.classList.remove("nms-pulse"); }, 5000);
+      }, 4500);
+    }, 1800);
   }
   if(document.body) mount();
   else document.addEventListener("DOMContentLoaded", mount);

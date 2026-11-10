@@ -58,7 +58,7 @@
     'pt-BR':['IDIOMA','Lembra seu idioma neste dispositivo e em todos os sites do NMS Hub. Nomes, glifos e endereços continuam como estão.'],
     it:['LINGUA','Ricorda la tua lingua su questo dispositivo e su tutti i siti NMS Hub. Nomi, glifi e indirizzi restano come sono.']
   };
-  var PACK_V = '2';
+  var PACK_V = '3';
   var K = 'nms_lang', host = location.hostname;
   var CODES = LANGS.map(function(l){ return l[0]; });
   var SELF = (document.currentScript && document.currentScript.src) || location.href;
