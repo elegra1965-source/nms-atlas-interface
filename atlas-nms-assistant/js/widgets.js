@@ -107,13 +107,20 @@ const Widgets = (() => {
         el.textContent = 'ATMOSPHERIC SENSORS OFFLINE';
       }
     };
+    // London first so nothing asks for location on page load; local weather follows
+    // once permission is already given, or after the visitor's first tap/key.
+    fetchWx(51.5, -0.12);
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        p => fetchWx(p.coords.latitude, p.coords.longitude),
-        () => fetchWx(51.5, -0.12) // fallback: London
-      , { timeout: 8000 });
-    } else {
-      fetchWx(51.5, -0.12);
+      const ask = () => navigator.geolocation.getCurrentPosition(
+        p => fetchWx(p.coords.latitude, p.coords.longitude), () => {}, { timeout: 8000 });
+      const later = () => {
+        const go = () => { removeEventListener('pointerdown', go); removeEventListener('keydown', go); ask(); };
+        addEventListener('pointerdown', go); addEventListener('keydown', go);
+      };
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then(
+          r => { if (r.state === 'granted') ask(); else if (r.state === 'prompt') later(); }, later);
+      } else later();
     }
   }
 

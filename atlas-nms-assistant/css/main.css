@@ -20,13 +20,7 @@
   font-display: swap;
 }
 
-/* Drop GeoNMS.woff2 into assets/fonts/ and this activates automatically */
-@font-face {
-  font-family: 'GeoNMS';
-  src: url('../assets/fonts/GeoNMS.woff2') format('woff2'),
-       url('../assets/fonts/GeoNMS.otf') format('opentype');
-  font-display: swap;
-}
+/* GeoNMS font file was never added (404 in console), so Orbitron is used. */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 button { -webkit-appearance: none; appearance: none; }
@@ -42,7 +36,7 @@ html, body {
 /* ====== BACKGROUND LAYERS ====== */
 #bg-base {
   position: fixed; inset: 0; z-index: 0;
-  background: url('../assets/bg-spaceport.jpg') center/cover no-repeat;
+  background: url('../assets/bg-spaceport.webp') center/cover no-repeat;
   filter: blur(2px) brightness(0.55);
   opacity: 0.6;
 }
@@ -728,7 +722,7 @@ body:has(#speech-decode:not(.hidden)) #input-bar { display: none; }
 .tg-inner { padding: 24px; }
 .tg-orb {
   width: min(170px, 42vw); aspect-ratio: 1; margin: 0 auto 26px; border-radius: 50%;
-  background: url('../assets/atlas-orb-small.gif') center / 100% 100%;
+  background: url('../assets/atlas-orb-small.webp') center / 100% 100%;
   -webkit-mask-image: radial-gradient(circle, #000 60%, transparent 72%);
           mask-image: radial-gradient(circle, #000 60%, transparent 72%);
   box-shadow: 0 0 40px rgba(255, 51, 34, 0.45);

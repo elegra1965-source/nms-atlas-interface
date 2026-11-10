@@ -23,7 +23,7 @@
   position: absolute;
   top: 3.2%; left: 8.3%;
   width: 83.4%; height: 46.9%;
-  background: url('../assets/atlas-orb.gif');
+  background: url('../assets/atlas-orb.webp');
   background-size: 100% 100%;
   transition: filter 0.5s;
 }
@@ -33,7 +33,7 @@
   position: absolute;
   top: 50.1%; left: 8.3%;
   width: 83.4%; height: 46.9%;
-  background: url('../assets/atlas-orb.gif');
+  background: url('../assets/atlas-orb.webp');
   background-size: 100% 100%;
   transform: scaleY(-1);
   opacity: 0.65;

@@ -15,7 +15,7 @@
   if (!arch || !mirror) return;
 
   const small = window.matchMedia('(max-width: 768px)').matches;
-  const SRC = small ? 'assets/atlas-orb-small.gif' : 'assets/atlas-orb.gif';
+  const SRC = small ? 'assets/atlas-orb-small.webp' : 'assets/atlas-orb.webp';
   const DARK = [10, 6, 8]; // chamber dark the reflection fades into
 
   const canvas = document.createElement('canvas');
@@ -106,7 +106,7 @@
 
   async function init() {
     const buf = await (await fetch(SRC)).arrayBuffer();
-    const dec = new ImageDecoder({ data: buf, type: 'image/gif' });
+    const dec = new ImageDecoder({ data: buf, type: 'image/webp' });
     await dec.tracks.ready;
     const count = dec.tracks.selectedTrack.frameCount;
 

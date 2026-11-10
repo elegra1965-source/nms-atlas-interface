@@ -36,7 +36,7 @@
 
   /* orb smaller, GIF swapped for lighter version */
   #orb-arch { width: min(240px, 68vw); }
-  #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.gif'); }
+  #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.webp'); }
   #orb-arch #status-line { font-size: 0.6rem; padding: 4px 10px; }
 
   /* transcript: fixed comfortable height instead of flex-fill */
@@ -125,7 +125,7 @@
 
   /* compact centre for short viewport */
   #orb-arch  { width: min(100px, 22vw); }
-  #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.gif'); }
+  #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.webp'); }
   #transcript { height: auto; max-height: 16vh; min-height: 0; }
   #ticker-track, #al-ticker-track { font-size: 0.55rem; }
   #header-bar { min-height: 38px; padding: 4px 8px; }
