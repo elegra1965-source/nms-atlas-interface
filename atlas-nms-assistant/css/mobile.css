@@ -31,13 +31,13 @@
   #clock-utc { display: none; }
   .clock-sep { display: none; }
   #header-bar { padding: 5px 8px; min-height: 44px; }
-  .tk-label { font-size: 0.48rem; padding: 0 6px; }
-  #ticker-track, #al-ticker-track { font-size: 0.62rem; }
+  .tk-label { font-size: 0.6875rem; padding: 0 6px; }
+  #ticker-track, #al-ticker-track { font-size: 0.6875rem; }
 
   /* orb smaller, GIF swapped for lighter version */
   #orb-arch { width: min(240px, 68vw); }
   #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.webp'); }
-  #orb-arch #status-line { font-size: 0.6rem; padding: 4px 10px; }
+  #orb-arch #status-line { font-size: 0.6875rem; padding: 4px 10px; }
 
   /* transcript: fixed comfortable height instead of flex-fill */
   #transcript {
@@ -57,9 +57,9 @@
   .chip { flex: 0 0 auto; }
 
   /* big touch targets for typing and speaking */
-  #mic-btn { flex-basis: 56px; height: 56px; }
-  #send-btn { flex-basis: 50px; height: 56px; }
-  #text-input { height: 56px; font-size: 16px; } /* 16px prevents iOS zoom */
+  #mic-btn, #wake-btn, #auto-btn { flex-basis: 46px; height: 52px; }
+  #send-btn { flex-basis: 44px; height: 52px; }
+  #text-input { height: 52px; font-size: 16px; } /* 16px prevents iOS zoom */
   #input-bar { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
 
   /* panels collapse into horizontal widget strips */
@@ -127,13 +127,14 @@
   #orb-arch  { width: min(100px, 22vw); }
   #orb, #orb-mirror { background-image: url('../assets/atlas-orb-small.webp'); }
   #transcript { height: auto; max-height: 16vh; min-height: 0; }
-  #ticker-track, #al-ticker-track { font-size: 0.55rem; }
+  #ticker-track, #al-ticker-track { font-size: 0.6875rem; }
   #header-bar { min-height: 38px; padding: 4px 8px; }
   #mic-btn { flex-basis: 42px; height: 42px; }
+  #wake-btn, #auto-btn { flex-basis: 42px; height: 42px; }
   #send-btn { flex-basis: 38px; height: 42px; }
   #text-input { height: 42px; }
   #chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; justify-content: flex-start; }
-  .chip { flex: 0 0 auto; font-size: 0.6rem; padding: 4px 8px; }
+  .chip { flex: 0 0 auto; font-size: 0.6875rem; padding: 4px 8px; }
 }
 
 /* ---------- LANDSCAPE PHONES / SMALL TABLETS ---------- */
@@ -146,15 +147,16 @@
   .brand { font-size: 0.9rem; letter-spacing: 0.18em; white-space: nowrap; }
   .brand-sub { display: none; }
   .header-clocks { font-size: 0.7rem; }
-  #ticker-track, #al-ticker-track { font-size: 0.62rem; }
+  #ticker-track, #al-ticker-track { font-size: 0.6875rem; }
   #orb-arch { width: min(300px, 34vw, 40dvh); }
   .hud-panel { padding: 10px; gap: 12px; }
-  .widget-label { font-size: 0.56rem; }
+  .widget-label { font-size: 0.6875rem; }
   .big-clock { font-size: 1.3rem; }
   .lore-fact { font-size: 0.7rem; }
   .exp-countdown { font-size: 0.9rem; }
   #text-input { height: 52px; font-size: 16px; }
   #mic-btn { flex-basis: 52px; height: 52px; }
+  #wake-btn, #auto-btn { flex-basis: 52px; height: 52px; }
   #send-btn { flex-basis: 48px; height: 52px; }
 }
 
@@ -183,8 +185,8 @@
   .sh-arrow.show { opacity: 1; pointer-events: auto; }
   .sh-left  { left: 1px;  background: linear-gradient(90deg, rgba(0, 8, 12, .92) 30%, transparent); justify-content: flex-start; padding-left: 6px; }
   .sh-right { right: 1px; background: linear-gradient(270deg, rgba(0, 8, 12, .92) 30%, transparent); justify-content: flex-end; padding-right: 6px; }
-  .sh-dia  { font-size: .55rem; color: var(--nms-teal); text-shadow: 0 0 8px rgba(0, 229, 204, .8); }
-  .sh-chev { font-size: 1.6rem; line-height: 1; text-shadow: 0 0 10px rgba(255, 140, 0, .7); }
+  .sh-dia  { font-size: 0.6875rem; color: var(--nms-teal); }
+  .sh-chev { font-size: 1.6rem; line-height: 1; }
   .sh-right.show .sh-chev, .sh-right.show .sh-dia { animation: sh-nudge 1.6s ease-in-out infinite; }
   .sh-left.show .sh-chev, .sh-left.show .sh-dia { animation: sh-nudge-l 1.6s ease-in-out infinite; }
   @keyframes sh-nudge   { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }

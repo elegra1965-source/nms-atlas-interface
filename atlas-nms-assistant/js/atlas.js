@@ -1071,7 +1071,7 @@
 
     // sound mute toggle
     const muteBtn = $('mute-btn');
-    function renderMute() { muteBtn.classList.toggle('muted', soundMuted); muteBtn.textContent = soundMuted ? '♪̸' : '♪'; }
+    function renderMute() { muteBtn.classList.toggle('muted', soundMuted); }
     renderMute();
     muteBtn.addEventListener('click', () => {
       soundMuted = !soundMuted;

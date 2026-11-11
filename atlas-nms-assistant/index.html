@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#CC1A1A">
 <title>ATLAS | No Man's Sky AI Companion &amp; Expedition Tracker</title>
 <script src="/calm.js?v=3"></script>
-<script src="/lang.js?v=4"></script>
+<script src="/lang.js?v=5"></script>
 <script src="/nms-update.js?v=4" defer></script>
 <meta name="description" content="A free, voice-driven No Man's Sky AI companion. Ask how to craft or refine anything, check expedition milestones and live community research, and browse lore.">
 <meta property="og:title" content="ATLAS | A No Man's Sky AI Companion">
@@ -58,10 +58,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=20261110">
+<link rel="stylesheet" href="css/main.css?v=20261111">
 <link rel="stylesheet" href="css/orb.css?v=20261110">
-<link rel="stylesheet" href="css/panels.css?v=20261027">
-<link rel="stylesheet" href="css/mobile.css?v=20261110c">
+<link rel="stylesheet" href="css/panels.css?v=20261111">
+<link rel="stylesheet" href="css/mobile.css?v=20261111">
 </head>
 <body>
 <h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">ATLAS — No Man's Sky AI Companion &amp; Expedition Tracker</h1>
@@ -130,7 +130,7 @@
     <button id="demo-skip" class="btn-demo">CONTINUE FREE — NMS ARCHIVE</button>
     <button id="open-memory" class="btn-demo" type="button">◈ ATLAS MEMORY — WHAT IT REMEMBERS ABOUT YOU</button>
     <p class="key-note">Create a key free at console.anthropic.com, then add a small prepaid credit there (even $5 lasts months — a chat costs a penny or two). Note: this is separate from any Claude.ai subscription. The key is sent only to Anthropic and stored only on this device.</p>
-    <p class="key-note key-warn">⚠ Keep your key private, like a password. A typical chat costs only a penny or two, and you can set spending limits — or revoke the key — anytime at console.anthropic.com.</p>
+    <p class="key-note key-warn">Keep your key private, like a password. A typical chat costs only a penny or two, and you can set spending limits — or revoke the key — anytime at console.anthropic.com.</p>
     <p class="key-note">ATLAS is a free, unofficial fan project — its creator receives no money whatsoever. The only cost is your own Anthropic API usage, billed by Anthropic to you directly. No Man's Sky © Hello Games.</p>
     <p class="key-note"><a href="#" id="websearch-info-link">ⓘ Why can't ATLAS search the web?</a></p>
   </div>
@@ -246,7 +246,7 @@
 
 <!-- ====== MOBILE DISPLAY HINT ====== -->
 <div id="mobile-hint" class="hidden">
-  ⚠ SMALL SCREEN IN DESKTOP MODE — turn OFF "Desktop site" in your browser menu, or switch rotation lock off and turn your device sideways.
+  SMALL SCREEN IN DESKTOP MODE — turn OFF "Desktop site" in your browser menu, or switch rotation lock off and turn your device sideways.
   <button id="mobile-hint-close" title="Dismiss">✕</button>
 </div>
 
@@ -260,10 +260,10 @@
       <span id="clock-utc">UTC --:--:--</span>
       <span class="clock-sep">|</span>
       <span id="clock-local">LOCAL --:--:--</span>
-      <button id="lang-btn" type="button" data-lang-btn title="Language" aria-label="Language">🌐<b data-lang-code translate="no">EN</b></button>
-      <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds">♪</button>
-      <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings">⚙</button>
-      <button id="tour-btn" type="button" title="Take a quick tour of this page" aria-label="Take a quick tour of this page">▷</button>
+      <button id="lang-btn" type="button" data-lang-btn title="Language" aria-label="Language"><img class="hico" src="/assets/crystal/ci-globe.webp" alt="" width="20" height="20"><b data-lang-code translate="no">EN</b></button>
+      <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds"><img class="hico" src="/assets/crystal/ci-sound.webp" srcset="/assets/crystal/ci-sound@2x.webp 2x" alt="" width="22" height="22"></button>
+      <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings"><img class="hico" src="/assets/crystal/ci-gear.webp" srcset="/assets/crystal/ci-gear@2x.webp 2x" alt="" width="22" height="22"></button>
+      <button id="tour-btn" type="button" title="Take a quick tour of this page" aria-label="Take a quick tour of this page"><img class="hico" src="/assets/crystal/ci-tour.webp" srcset="/assets/crystal/ci-tour@2x.webp 2x" alt="" width="22" height="22"></button>
     </div>
     <!-- v4.3: two full-width tickers — expedition, then galactic alliances (always visible) -->
     <div id="ticker-bar">
@@ -409,13 +409,9 @@
     </div>
 
     <div id="input-bar">
-      <button id="wake-btn" title="Wake word — say 'Atlas' to activate the mic (experimental, keeps microphone armed)" aria-label="Toggle wake word">◉)</button>
-      <button id="auto-btn" title="Continuous conversation — ATLAS listens again after each reply" aria-label="Toggle continuous conversation">∞</button>
-      <button id="mic-btn" title="Tap to speak" aria-label="Speak to ATLAS">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
-        </svg>
-      </button>
+      <button id="wake-btn" title="Wake word — say 'Atlas' to activate the mic (experimental, keeps microphone armed)" aria-label="Toggle wake word"><img class="inico" src="/assets/crystal/ci-listen.webp" srcset="/assets/crystal/ci-listen@2x.webp 2x" alt="" width="40" height="40"></button>
+      <button id="auto-btn" title="Continuous conversation — ATLAS listens again after each reply" aria-label="Toggle continuous conversation"><img class="inico" src="/assets/crystal/ci-infinity.webp" srcset="/assets/crystal/ci-infinity@2x.webp 2x" alt="" width="40" height="46"></button>
+      <button id="mic-btn" title="Tap to speak" aria-label="Speak to ATLAS"><img class="inico" src="/assets/crystal/ci-mic.webp" srcset="/assets/crystal/ci-mic@2x.webp 2x" alt="" width="40" height="47"></button>
       <input type="text" id="text-input" placeholder="Ask the Atlas" autocomplete="off">
       <button id="send-btn" title="Send" aria-label="Send message">▶</button>
     </div>
@@ -479,7 +475,7 @@
 <script src="js/api.js?v=20261104"></script>
 <script src="js/voice.js"></script>
 <script src="js/codex.js"></script>
-<script src="js/atlas.js?v=20261104"></script>
+<script src="js/atlas.js?v=20261111"></script>
 <script src="js/orbwrap.js"></script>
 <script src="js/pulse.js"></script>
 <script src="js/heartbeat.js"></script>
