@@ -36,7 +36,7 @@
     bar.setAttribute('role', 'status');
     var go = document.createElement('button');
     go.id = 'nmsUpdGo'; go.type = 'button';
-    var ic = document.createElement('b'); ic.textContent = '↻'; ic.setAttribute('aria-hidden', 'true');
+    var ic = document.createElement('b'); ic.innerHTML = '<img src="/nms-ci/ci-refresh.webp?v=20261111" alt="" width="22" height="22" style="width:22px;height:22px;vertical-align:middle">'; ic.setAttribute('aria-hidden', 'true');
     var tx = document.createElement('span'); tx.textContent = T('New version ready · tap to update');
     go.appendChild(ic); go.appendChild(tx);
     go.addEventListener('click', function () { tx.textContent = '…'; try { sessionStorage.setItem('nmsPNgo', '1'); } catch (e) {} location.reload(); });
@@ -120,7 +120,7 @@
     var b = document.createElement('button');
     b.type = 'button'; b.id = 'nmsRefresh';
     b.className = slot ? (slot.getAttribute('data-nms-refresh-slot') || '') : (ref.tagName === 'BUTTON' ? ref.className : '');
-    b.textContent = '⟳';
+    b.innerHTML = '<img src="/nms-ci/ci-refresh.webp?v=20261111" alt="" width="22" height="22" style="width:22px;height:22px;vertical-align:middle">';
     b.title = T('Refresh'); b.setAttribute('aria-label', T('Refresh'));
     b.addEventListener('click', refresh);
     var st = document.createElement('style');

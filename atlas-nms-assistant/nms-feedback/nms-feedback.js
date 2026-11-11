@@ -115,7 +115,7 @@
     idea: { tools: 'WHICH TOOL?', text: 'WHAT WOULD YOU LIKE ADDED OR CHANGED?', ph: 'Describe your idea…' },
     other: { tools: 'WHICH TOOL?', text: 'WHAT WOULD YOU LIKE TO ASK OR TELL US?', ph: 'Ask a question or tell us anything…' }
   };
-  function ico(n) { return '<img class="fb-ico" src="' + BASE + 'fb-ico-' + n + '.webp" srcset="' + BASE + 'fb-ico-' + n + '@2x.webp 2x" alt="" width="24" height="24">'; }
+  function ico(n) { return '<img class="fb-ico" src="' + BASE + 'fb-ico-' + n + '.webp?v=20261111" srcset="' + BASE + 'fb-ico-' + n + '@2x.webp?v=20261111 2x" alt="" width="24" height="24">'; }
 
   var d, f, t, send, done, slowEl, say, err, tabs, rating = 0, sent = false, slow = false, lastFocus = null, reviews = null;
   function $(id) { return document.getElementById(id); }

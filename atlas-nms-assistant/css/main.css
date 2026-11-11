@@ -883,3 +883,6 @@ html.log-reading #nmsCalmBtn, html.log-reading #nms-top-btn { display: none !imp
 /* crystal refresh (installed app): picture replaces the ⟳ glyph */
 #nmsRefresh { font-size: 0 !important; color: transparent !important; border: 0 !important; background: url('/assets/crystal/ci-refresh.webp') center / contain no-repeat !important; width: 22px; height: 22px; min-width: 40px !important; min-height: 40px !important; background-origin: content-box !important; padding: 9px !important; box-sizing: border-box; }
 #nmsRefresh:hover { box-shadow: none; filter: drop-shadow(0 0 6px rgba(0, 229, 204, 0.8)); }
+
+#nmsRefresh img{display:none}
+.widget-action .ci-act{width:20px;height:20px;object-fit:contain;display:block}

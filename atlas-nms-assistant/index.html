@@ -10,7 +10,7 @@
 <title>ATLAS | No Man's Sky AI Companion &amp; Expedition Tracker</title>
 <script src="/calm.js?v=3"></script>
 <script src="/lang.js?v=6"></script>
-<script src="/nms-update.js?v=4" defer></script>
+<script src="/nms-update.js?v=5" defer></script>
 <meta name="description" content="A free, voice-driven No Man's Sky AI companion. Ask how to craft or refine anything, check expedition milestones and live community research, and browse lore.">
 <meta property="og:title" content="ATLAS | A No Man's Sky AI Companion">
 <meta property="og:description" content="Talk to the Atlas: how to craft or refine anything, expedition milestones, live community research and lore. Voice-driven, free, no account needed.">
@@ -58,7 +58,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=20261111">
+<link rel="stylesheet" href="css/main.css?v=20261111b">
 <link rel="stylesheet" href="css/orb.css?v=20261110">
 <link rel="stylesheet" href="css/panels.css?v=20261111b">
 <link rel="stylesheet" href="css/mobile.css?v=20261111">
@@ -288,18 +288,18 @@
         <div><span class="c-key">FRIEND CODE:</span>MGD8-C6PP-XKFGT</div>
       </div>
       <button id="sister-btn" class="sister-popup-btn">⏁ SISTER PROJECTS</button>
-      <button type="button" class="sister-popup-btn nms-fb-btn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp" srcset="/nms-feedback/fb-ico-review@2x.webp 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
+      <button type="button" class="sister-popup-btn nms-fb-btn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp?v=20261111" srcset="/nms-feedback/fb-ico-review@2x.webp?v=20261111 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
       <div class="credit-foot">UNOFFICIAL FAN PROJECT · NO MAN'S SKY © HELLO GAMES</div>
     </div>
     </div>
     <!-- v4.3: on phones the two archives share one tile (stacked); desktop is unchanged -->
     <div class="widget-stack">
     <div class="widget">
-      <div class="widget-label">ATLAS ARCHIVE <span id="lore-left-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive">⟳</span></div>
+      <div class="widget-label">ATLAS ARCHIVE <span id="lore-left-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
       <div id="lore-left" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
     </div>
     <div class="widget">
-      <div class="widget-label">VISUAL ARCHIVE <span id="gallery-shuffle" class="widget-action" title="Shuffle" role="button" aria-label="Shuffle archive image">⟳</span></div>
+      <div class="widget-label">VISUAL ARCHIVE <span id="gallery-shuffle" class="widget-action" title="Shuffle" role="button" aria-label="Shuffle archive image"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
       <a id="gallery-link" href="https://www.nomanssky.com/" target="_blank" rel="noopener">
         <div id="gallery-frame">
           <img id="gallery-img" src="assets/bg-base.png" alt="No Man's Sky archive image">
@@ -428,11 +428,11 @@
       <div id="sys-stats" class="sys-stats">—</div>
     </div>
     <div class="widget">
-      <div class="widget-label">ATLAS ARCHIVE — II <span id="lore-right-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive II">⟳</span></div>
+      <div class="widget-label">ATLAS ARCHIVE — II <span id="lore-right-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive II"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
       <div id="lore-right" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
     </div>
     <div class="widget">
-      <div class="widget-label">SYSTEM SCAN <span id="planet-rescan" class="widget-action" title="Rescan">⟳</span></div>
+      <div class="widget-label">SYSTEM SCAN <span id="planet-rescan" class="widget-action" title="Rescan"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
       <div id="system-scan" class="system-scan clickable" title="Tap to scan a new system">SCANNING…</div>
       <div id="planet-scan" class="planet-scan clickable" title="Tap to scan a new system">…</div>
     </div>
@@ -486,6 +486,6 @@
 <script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device. EXPAND LOG opens it in a big window where you can copy any reply."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
 <script>/* 2026-10-24: turn on the app's own update worker (sw.js was only registered when alerts were switched on), so an installed ATLAS can tell when a new version is live (nms-update.js) */if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 <script src="/nms-totop.js?v=3" defer></script>
-<script src="/nms-feedback/nms-feedback.js?v=20261104" data-tool="atlas" defer></script>
+<script src="/nms-feedback/nms-feedback.js?v=20261111" data-tool="atlas" defer></script>
 </body>
 </html>
