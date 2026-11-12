@@ -68,6 +68,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
   <img src="screenshots/11-feedback-other-reply-email.jpg" alt="The feedback pop-up with four chips (Review, Bug, Idea / request, Other) and the optional reply email (example text)" width="290">
 
+- **New crystal icons.** Every icon on ATLAS has been redrawn in one faceted crystal style, so all six sites match, and every picture has a text description for screen readers. The icons are toned down a little so they don't shout over the content.
+
+  <img src="screenshots/icons-crystal.jpg" alt="The new crystal icons on ATLAS: buttons and menus drawn as faceted cyan crystals with amber accents" width="300">
+
 </details>
 
 ## New here? Take the tour
