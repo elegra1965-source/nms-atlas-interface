@@ -886,3 +886,17 @@ html.log-reading #nmsCalmBtn, html.log-reading #nms-top-btn { display: none !imp
 
 #nmsRefresh img{display:none}
 .widget-action .ci-act{width:20px;height:20px;object-fit:contain;display:block}
+
+/* ====== FAQ (closed until opened from Settings; flat, uses the modal look) ====== */
+.faq-box { width: min(520px, 94vw); text-align: left; }
+.faq-box h2 { text-align: center; }
+.faq-box h2 { letter-spacing: 0.14em; font-size: 1.1rem; overflow-wrap: anywhere; padding: 0 28px; }
+.faq-box .faq-body { margin-top: 6px; }
+.faq-q { border-top: 1px solid rgba(0, 229, 204, 0.2); }
+.faq-q summary { cursor: pointer; padding: 11px 0; color: var(--nms-white); font-size: 0.85rem; list-style: none; display: flex; gap: 8px; }
+.faq-q summary::-webkit-details-marker { display: none; }
+.faq-q summary::before { content: "\25B8"; color: var(--nms-teal); flex: none; width: 10px; transition: transform 0.2s; display: inline-block; }
+.faq-q[open] summary::before { transform: rotate(90deg); }
+.faq-q summary:focus-visible { outline: 1px solid var(--nms-teal); outline-offset: 2px; }
+.faq-q p { margin: 0 0 12px 18px; font-size: 0.8rem; line-height: 1.5; color: var(--nms-white); opacity: 0.85; }
+@media (prefers-reduced-motion: reduce) { .faq-q summary::before { transition: none; } }

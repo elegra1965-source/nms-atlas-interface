@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#CC1A1A">
 <title>ATLAS | No Man's Sky AI Companion &amp; Expedition Tracker</title>
 <script src="/calm.js?v=3"></script>
-<script src="/lang.js?v=6"></script>
+<script src="/lang.js?v=7"></script>
 <script src="/nms-update.js?v=5" defer></script>
 <meta name="description" content="A free, voice-driven No Man's Sky AI companion. Ask how to craft or refine anything, check expedition milestones and live community research, and browse lore.">
 <meta property="og:title" content="ATLAS | A No Man's Sky AI Companion">
@@ -50,6 +50,62 @@
   }
 }
 </script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "What is ATLAS?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "ATLAS is a free, fan-made No Man's Sky companion you can talk to. Ask how to craft or refine something, where to find a resource, how the expedition is going, or for a story from the lore."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I talk to it?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Tap the orb or the microphone and speak, or type in the box. The buttons under the orb give quick questions, and ATLAS answers aloud."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is it free, and do I need an account?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, it is free and there is no account or sign-up. Without a key it answers from the NMS archive and the NMS Wiki, in English."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What does it know?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Crafting and refining recipes, where to find things, expedition milestones and guides, live community research, lore and faction standings."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I use my own Anthropic key?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, it is optional. Add your key in Settings (the cog) and ATLAS becomes a true AI that can talk about anything, in your language. The key is stored only on this device."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I change the voice or the language?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Choose the voice in Settings (the cog) and the page language with the language button at the top."
+   }
+  }
+ ]
+}
+</script>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png">
@@ -58,7 +114,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=20261112b">
+<link rel="stylesheet" href="css/main.css?v=20261112e">
 <link rel="stylesheet" href="css/orb.css?v=20261110">
 <link rel="stylesheet" href="css/panels.css?v=20261112d">
 <link rel="stylesheet" href="css/mobile.css?v=20261112">
@@ -129,10 +185,20 @@
     <button id="key-save" class="btn-primary">INITIALISE</button>
     <button id="demo-skip" class="btn-demo">CONTINUE FREE — NMS ARCHIVE</button>
     <button id="open-memory" class="btn-demo" type="button">◈ ATLAS MEMORY — WHAT IT REMEMBERS ABOUT YOU</button>
+    <button id="open-faq" class="btn-demo" type="button">◈ HOW IT WORKS · FAQ</button>
     <p class="key-note">Create a key free at console.anthropic.com, then add a small prepaid credit there (even $5 lasts months — a chat costs a penny or two). Note: this is separate from any Claude.ai subscription. The key is sent only to Anthropic and stored only on this device.</p>
     <p class="key-note key-warn">Keep your key private, like a password. A typical chat costs only a penny or two, and you can set spending limits — or revoke the key — anytime at console.anthropic.com.</p>
     <p class="key-note">ATLAS is a free, unofficial fan project — its creator receives no money whatsoever. The only cost is your own Anthropic API usage, billed by Anthropic to you directly. No Man's Sky © Hello Games.</p>
     <p class="key-note"><a href="#" id="websearch-info-link">ⓘ Why can't ATLAS search the web?</a></p>
+  </div>
+</div>
+
+<!-- ====== FAQ (closed; opened from Settings) ====== -->
+<div id="faq-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="faq-title">
+  <div class="modal-box welcome-box faq-box">
+    <button id="faq-close" class="modal-x" aria-label="Close FAQ">✕</button>
+    <h2 id="faq-title">HOW IT WORKS · FAQ</h2>
+    <div class="faq-body"><details class="faq-q"><summary>What is ATLAS?</summary><p>ATLAS is a free, fan-made No Man's Sky companion you can talk to. Ask how to craft or refine something, where to find a resource, how the expedition is going, or for a story from the lore.</p></details><details class="faq-q"><summary>How do I talk to it?</summary><p>Tap the orb or the microphone and speak, or type in the box. The buttons under the orb give quick questions, and ATLAS answers aloud.</p></details><details class="faq-q"><summary>Is it free, and do I need an account?</summary><p>Yes, it is free and there is no account or sign-up. Without a key it answers from the NMS archive and the NMS Wiki, in English.</p></details><details class="faq-q"><summary>What does it know?</summary><p>Crafting and refining recipes, where to find things, expedition milestones and guides, live community research, lore and faction standings.</p></details><details class="faq-q"><summary>Can I use my own Anthropic key?</summary><p>Yes, it is optional. Add your key in Settings (the cog) and ATLAS becomes a true AI that can talk about anything, in your language. The key is stored only on this device.</p></details><details class="faq-q"><summary>Can I change the voice or the language?</summary><p>Yes. Choose the voice in Settings (the cog) and the page language with the language button at the top.</p></details></div>
   </div>
 </div>
 
@@ -469,6 +535,13 @@
 
 </div>
 
+<script>
+(function(){var m=document.getElementById('faq-modal'),b=document.getElementById('open-faq'),c=document.getElementById('faq-close');if(!m||!b||!c)return;
+function open(){m.classList.remove('hidden');c.focus();}function close(){m.classList.add('hidden');b.focus();}
+b.addEventListener('click',open);c.addEventListener('click',close);
+m.addEventListener('click',function(e){if(e.target===m)close();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.classList.contains('hidden'))close();});})();
+</script>
 <script src="js/widgets.js?v=20261110"></script>
 <script src="js/hud.js"></script>
 <script src="js/memory.js"></script>
