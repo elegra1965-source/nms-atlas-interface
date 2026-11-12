@@ -68,7 +68,7 @@ const Widgets = (() => {
   };
 
   function weatherIcon(code) {
-    function wi(file) { return '<img class="weather-icon" alt="" src="assets/weather-icons/' + file + '.png" width="30" height="30" style="image-rendering:pixelated">'; }
+    function wi(file) { return '<img class="weather-icon" alt="Weather" src="assets/weather-icons/' + file + '.png" width="30" height="30" style="image-rendering:pixelated">'; }
     if (code === 0 || code === 1) return wi(4);           // clear / mainly clear
     if (code <= 3 || code === 45 || code === 48) return wi(12); // cloudy / overcast / fog
     if (code >= 95) return wi(13);                        // thunderstorm
@@ -433,7 +433,7 @@ const Widgets = (() => {
     const P = document.getElementById('planet-scan');
     P.innerHTML =
       '<div class="planet-head">' +
-      '<div class="planet-vis">' + (pic ? '<img class="alm-disc" src="' + esc(pic) + '" alt="" width="56" height="56">' : fallback) + '</div>' +
+      '<div class="planet-vis">' + (pic ? '<img class="alm-disc" src="' + esc(pic) + '" alt="Planet" width="56" height="56">' : fallback) + '</div>' +
       '<span class="p-name">' + esc(up(B.name || w.name)) + '</span>' +
       '</div>' +
       '<div class="planet-rows">' +

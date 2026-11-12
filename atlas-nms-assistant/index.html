@@ -58,10 +58,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=20261111b">
+<link rel="stylesheet" href="css/main.css?v=20261112b">
 <link rel="stylesheet" href="css/orb.css?v=20261110">
-<link rel="stylesheet" href="css/panels.css?v=20261111b">
-<link rel="stylesheet" href="css/mobile.css?v=20261111">
+<link rel="stylesheet" href="css/panels.css?v=20261112d">
+<link rel="stylesheet" href="css/mobile.css?v=20261112">
 </head>
 <body>
 <h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">ATLAS — No Man's Sky AI Companion &amp; Expedition Tracker</h1>
@@ -260,10 +260,10 @@
       <span id="clock-utc">UTC --:--:--</span>
       <span class="clock-sep">|</span>
       <span id="clock-local">LOCAL --:--:--</span>
-      <button id="lang-btn" type="button" data-lang-btn title="Language" aria-label="Language"><img class="hico" src="/assets/crystal/ci-globe.webp" alt="" width="20" height="20"><b data-lang-code translate="no">EN</b></button>
-      <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds"><img class="hico" src="/assets/crystal/ci-sound.webp" srcset="/assets/crystal/ci-sound@2x.webp 2x" alt="" width="22" height="22"></button>
-      <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings"><img class="hico" src="/assets/crystal/ci-gear.webp" srcset="/assets/crystal/ci-gear@2x.webp 2x" alt="" width="22" height="22"></button>
-      <button id="tour-btn" type="button" title="Take a quick tour of this page" aria-label="Take a quick tour of this page"><img class="hico" src="/assets/crystal/ci-tour.webp" srcset="/assets/crystal/ci-tour@2x.webp 2x" alt="" width="22" height="22"></button>
+      <button id="lang-btn" type="button" data-lang-btn title="Language" aria-label="Language"><img class="hico" src="/assets/crystal/ci-globe.webp?v=20261112" alt="Language" width="20" height="20"><b data-lang-code translate="no">EN</b></button>
+      <button id="mute-btn" title="Toggle interface sounds" aria-label="Toggle interface sounds"><img class="hico" src="/assets/crystal/ci-sound.webp?v=20261112" srcset="/assets/crystal/ci-sound@2x.webp 2x" alt="Sound" width="22" height="22"></button>
+      <button id="settings-btn" title="Settings — voice & API keys" aria-label="Settings"><img class="hico" src="/assets/crystal/ci-gear.webp?v=20261112" srcset="/assets/crystal/ci-gear@2x.webp 2x" alt="Settings" width="22" height="22"></button>
+      <button id="tour-btn" type="button" title="Take a quick tour of this page" aria-label="Take a quick tour of this page"><img class="hico" src="/assets/crystal/ci-tour.webp?v=20261112" srcset="/assets/crystal/ci-tour@2x.webp 2x" alt="Tour" width="22" height="22"></button>
     </div>
     <!-- v4.3: two full-width tickers — expedition, then galactic alliances (always visible) -->
     <div id="ticker-bar">
@@ -288,18 +288,18 @@
         <div><span class="c-key">FRIEND CODE:</span>MGD8-C6PP-XKFGT</div>
       </div>
       <button id="sister-btn" class="sister-popup-btn">⏁ SISTER PROJECTS</button>
-      <button type="button" class="sister-popup-btn nms-fb-btn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp?v=20261111" srcset="/nms-feedback/fb-ico-review@2x.webp?v=20261111 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
+      <button type="button" class="sister-popup-btn nms-fb-btn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp?v=20261112" srcset="/nms-feedback/fb-ico-review@2x.webp?v=20261112 2x" alt="Review" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
       <div class="credit-foot">UNOFFICIAL FAN PROJECT · NO MAN'S SKY © HELLO GAMES</div>
     </div>
     </div>
     <!-- v4.3: on phones the two archives share one tile (stacked); desktop is unchanged -->
     <div class="widget-stack">
     <div class="widget">
-      <div class="widget-label">ATLAS ARCHIVE <span id="lore-left-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
+      <div class="widget-label">ATLAS ARCHIVE <span id="lore-left-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive"><img class="ci-act" src="/assets/crystal/ci-refresh.webp?v=20261112" alt="Act" width="20" height="20"></span></div>
       <div id="lore-left" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
     </div>
     <div class="widget">
-      <div class="widget-label">VISUAL ARCHIVE <span id="gallery-shuffle" class="widget-action" title="Shuffle" role="button" aria-label="Shuffle archive image"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
+      <div class="widget-label">VISUAL ARCHIVE <span id="gallery-shuffle" class="widget-action" title="Shuffle" role="button" aria-label="Shuffle archive image"><img class="ci-act" src="/assets/crystal/ci-refresh.webp?v=20261112" alt="Act" width="20" height="20"></span></div>
       <a id="gallery-link" href="https://www.nomanssky.com/" target="_blank" rel="noopener">
         <div id="gallery-frame">
           <img id="gallery-img" src="assets/bg-base.png" alt="No Man's Sky archive image">
@@ -355,15 +355,15 @@
         <span class="exp-share-label">SHARE TRANSMISSION</span>
         <div class="exp-share-btns">
           <a class="exp-share-btn" id="share-x" href="#" target="_blank" rel="noopener" title="Share on X" aria-label="Share on X">
-            <img class="ci" src="/assets/crystal/ci-x.webp" alt="" width="18" height="18">
+            <img class="ci" src="/assets/crystal/ci-x.webp?v=20261112" alt="X" width="18" height="18">
             <span>X</span>
           </a>
           <a class="exp-share-btn" id="share-reddit" href="#" target="_blank" rel="noopener" title="Share on Reddit" aria-label="Share on Reddit">
-            <img class="ci" src="/assets/crystal/ci-reddit.webp" alt="" width="18" height="18">
+            <img class="ci" src="/assets/crystal/ci-reddit.webp?v=20261112" alt="Reddit" width="18" height="18">
             <span>REDDIT</span>
           </a>
           <button class="exp-share-btn" id="share-discord" type="button" title="Share on Discord" aria-label="Share on Discord">
-            <img class="ci" src="/assets/crystal/ci-discord.webp" alt="" width="18" height="18">
+            <img class="ci" src="/assets/crystal/ci-discord.webp?v=20261112" alt="Discord" width="18" height="18">
             <span>DISCORD</span>
           </button>
         </div>
@@ -409,9 +409,9 @@
     </div>
 
     <div id="input-bar">
-      <button id="wake-btn" title="Wake word — say 'Atlas' to activate the mic (experimental, keeps microphone armed)" aria-label="Toggle wake word"><img class="inico" src="/assets/crystal/ci-listen.webp" srcset="/assets/crystal/ci-listen@2x.webp 2x" alt="" width="40" height="40"></button>
-      <button id="auto-btn" title="Continuous conversation — ATLAS listens again after each reply" aria-label="Toggle continuous conversation"><img class="inico" src="/assets/crystal/ci-infinity.webp" srcset="/assets/crystal/ci-infinity@2x.webp 2x" alt="" width="40" height="46"></button>
-      <button id="mic-btn" title="Tap to speak" aria-label="Speak to ATLAS"><img class="inico" src="/assets/crystal/ci-mic.webp" srcset="/assets/crystal/ci-mic@2x.webp 2x" alt="" width="40" height="47"></button>
+      <button id="wake-btn" title="Wake word — say 'Atlas' to activate the mic (experimental, keeps microphone armed)" aria-label="Toggle wake word"><img class="inico" src="/assets/crystal/ci-listen.webp?v=20261112" srcset="/assets/crystal/ci-listen@2x.webp 2x" alt="Listen" width="40" height="40"></button>
+      <button id="auto-btn" title="Continuous conversation — ATLAS listens again after each reply" aria-label="Toggle continuous conversation"><img class="inico" src="/assets/crystal/ci-infinity.webp?v=20261112" srcset="/assets/crystal/ci-infinity@2x.webp 2x" alt="Loop" width="40" height="46"></button>
+      <button id="mic-btn" title="Tap to speak" aria-label="Speak to ATLAS"><img class="inico" src="/assets/crystal/ci-mic.webp?v=20261112" srcset="/assets/crystal/ci-mic@2x.webp 2x" alt="Microphone" width="40" height="47"></button>
       <input type="text" id="text-input" placeholder="Ask the Atlas" autocomplete="off">
       <button id="send-btn" title="Send" aria-label="Send message">▶</button>
     </div>
@@ -428,11 +428,11 @@
       <div id="sys-stats" class="sys-stats">—</div>
     </div>
     <div class="widget">
-      <div class="widget-label">ATLAS ARCHIVE — II <span id="lore-right-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive II"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
+      <div class="widget-label">ATLAS ARCHIVE — II <span id="lore-right-refresh" class="widget-action" title="New transmission" role="button" aria-label="Refresh atlas archive II"><img class="ci-act" src="/assets/crystal/ci-refresh.webp?v=20261112" alt="Act" width="20" height="20"></span></div>
       <div id="lore-right" class="lore-fact clickable" title="Tap for another transmission">Accessing archive…</div>
     </div>
     <div class="widget">
-      <div class="widget-label">SYSTEM SCAN <span id="planet-rescan" class="widget-action" title="Rescan"><img class="ci-act" src="/assets/crystal/ci-refresh.webp" alt="" width="20" height="20"></span></div>
+      <div class="widget-label">SYSTEM SCAN <span id="planet-rescan" class="widget-action" title="Rescan"><img class="ci-act" src="/assets/crystal/ci-refresh.webp?v=20261112" alt="Act" width="20" height="20"></span></div>
       <div id="system-scan" class="system-scan clickable" title="Tap to scan a new system">SCANNING…</div>
       <div id="planet-scan" class="planet-scan clickable" title="Tap to scan a new system">…</div>
     </div>
@@ -475,7 +475,7 @@
 <script src="js/api.js?v=20261104"></script>
 <script src="js/voice.js"></script>
 <script src="js/codex.js"></script>
-<script src="js/atlas.js?v=20261111"></script>
+<script src="js/atlas.js?v=20261112"></script>
 <script src="js/orbwrap.js"></script>
 <script src="js/pulse.js"></script>
 <script src="js/heartbeat.js"></script>
@@ -486,6 +486,6 @@
 <script>NMSTour.init({id:'atlas',launchers:['#tour-btn'],delay:2500,waitFor:function(){var w=document.getElementById('welcome-modal'),g=document.getElementById('transmission-gate');return (!w||w.classList.contains('hidden'))&&(!g||g.classList.contains('hidden'));},steps:[{"sel": "#orb-wrap", "title": "Meet the Atlas", "body": "Tap the orb to talk. The Atlas answers out loud from the No Man's Sky archive."}, {"sel": "#mic-btn", "title": "Tap to speak", "body": "Ask by voice: how to craft something, where to find a resource, or about the lore."}, {"sel": "#text-input", "title": "Or type", "body": "Prefer typing? Write your question here and press ▶."}, {"sel": "#chips", "title": "Quick questions", "body": "One tap asks a ready-made question: expedition status, guides, crafting help and more."}, {"sel": "#settings-btn", "title": "Settings", "body": "The cog picks the Atlas's voice. Add your own Anthropic key here to make it a full AI."}, {"sel": "#log-toggle", "title": "Transmission log", "body": "Everything you and the Atlas have said, kept on this device. EXPAND LOG opens it in a big window where you can copy any reply."}, {"sel": "[data-lang-btn]", "top": true, "title": "Your language", "body": "Pick your language once and every site in the family follows."}]});</script>
 <script>/* 2026-10-24: turn on the app's own update worker (sw.js was only registered when alerts were switched on), so an installed ATLAS can tell when a new version is live (nms-update.js) */if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
 <script src="/nms-totop.js?v=3" defer></script>
-<script src="/nms-feedback/nms-feedback.js?v=20261111" data-tool="atlas" defer></script>
+<script src="/nms-feedback/nms-feedback.js?v=20261112" data-tool="atlas" defer></script>
 </body>
 </html>

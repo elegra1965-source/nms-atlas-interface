@@ -347,6 +347,7 @@
 }
 .exp-share-btn {
   flex: 1 1 0;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -364,9 +365,10 @@
   border-radius: 4px;
   transition: background 0.2s, box-shadow 0.2s, color 0.2s, border-color 0.2s;
 }
+.ci,.nms-fb-ico,.fb-ico{filter:saturate(.8) brightness(.88)}
 .exp-share-btn svg, .exp-share-btn .ci { flex: 0 0 auto; }
 .exp-share-btn .ci { width: 18px; height: 18px; object-fit: contain; }
-.exp-alert-link::before { content: ""; display: inline-block; width: 18px; height: 18px; margin-right: 8px; vertical-align: -4px; background: url(/assets/crystal/ci-bell.webp) center/contain no-repeat; }
+.exp-alert-link::before { content: ""; display: inline-block; width: 18px; height: 18px; margin-right: 8px; vertical-align: -4px; background: url(/assets/crystal/ci-bell.webp?v=20261112) center/contain no-repeat; }
 .exp-share-btn:hover {
   color: var(--nms-white);
   background: rgba(0, 229, 204, 0.18);
@@ -449,6 +451,10 @@
   padding: 7px 10px;
   cursor: pointer;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
 .sister-popup-btn:hover {
