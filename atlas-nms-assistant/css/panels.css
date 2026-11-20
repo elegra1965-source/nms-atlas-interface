@@ -138,7 +138,8 @@
   color: var(--nms-teal); font-size: 0.9rem;
   transition: transform 0.4s, text-shadow 0.2s;
 }
-.widget-label:not(.history-label) .widget-action { float: none; display: inline-block; margin-left: 8px; vertical-align: middle; }
+.widget-label:not(.history-label):has(.widget-action) { display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
+.widget-label:not(.history-label) .widget-action { float: none; display: inline-flex; align-items: center; margin-left: 0; }
 .widget-action:hover { text-shadow: 0 0 8px var(--nms-teal); }
 .widget-action.spinning { transform: rotate(360deg); }
 
@@ -437,6 +438,7 @@
 }
 
 /* ====== SISTER PROJECTS BUTTON (in credits panel) ====== */
+.sister-popup-btn .ci, .sister-popup-btn .nms-fb-ico { display: inline-block; vertical-align: middle; margin: -4px 8px -4px 0; }
 .sister-popup-btn {
   -webkit-appearance: none;
   appearance: none;
@@ -452,10 +454,7 @@
   padding: 7px 10px;
   cursor: pointer;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  display: block;
   transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
 }
 .sister-popup-btn:hover {
