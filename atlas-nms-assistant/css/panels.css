@@ -138,6 +138,7 @@
   color: var(--nms-teal); font-size: 0.9rem;
   transition: transform 0.4s, text-shadow 0.2s;
 }
+.widget-label:not(.history-label) .widget-action { float: none; display: inline-block; margin-left: 8px; vertical-align: middle; }
 .widget-action:hover { text-shadow: 0 0 8px var(--nms-teal); }
 .widget-action.spinning { transform: rotate(360deg); }
 
