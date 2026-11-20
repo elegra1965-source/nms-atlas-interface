@@ -213,7 +213,9 @@
   #history .history-label .log-toggle, #history .history-label .widget-action, #history .history-label .log-expand,
   .sister-popup-btn, .exp-share-btn { min-height: 40px; }
   .chip { min-height: 40px; padding-top: 0; padding-bottom: 0; display: inline-flex; align-items: center; }
-  .widget-label .widget-action { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; min-height: 36px; }
+  .widget-label .widget-action { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; min-height: 36px; margin: -10px 0 -10px 0; }
+  .exp-share-btn { flex-direction: column; letter-spacing: 0.04em; gap: 2px; padding: 5px 2px; overflow: hidden; }
+  .exp-share-btn .ci { width: 18px; height: 18px; }
 }
 @media (max-width:340px) {
   #settings-btn, #tour-btn, #mute-btn, #nmsRefresh { width: 34px; height: 34px; min-width: 34px !important; min-height: 34px !important; }
