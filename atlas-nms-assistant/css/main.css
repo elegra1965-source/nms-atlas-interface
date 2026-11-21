@@ -900,3 +900,8 @@ html.log-reading #nmsCalmBtn, html.log-reading #nms-top-btn { display: none !imp
 .faq-q summary:focus-visible { outline: 1px solid var(--nms-teal); outline-offset: 2px; }
 .faq-q p { margin: 0 0 12px 18px; font-size: 0.8rem; line-height: 1.5; color: var(--nms-white); opacity: 0.85; }
 @media (prefers-reduced-motion: reduce) { .faq-q summary::before { transition: none; } }
+
+/* 2026-11-21 (Tony): header icon buttons have no faint outline, so they all match the refresh button */
+#lang-btn, #mute-btn, #settings-btn, #tour-btn { border: 0; }
+#mute-btn:hover, #settings-btn:hover, #tour-btn:hover, #lang-btn:hover, #lang-btn[aria-expanded="true"] { box-shadow: none; }
+#mute-btn:hover .hico, #settings-btn:hover .hico, #tour-btn:hover .hico, #lang-btn:hover .hico, #lang-btn[aria-expanded="true"] .hico { filter: drop-shadow(0 0 6px rgba(0, 229, 204, 0.8)); }
