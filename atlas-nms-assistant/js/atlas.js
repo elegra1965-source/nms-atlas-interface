@@ -520,7 +520,7 @@
   }
   function progressWords(info) {
     const L = info.live;
-    if (!L) return 'The live progress feed is quiet right now — watch the ticker above.';
+    if (!L) return info.redux ? '' : 'The live progress feed is quiet right now — watch the ticker above.';
     const pct = v => Number(v).toFixed(1).replace(/\.0$/, '');
     let s = L.tierPercentage != null
       ? `The community stands at tier ${L.tier} of ${L.totalTiers}, ${pct(L.tierPercentage)} percent through this tier.`
@@ -544,10 +544,14 @@
     const info = expInfo();
     if (!info) return 'The expedition uplink is silent, Traveller. Watch the ticker at the top of this interface.';
     const name = expSpokenName(info);
+    if (info.between && info.next) {
+      const nm = expSpokenName({ name: info.next.name });
+      return `No expedition is live right now, Traveller. ${nm} begins on ${new Date(info.next.start).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}. The ticker above will show it the moment it does.`;
+    }
     if (info.ended) {
       return `${name} has ended, Traveller. The Atlas watches for the next to begin — the ticker above will show it the moment it does.`;
     }
-    return `${name} is under way, Traveller. ${progressWords(info)} ${timeLeftWords(info)} ` +
+    return `${name} is under way${info.redux ? ' as a holiday redux' : ''}, Traveller. ${progressWords(info)} ${timeLeftWords(info)} ` +
            'Join the effort aboard the Space Anomaly — the countdown stands at the left of this interface.';
   }
   /* ---------- v4.0: questions about ANY expedition (demo mode) ----------

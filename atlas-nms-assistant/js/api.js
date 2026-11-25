@@ -43,7 +43,7 @@ const API = (() => {
     if (typeof Widgets === 'undefined' || !Widgets.expeditionInfo) return '';
     const e = Widgets.expeditionInfo();
     if (!e || !e.name) return '';
-    let s = '\n\nLive No Man\'s Sky data right now, from the official Galactic Atlas feed. Trust this over your own training data, ' +
+    let s = '\n\nLive No Man\'s Sky data right now, from Hello Games\' official news (expedition schedule) and the Galactic Atlas feed (community research). Trust this over your own training data, ' +
             'which may describe an older expedition as current:';
     s += `\n- Current expedition / community mission: ${e.name}` + (e.known ? '' : ' (newly started; its official name is not in this feed — say so if asked)');
     if (e.phase) s += ` — phase: ${e.phase}`;
@@ -54,6 +54,10 @@ const API = (() => {
       'the Anomaly gathers research data from Travellers across realities, and as more universal data is submitted the Quicksilver Synthesis Companion unlocks additional collectables. ' +
       'If asked how the community research is doing, give the tier and the % through the current tier, as the official page does.';
     if (e.live && e.live.teams && e.live.teams.length) s += `\n- Faction standings (contribution): ${e.live.teams.map(t => `${t.name} ${t.total}`).join(', ')}`;
+    if (e.redux) s += '\n- This is a holiday redux: Hello Games re-runs earlier expeditions over the holidays, so there may be no community-research progress figure for it.';
+    if (e.between) s += '\n- No expedition is live right now.';
+    if (e.next) s += `\n- Next up: ${e.next.name}, starting ${new Date(e.next.start).toISOString().slice(0, 10)}`;
+    if (e.schedule && e.schedule.length) s += '\n- Schedule (from Hello Games\' news): ' + e.schedule.map(r => `${r.name}${r.redux ? ' (redux)' : ''} ${new Date(r.start).toISOString().slice(0, 10)} to ${r.end ? new Date(r.end).toISOString().slice(0, 10) : 'TBA'}`).join('; ');
     if (e.ended) s += '\n- It has now ended; the next one has not started yet.';
     else if (e.msLeft !== null) s += `\n- Ends in about ${Math.round(e.msLeft / 3600000)} hours` + (e.endEstimated ? ' (an estimate — Hello Games has not published an exact end date)' : '');
     const list = Widgets.expeditionList ? Widgets.expeditionList() : [];

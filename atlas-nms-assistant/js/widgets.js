@@ -529,8 +529,34 @@ const Widgets = (() => {
   };
   const MISSION_LS_KEY = 'atlasMissionId';
   const EXPEDITION = { name: '', phase: '', mission: 0, start: null, end: null, endEstimated: false, totalTiers: 5, known: false };
+  /* v5.0 (2026-11-25): the schedule now comes from Hello Games' own news (checked every 3 hours by
+     map.nomansskyhub.app, shared by every site, see nms-expedition.js), so a new expedition or holiday
+     redux shows up on its own. The Galactic Atlas feed only adds the community-research progress. */
+  let SHARED = null; // last NMSExp view
   let LIVE = null; // last live reading from the Galactic Atlas feed (tier / % / teams), shared with ATLAS's answers
+  function applyShared(v) {
+    const r = v && (v.live || v.last);
+    if (!r) return false;
+    SHARED = v;
+    EXPEDITION.name = r.name;
+    EXPEDITION.phase = r.redux ? 'HOLIDAY REDUX' : 'COMMUNITY MISSION';
+    EXPEDITION.start = new Date(r.start).toISOString();
+    EXPEDITION.end = r.end ? new Date(r.end).toISOString() : null;
+    EXPEDITION.endEstimated = !!r.estimated;
+    EXPEDITION.known = true;
+    EXPEDITION.redux = !!r.redux;
+    EXPEDITION.between = !v.live;
+    EXPEDITION.art = r.art || '';
+    EXPEDITION.mission = v.research ? v.research.mission : 0;
+    return true;
+  }
+  async function refreshShared() {
+    if (!window.NMSExp) return false;
+    try { return applyShared(await NMSExp.get()); } catch (e) { return false; }
+  }
+
   function applyKnownMission(id) {
+    if (SHARED) return; // the shared schedule decides, not this old list
     const k = KNOWN_MISSIONS[id];
     EXPEDITION.mission = id;
     EXPEDITION.name = k ? k.name : `GALACTIC MISSION #${id}`;
@@ -850,6 +876,17 @@ const Widgets = (() => {
     }
     const end = new Date(EXPEDITION.end);
     const ms = end - new Date();
+    const nxt = SHARED && EXPEDITION.between && SHARED.next ? SHARED.next : null;
+    if (ms <= 0 && nxt && new Date(nxt.start) > new Date()) {
+      const g = new Date(nxt.start) - new Date();
+      const line = (n, u) =>
+        `<div class="cd-line"><span class="cd-num">${n}</span><span class="cd-unit">${u}</span></div>`;
+      const d = Math.floor(g / 86400000), h = Math.floor((g % 86400000) / 3600000), m = Math.floor((g % 3600000) / 60000), s = Math.floor((g % 60000) / 1000);
+      el.innerHTML = line(d, d === 1 ? 'DAY' : 'DAYS') + line(h, h === 1 ? 'HOUR' : 'HOURS') + line(m, m === 1 ? 'MINUTE' : 'MINUTES') + line(String(s).padStart(2, '0'), s === 1 ? 'SECOND' : 'SECONDS');
+      if (bar) bar.style.width = '0%';
+      nameEl.textContent = `UNTIL ${nxt.name} STARTS`;
+      return;
+    }
     if (ms <= 0) {
       el.textContent = 'EXPEDITION COMPLETE';
       if (bar) bar.style.width = '0%';
@@ -944,6 +981,11 @@ const Widgets = (() => {
   // id is highest and still live — this is how the ticker follows a new expedition
   // without needing a manual code edit when Hello Games launches one.
   async function probeForCurrentMission() {
+    if (SHARED) {
+      // progress only for the community-research mission that is really moving (reported by the shared source)
+      const m = SHARED.research && SHARED.research.mission;
+      return m ? await fetchExpeditionById(m) : null;
+    }
     const base = EXPEDITION.mission || 116;
     const ids = [base, base + 1, base + 2];
     const results = await Promise.all(ids.map(fetchExpeditionById));
@@ -969,6 +1011,7 @@ const Widgets = (() => {
   async function updateTicker() {
     const el = document.getElementById('ticker-track');
     const sep = '   ◆   ';
+    await refreshShared();
     const data = await probeForCurrentMission();
     LIVE = data ? {
       tier: data.currentTier, totalTiers: data.totalTiers || EXPEDITION.totalTiers,
@@ -982,8 +1025,8 @@ const Widgets = (() => {
         // tierPercentage = progress through the current tier: the number Hello Games' own
         // Galactic Atlas 'Community Research' sidebar shows (TIER 2 - 41.1%)
         typeof data.tierPercentage === 'number'
-          ? `${EXPEDITION.phase}: TIER ${data.currentTier} OF ${data.totalTiers || EXPEDITION.totalTiers} — ${data.tierPercentage.toFixed(1)}%`
-          : `${EXPEDITION.phase}: TIER ${data.currentTier}/${data.totalTiers || EXPEDITION.totalTiers} — ${data.percentage.toFixed(1)}% COMPLETE`
+          ? `${SHARED ? 'COMMUNITY RESEARCH' : EXPEDITION.phase}: TIER ${data.currentTier} OF ${data.totalTiers || EXPEDITION.totalTiers} — ${data.tierPercentage.toFixed(1)}%`
+          : `${SHARED ? 'COMMUNITY RESEARCH' : EXPEDITION.phase}: TIER ${data.currentTier}/${data.totalTiers || EXPEDITION.totalTiers} — ${data.percentage.toFixed(1)}% COMPLETE`
       ];
       if (teamsArr.length) {
         // this expedition has a faction/team split — show it; a community-only
@@ -1001,6 +1044,19 @@ const Widgets = (() => {
       }
       segs.push(countdownStr());
       el.textContent = segs.map(TR).join(sep);
+    } else if (SHARED) {
+      // the schedule is known (Hello Games' news); there is just no community-research figure to show
+      const segs = [];
+      if (EXPEDITION.between) {
+        segs.push('NO EXPEDITION LIVE');
+        const nx = SHARED.next;
+        if (nx) segs.push(T('NEXT: {x}', { x: nx.name }), T('STARTS {d}', { d: new Date(nx.start).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }).toUpperCase() }));
+      } else {
+        segs.push(T('{x} — LIVE', { x: EXPEDITION.name }));
+        if (EXPEDITION.redux) segs.push('HOLIDAY REDUX');
+        segs.push(countdownStr());
+      }
+      el.textContent = segs.map(s => s).join(sep);
     } else {
       // offline or the API hasn't responded — say so honestly rather than guessing numbers
       el.textContent = [
@@ -1037,6 +1093,7 @@ const Widgets = (() => {
 
     if (!match || !artEl) return;
     const num = parseInt(match[1], 10);
+    if (EXPEDITION.art) { artEl.src = EXPEDITION.art; artEl.style.display = 'block'; fallbackEl.style.display = 'none'; return; }
     const fileName = PATCH_FILES[num] || `PATCH.EXPEDITION.${num}.png`;
 
     try {
@@ -1100,8 +1157,9 @@ const Widgets = (() => {
     // expedition ticker: live update every 5 min; tap to pause/resume (touch devices)
     // wiki names/dates first (cached), then the live ticker; re-check the wiki every 3h
     // (not awaited — the rest of the interface must not wait on the wiki)
+    applyShared(window.NMSExp && NMSExp.cached()); // the last schedule kept on this device, instantly
     loadWikiExpeditions().then(changed => { if (changed) { applyKnownMission(EXPEDITION.mission); updateTicker(); } });
-    applyKnownMission(EXPEDITION.mission); // uses the cached wiki copy immediately, if any
+    applyKnownMission(EXPEDITION.mission); // (does nothing once the shared schedule is in)
     updateTicker();
     setInterval(updateTicker, 5 * 60000);
     setInterval(async () => { if (await loadWikiExpeditions()) { applyKnownMission(EXPEDITION.mission); updateTicker(); } }, WIKI_TTL);
@@ -1162,6 +1220,9 @@ const Widgets = (() => {
     return {
       mission: EXPEDITION.mission, name: EXPEDITION.name, phase: EXPEDITION.phase,
       known: EXPEDITION.known, end: EXPEDITION.end, endEstimated: EXPEDITION.endEstimated,
+      redux: !!EXPEDITION.redux, between: !!EXPEDITION.between, shared: !!SHARED,
+      next: SHARED && SHARED.next ? { name: SHARED.next.name, start: SHARED.next.start, end: SHARED.next.end } : null,
+      schedule: SHARED ? SHARED.runs.filter(r => !r.end || r.end > Date.now() - 30 * 86400000).slice(0, 8).map(r => ({ name: r.name || ('EXPEDITION ' + r.num + ': ' + String(r.title).toUpperCase()), start: r.start, end: r.end, redux: !!r.redux })) : [],
       msLeft, ended: msLeft !== null && msLeft <= 0,
       live: LIVE ? Object.assign({}, LIVE, { teams: LIVE.teams.map(t => ({
         name: TEAM_NAMES[t.team] || String(t.team || '').toUpperCase(), total: t.total })) }) : null
